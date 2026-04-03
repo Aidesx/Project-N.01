@@ -1,0 +1,1 @@
+﻿Đảm nhiệm kiểu dữ liệu cho file văn bản, bao gồm các thuộc tính như tên file, đường dẫn, kích thước, và nội dung.

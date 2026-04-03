@@ -1,0 +1,1 @@
+﻿Xử lý nội dung của file văn bản, bao gồm đọc, ghi, và chỉnh sửa nội dung. Các chức năng có thể bao gồm:
