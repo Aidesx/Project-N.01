@@ -30,7 +30,7 @@ namespace Project_385.Controllers
             return View("~/Views/Checkout/Index.cshtml");
         }
 
-        public async Task<IActionResult> AddToCart(int id)
+        public async Task<IActionResult> Add(int id)
         {
             ProductModels product = await _dataContext.Products.FindAsync(id);
             List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
@@ -44,8 +44,44 @@ namespace Project_385.Controllers
             {
                 cartItem.Quantity += 1;
             }
-                return Redirect(Request.Headers["Referer"].ToString());
+                HttpContext.Session.SetJson("Cart", cart);
+            return Redirect(Request.Headers["Referer"].ToString());
             }
+        public async Task<IActionResult> Decrease(int id)
+        {
+            List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart");
+            CartItemModel cartItem = cart.Where(c => c.ProductId == id).FirstOrDefault();
+            if (cartItem.Quantity > 1)
+            {
+                --cartItem.Quantity;
+            }
+            else
+            {
+                cart.RemoveAll(p=>p.ProductId ==id);
+            }
+            if(cart.Count ==0)
+            {
+                HttpContext.Session.Remove("Cart");
+            }
+            else {
+                HttpContext.Session.SetJson("Cart", cart);
+            }
+
+            return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> Increase(int id)
+        {
+            List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart");
+            CartItemModel cartItem = cart.Where(c => c.ProductId == id).FirstOrDefault();
+            if (cartItem != null)
+            {
+                ++cartItem.Quantity;
+            }
+
+            HttpContext.Session.SetJson("Cart", cart);
+
+            return RedirectToAction("Index");
         }
     }
+}
 

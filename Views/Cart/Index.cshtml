@@ -27,10 +27,10 @@
                         @foreach (var item in Model.CartItems)
                         {
                             <tr>
-                                <td class="cart_product">
-                                    <a href=""><img src="~/images/@item.Image" alt=""></a>
+                                <td class="cart_product" style="padding-right: 25px;">
+                                    <a href=""><img src="~/images/@item.Image" alt="@item.ProductName" style="width: 100px; height: auto; object-fit: contain;"></a>
                                 </td>
-                                <td class="cart_description">
+                                <td class="cart_description" style="padding-left: 10px;">
                                     <h4><a href="">@item.ProductName</a></h4>
                                 </td>
                                 <td class="cart_price">
