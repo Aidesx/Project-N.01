@@ -37,18 +37,19 @@
                                     <p>@item.Price</p>
                                 </td>
                                 <td class="cart_quantity">
-                                    <div class="cart_quantity_button">
+                                    <div class="cart_quantity_button" style="display: flex; align-items: center; gap: 10px;">
                                         <a class="bt_cart_up" asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId"> + </a>
-                                        <input class="cart_quantity_input" type="text" name="quantity" value="@item.Quantity" autocomplete="off" size="2">
+
+                                        <input class="cart_quantity_input" type="text" name="quantity" value="@item.Quantity" autocomplete="off" size="2" style="text-align: center; padding: 2px 5px;">
+
                                         <a class="bt_cart_down" asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId"> - </a>
-                                        <a class="bt_cart_remove" asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId"> Remove </a>
                                     </div>
                                 </td>
                                 <td class="cart_total">
                                     <p class="cart_total_price">@item.Total.ToString()</p>
                                 </td>
                                 <td class="cart_delete">
-                                    <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
+                                    <a class="cart_quantity_delete" asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId"><i class="fa fa-times"></i></a>
                                 </td>
                             </tr>
                         }
