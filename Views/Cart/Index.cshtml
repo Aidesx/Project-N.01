@@ -12,7 +12,7 @@
         <div class="table-responsive cart_info">
             <table class="table table-condensed">
                 <thead>
-                    <tr class="cart_menu">
+                    <tr class="cart_menu" style="background: #FE980F; color: #fff; border-bottom: 0;">
                         <td class="image">Item</td>
                         <td class="description"></td>
                         <td class="price">Price</td>
@@ -27,40 +27,52 @@
                         @foreach (var item in Model.CartItems)
                         {
                             <tr>
-                                <td class="cart_product" style="padding-right: 25px;">
-                                    <a href=""><img src="~/images/@item.Image" alt="@item.ProductName" style="width: 100px; height: auto; object-fit: contain;"></a>
+                                <td class="cart_product" style="vertical-align: middle; padding-right: 25px; min-width: 110px;">
+                                    <a href=""><img src="~/images/@item.Image" alt="@item.ProductName" style="width: 80px; height: auto; object-fit: contain;"></a>
                                 </td>
-                                <td class="cart_description" style="padding-left: 10px;">
-                                    <h4><a href="">@item.ProductName</a></h4>
+                                <td class="cart_description" style="vertical-align: middle; min-width: 160px;">
+                                    <h4 style="margin: 0; font-size: 16px;"><a href="" style=" text-decoration: none !important;">@item.ProductName</a></h4>
                                 </td>
-                                <td class="cart_price">
-                                    <p>@item.Price</p>
+                                <td class="cart_price" style="vertical-align: middle;">
+                                    <p >@item.Price.ToString("0.00")</p>
                                 </td>
+
                                 <td class="cart_quantity">
-                                    <div class="cart_quantity_button" style="display: flex; align-items: center; gap: 10px;">
-                                        <a class="bt_cart_up" asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId"> + </a>
+                                    <div class="cart_quantity_button" style="display: flex; align-items: center; gap: 6px; flex-wrap: nowrap;">
 
-                                        <input class="cart_quantity_input" type="text" name="quantity" value="@item.Quantity" autocomplete="off" size="2" style="text-align: center; padding: 2px 5px;">
+                                        <a asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId">+</a>
 
-                                        <a class="bt_cart_down" asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId"> - </a>
+                                        <input class="cart_quantity_input" type="text" name="quantity" value="@item.Quantity" autocomplete="off" size="2">
+
+                                        <a asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId">-</a>
+
+                                        <a asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId">Remove</a>
+
                                     </div>
                                 </td>
-                                <td class="cart_total">
-                                    <p class="cart_total_price">@item.Total.ToString()</p>
+
+                                <td class="cart_total" style="vertical-align: middle;">
+                                    <p class="cart_total_price" >@item.Total.ToString("0.00")</p>
                                 </td>
-                                <td class="cart_delete">
-                                    <a class="cart_quantity_delete" asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId"><i class="fa fa-times"></i></a>
+                                <td class="cart_delete" style="vertical-align: middle;">
+                                    <div><i class="fa fa-times"></i></div>
                                 </td>
                             </tr>
                         }
                         <tr>
-                            <td colspan="6">Grand Total : @Model.GrandTotal.ToString()</td>
+                            <td colspan="4" style="vertical-align: middle; padding-top: 20px;">
+                                <p style="margin: 0; font-size: 14px; ">Grand Total:</p>
+                                <h3 style="margin: 0; font-size: 24px; ">@Model.GrandTotal.ToString("0.00")</h3>
+                            </td>
+                            <td colspan="2" style="text-align: right; vertical-align: bottom; padding-top: 20px;">
+                                <a asp-controller="Cart" asp-action="Clear">Clear</a>
+                            </td>
                         </tr>
                     }
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center">Your cart is empty.</td>
+                            <td colspan="6" class="text-center" style="padding: 30px;">Your cart is empty.</td>
                         </tr>
                     }
                 </tbody>
