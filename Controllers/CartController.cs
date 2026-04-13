@@ -46,25 +46,36 @@ namespace Project_385.Controllers
             }
 
             HttpContext.Session.SetJson("Cart", cart);
+            TempData["Success"] = "Product added to cart successfully!";
             return Redirect(Request.Headers["Referer"].ToString());
         }
 
-        // ✅ TĂNG số lượng lên 1
+
         public async Task<IActionResult> Increase(int id)
         {
             List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart");
             CartItemModel cartItem = cart.Where(c => c.ProductId == id).FirstOrDefault();
 
-            if (cartItem != null)
+            if(cartItem.Quantity >= 1)
             {
                 ++cartItem.Quantity;
             }
-
-            HttpContext.Session.SetJson("Cart", cart);
+            else
+            {
+                cart.RemoveAll(p => p.ProductId == id);
+            }
+            if (cart.Count == 0)
+            {
+                HttpContext.Session.Remove("Cart");
+            }
+            else
+            {
+                HttpContext.Session.SetJson("Cart", cart);
+            }
+            TempData["Success"] = "Product quantity increased successfully!";
             return RedirectToAction("Index");
         }
 
-        // ✅ GIẢM số lượng xuống 1, nếu = 1 thì xóa khỏi giỏ
         public async Task<IActionResult> Decrease(int id)
         {
             List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart");
@@ -90,7 +101,7 @@ namespace Project_385.Controllers
             {
                 HttpContext.Session.SetJson("Cart", cart);
             }
-
+            TempData["Success"] = "Product quantity decreased successfully!";
             return RedirectToAction("Index");
         }
 
@@ -107,13 +118,14 @@ namespace Project_385.Controllers
             {
                 HttpContext.Session.SetJson("Cart", cart);
             }
-
+            TempData["Success"] = "Product removed from cart successfully!";
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Clear()
         {
             HttpContext.Session.Remove("Cart");
+            TempData["Success"] = "Cart cleared successfully!";
             return RedirectToAction("Index");
         }
     }
