@@ -35,6 +35,6 @@ namespace Project_385.Models
         public BrandModels Brand { get; set; }
         [NotMapped]
         [FileExtension]
-        public IFormFile ImageUpLoad { get; set; }
+        public IFormFile? ImageUpLoad { get; set; }
     }
 }
