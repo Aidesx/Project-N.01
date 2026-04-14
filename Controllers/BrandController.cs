@@ -19,7 +19,7 @@ namespace Project_385.Controllers
             BrandModels brand = _dataContext.Brands.Where(c => c.Slug == Slug).FirstOrDefault();
             if ( brand == null) return RedirectToAction("Index");
 
-            var productsByBrand = _dataContext.Products.Where(b => b.BrandID == brand.Id);
+            var productsByBrand = _dataContext.Products.Where(b => b.BrandID == brand.Id).Include(p => p.Category).Include(p => p.Brand); 
             return View(await productsByBrand.OrderByDescending(p => p.Id).ToListAsync());
         }
     }
