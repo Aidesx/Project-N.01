@@ -1,0 +1,42 @@
+﻿@model IEnumerable<BrandModels>
+@{
+    ViewData["title"] = "Brand List";
+}
+<h3>Brand List</h3>
+<a asp-action="Create" asp-controller="Brand" class="btn btn-primary mb-3">Create New Brand</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Brand Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@Html.Raw(item.Description)</td>
+                <td>
+                    @if (item.Status == 1)
+                    {
+                        <span class="text-success">Show</span>
+                    }
+                    else
+                    {
+
+                        <span class="text-danger">Hide</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-Id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="">
 	<meta name="author" content="">
-	<title>@ViewData["tittle"] - Admin</title>
+	<title>@ViewData["title"] - Admin</title>
 	<link href="~/css/bootstrap.min.css" rel="stylesheet">
 	<link href="~/css/font-awesome.min.css" rel="stylesheet">
 	<link href="~/css/prettyPhoto.css" rel="stylesheet">
@@ -62,29 +62,12 @@
 								<span class="icon-bar"></span>
 							</button>
 						</div>
-						<div class="mainmenu pull-left">
-							<ul class="nav navbar-nav collapse navbar-collapse">
-								<li><a asp-controller="Home" asp-action="Index" class="active">Home</a></li>
-								<li class="dropdown">
-									<a asp-controller="Product"><i class="fa fa-angle-down"></i></a>
-									<ul role="menu" class="sub-menu">
-										<li><a asp-action="Index" asp-controller="Category"> Categorey</a></li>
-										<li><a asp-action="Details" asp-controller="Product">Product Details</a></li>
-										<li><a asp-action="Checkout" asp-controller="Cart">Checkout</a></li>
-										<li><a asp-controller="Cart">Cart</a></li>
-										<li><a>Login</a></li>
-									</ul>
-								</li>
-								<li class="dropdown">
-									<a href="#">Blog<i class="fa fa-angle-down"></i></a>
-									<ul role="menu" class="sub-menu">
-										<li><a href="blog.html">Blog List</a></li>
-										<li><a href="blog-single.html">Blog Single</a></li>
-									</ul>
-								</li>
-								<li><a href="404.html">404</a></li>
-								<li><a href="contact-us.html">Contact</a></li>
-							</ul>
+						<ul class="nav navbar-nav collapse navbar-collapse">
+							<li><a asp-controller="Home" asp-action="Index" class="active">Home</a></li>
+                            <li><a asp-controller="Product" asp-action="Index">Products</a></li>
+							<li><a asp-controller="Category" asp-action="Index">Categories</a></li>
+							<li><a asp-controller="Brand" asp-action="Index">Brands</a></li>
+						</ul>
 						</div>
 					</div>
 					<div class="col-sm-3">

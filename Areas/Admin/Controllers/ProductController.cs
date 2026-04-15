@@ -11,7 +11,7 @@ namespace Project_385.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly DataContext _dataContext;
-        private readonly IWebHostEnvironment _webHostEnvironment; // SỬA: Thêm dấu chấm phẩy ở đây
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public ProductController(DataContext context, IWebHostEnvironment webHostEnvironment)
         {
@@ -218,6 +218,5 @@ namespace Project_385.Areas.Admin.Controllers
             }
             return RedirectToAction("Index");
         }
-
     }
-    }
+}
