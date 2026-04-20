@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
@@ -7,7 +8,7 @@ using Project_385.Repositery;
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-
+    [Authorize(Roles = "1")]
     public class ProductController : Controller
     {
         private readonly DataContext _dataContext;
