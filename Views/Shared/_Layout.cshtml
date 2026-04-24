@@ -118,16 +118,15 @@
 							<ul class="nav navbar-nav collapse navbar-collapse">
 								<li><a asp-controller="Home" asp-action="Index" class="active">Home</a></li>
 								<li class="dropdown">
-									<a asp-controller="Product"><i class="fa fa-angle-down"></i></a>
+									<a asp-controller="Product">Shop</></a>
 									<ul role="menu" class="sub-menu">
 										<li><a asp-action="Index" asp-controller="Category"> Categorey</a></li>
 										<li><a asp-action="Details" asp-controller="Product">Product Details</a></li>
 										<li><a asp-action="Checkout" asp-controller="Cart">Checkout</a></li>
 										<li><a asp-controller="Cart">Cart</a></li>
-										
-										<li><a asp-controller="Login" asp-action="Login"><i class="fa fa-lock"></i> Đăng nhập</a></li>
-										<li><a asp-controller="Login" asp-action="Register"><i class="fa fa-user"></i> Đăng ký</a></li>
-								
+										<li><a asp-controller="Login" asp-action="Login">Sign in</a></li>
+										<li><a asp-controller="Login" asp-action="Register">Sign up</a></li>
+									</ul>
 								</li>
 								<li class="dropdown">
 									<a href="#">Blog<i class="fa fa-angle-down"></i></a>

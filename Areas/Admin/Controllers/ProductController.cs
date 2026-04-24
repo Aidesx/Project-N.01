@@ -19,16 +19,20 @@ namespace Project_385.Areas.Admin.Controllers
             _dataContext = context;
             _webHostEnvironment = webHostEnvironment;
         }
+
         public async Task<IActionResult> Index()
         {
-            return View(await _dataContext.Products.OrderByDescending(p => p.Id).Include(p => p.Category).Include(p => p.Brand).ToListAsync());
+            return View(await _dataContext.Products
+                .OrderByDescending(p => p.Id)
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .ToListAsync());
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Categories = new SelectList(_dataContext.Categories, "Id", "Name");
-            ViewBag.Brands = new SelectList(_dataContext.Brands, "Id", "Name");
+            PopulateViewBag();
             return View();
         }
 
@@ -40,24 +44,26 @@ namespace Project_385.Areas.Admin.Controllers
             {
                 if (string.IsNullOrEmpty(product.Slug))
                 {
-                    product.Slug = product.Name.Replace(" ", "-");
+                    product.Slug = product.Name.Replace(" ", "-").ToLower();
+                }
 
-                    var slug = await _dataContext.Products.FirstOrDefaultAsync(p => p.Slug == product.Slug);
-                    if (slug != null)
-                    {
-                        ModelState.AddModelError("", "Sản phẩm đã có");
-                        return View(product);
-                    }
+                var existingSlug = await _dataContext.Products
+                    .FirstOrDefaultAsync(p => p.Slug == product.Slug);
+                if (existingSlug != null)
+                {
+                    ModelState.AddModelError("", "Sản phẩm đã có");
+                    PopulateViewBag();
+                    return View(product);
                 }
 
                 if (product.ImageUpLoad != null)
                 {
                     string[] allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
                     string fileExtension = Path.GetExtension(product.ImageUpLoad.FileName).ToLower();
-
                     if (!allowedExtensions.Contains(fileExtension))
                     {
                         ModelState.AddModelError("", "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .webp)");
+                        PopulateViewBag();
                         return View(product);
                     }
 
@@ -66,37 +72,33 @@ namespace Project_385.Areas.Admin.Controllers
                     {
                         Directory.CreateDirectory(uploadDir);
                     }
-                    string imageName = Guid.NewGuid().ToString() + "_" + product.ImageUpLoad.FileName;
-                    string filePath = Path.Combine(uploadDir, imageName);
 
+                    // Dùng Path.GetFileName() để tránh path traversal
+                    string imageName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(product.ImageUpLoad.FileName);
+                    string filePath = Path.Combine(uploadDir, imageName);
                     using (FileStream fs = new FileStream(filePath, FileMode.Create))
                     {
                         await product.ImageUpLoad.CopyToAsync(fs);
                     }
-
                     product.Image = imageName;
                 }
 
                 _dataContext.Add(product);
                 await _dataContext.SaveChangesAsync();
-                TempData["succes"] = "Thêm sản phẩm thành công";
+                TempData["success"] = "Thêm sản phẩm thành công";
                 return RedirectToAction("Index");
             }
-            else
-            {
-                TempData["error"] = "";
-                List<string> errors = new List<string>();
-                foreach (var value in ModelState.Values)
-                {
-                    foreach (var error in value.Errors)
-                    {
-                        errors.Add(error.ErrorMessage);
-                    }
-                }
-                string errorMessage = string.Join("\n", errors);
-                return BadRequest(errorMessage);
-            }
+
+            List<string> errors = new List<string>();
+            foreach (var value in ModelState.Values)
+                foreach (var error in value.Errors)
+                    errors.Add(error.ErrorMessage);
+
+            TempData["error"] = string.Join("\n", errors);
+            PopulateViewBag();
+            return View(product);
         }
+
         [HttpGet]
         public async Task<IActionResult> Edit(int? Id)
         {
@@ -128,7 +130,8 @@ namespace Project_385.Areas.Admin.Controllers
                     product.Slug = product.Name.Replace(" ", "-").ToLower();
                 }
 
-                var slugExists = await _dataContext.Products.FirstOrDefaultAsync(p => p.Slug == product.Slug && p.Id != product.Id);
+                var slugExists = await _dataContext.Products
+                    .FirstOrDefaultAsync(p => p.Slug == product.Slug && p.Id != product.Id);
                 if (slugExists != null)
                 {
                     ModelState.AddModelError("", "Slug đã tồn tại trong một sản phẩm khác.");
@@ -137,14 +140,22 @@ namespace Project_385.Areas.Admin.Controllers
 
                 if (product.ImageUpLoad != null)
                 {
+                    string[] allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                    string fileExtension = Path.GetExtension(product.ImageUpLoad.FileName).ToLower();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        ModelState.AddModelError("", "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .webp)");
+                        return View(product);
+                    }
+
                     string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
                     if (!Directory.Exists(uploadDir))
                     {
                         Directory.CreateDirectory(uploadDir);
                     }
-                    string imageName = Guid.NewGuid().ToString() + "_" + product.ImageUpLoad.FileName;
-                    string filePath = Path.Combine(uploadDir, imageName);
 
+                    string imageName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(product.ImageUpLoad.FileName);
+                    string filePath = Path.Combine(uploadDir, imageName);
                     using (FileStream fs = new FileStream(filePath, FileMode.Create))
                     {
                         await product.ImageUpLoad.CopyToAsync(fs);
@@ -152,10 +163,10 @@ namespace Project_385.Areas.Admin.Controllers
 
                     if (!string.Equals(existingProduct.Image, "default.png"))
                     {
-                        string oldfilePath = Path.Combine(uploadDir, existingProduct.Image);
-                        if (System.IO.File.Exists(oldfilePath))
+                        string oldFilePath = Path.Combine(uploadDir, existingProduct.Image);
+                        if (System.IO.File.Exists(oldFilePath))
                         {
-                            System.IO.File.Delete(oldfilePath);
+                            System.IO.File.Delete(oldFilePath);
                         }
                     }
 
@@ -174,38 +185,32 @@ namespace Project_385.Areas.Admin.Controllers
                 TempData["success"] = "Cập nhật sản phẩm thành công";
                 return RedirectToAction("Index");
             }
-            else
-            {
-                TempData["error"] = "";
-                List<string> errors = new List<string>();
-                foreach (var value in ModelState.Values)
-                {
-                    foreach (var error in value.Errors)
-                    {
-                        errors.Add(error.ErrorMessage);
-                    }
-                }
-                string errorMessage = string.Join("\n", errors);
-                return BadRequest(errorMessage);
-            }
+
+            List<string> errors = new List<string>();
+            foreach (var value in ModelState.Values)
+                foreach (var error in value.Errors)
+                    errors.Add(error.ErrorMessage);
+
+            TempData["error"] = string.Join("\n", errors);
+            return View(product);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? Id)
         {
             if (Id == null) return NotFound();
 
             ProductModels product = await _dataContext.Products.FindAsync(Id);
-
             if (product != null)
             {
                 if (!string.Equals(product.Image, "default.png"))
                 {
                     string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-                    string oldfilePath = Path.Combine(uploadDir, product.Image);
-
-                    if (System.IO.File.Exists(oldfilePath))
+                    string oldFilePath = Path.Combine(uploadDir, product.Image);
+                    if (System.IO.File.Exists(oldFilePath))
                     {
-                        System.IO.File.Delete(oldfilePath);
+                        System.IO.File.Delete(oldFilePath);
                     }
                 }
 
@@ -217,7 +222,14 @@ namespace Project_385.Areas.Admin.Controllers
             {
                 TempData["error"] = "Sản phẩm không tồn tại";
             }
+
             return RedirectToAction("Index");
+        }
+
+        private void PopulateViewBag()
+        {
+            ViewBag.Categories = new SelectList(_dataContext.Categories, "Id", "Name");
+            ViewBag.Brands = new SelectList(_dataContext.Brands, "Id", "Name");
         }
     }
 }

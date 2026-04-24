@@ -41,6 +41,9 @@
             <span asp-validation-for="ImageUpLoad" class="text-danger"></span>
         </div>
         <div class="form-group">
+            <img id="imgpreview" src="" alt="Ảnh xem trước" style="display:none; margin-top: 10px;" />
+        </div>
+        <div class="form-group">
             <button class="btn btn-primary">Create</button>
         </div>
     </form>
@@ -48,10 +51,16 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script src="https://cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
     <script>
-        CKEDITOR.replace('Description'); </script>
-
+        $("#ImageUpLoad").change(function () {
+            readURL(this);
+        });              
+    </script>
+    <script>
+        CKEDITOR.replace('Description');
+    </script>
 }
-
