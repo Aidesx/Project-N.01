@@ -13,6 +13,8 @@ namespace Project_385.Repositery
         public DbSet<BrandModels> Brands { get; set; }
         public DbSet<CategoryModel> Categories { get; set; }
         public DbSet<ProductModels> Products { get; set; }
+        public DbSet<OrderModels> Orders { get; set; }
+        public DbSet<OrderDetailModels> OrderDetails { get; set; }
 
     }
 }
