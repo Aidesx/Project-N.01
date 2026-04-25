@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Project_385.Models;
 using Project_385.Repositery;
-using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 // Connection DB
@@ -17,12 +20,28 @@ builder.Services.AddSession(options =>{
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/Login"; 
-        options.AccessDeniedPath = "/Account/AccessDenied"; 
-    });
+
+builder.Services.AddIdentity<AppUserModels,IdentityRole>()
+    .AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/Login";
+});
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Password settings.
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
+
+
+    options.User.RequireUniqueEmail = true;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,6 +52,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}"); 
 app.UseSession();
 
 app.UseHttpsRedirection();
@@ -66,4 +86,11 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<DataContext>();
     SeedData.SeedingData(context);
 }
+
+using (var scope = app.Services.CreateScope())
+{
+    await SeedData.SeedRolesAsync(scope.ServiceProvider);
+    await SeedData.SeedAdminAsync(scope.ServiceProvider);
+}
+
 app.Run();

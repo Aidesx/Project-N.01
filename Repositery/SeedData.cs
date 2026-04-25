@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
+using System.Linq;
 
 namespace Project_385.Repositery
 {
@@ -25,27 +26,43 @@ namespace Project_385.Repositery
 
                 _context.SaveChanges();
             }
-            if (!_context.Users.Any())
+
+        }
+
+        public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            string[] roles = { "Admin", "User" };
+
+            foreach (var role in roles)
             {
-                _context.Users.AddRange(
-                    new LoginModels
-                    {
-                        FullName = "Quản trị viên",
-                        UserName = "admin",
-                        Email = "admin@gmail.com",
-                        Password = "jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=", // Mật khẩu: 123456
-                        RoleId = 1
-                    },
-                    new LoginModels
-                    {
-                        FullName = "Người dùng test",
-                        UserName = "user1",
-                        Email = "user1@gmail.com",
-                        Password = "jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=", // Mật khẩu: 123456
-                        RoleId = 2
-                    }
-                );
-                _context.SaveChanges();
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+        }
+
+        public static async Task SeedAdminAsync(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<AppUserModels>>();
+
+            if (await userManager.FindByNameAsync("admin") == null)
+            {
+                AppUserModels admin = new AppUserModels
+                {
+                    UserName = "admin",
+                    Email = "admin@admin.com",
+                    EmailConfirmed = true
+                };
+
+                IdentityResult result = await userManager.CreateAsync(admin, "Admin@123");
+
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(admin, "Admin");
+                }
             }
         }
     }

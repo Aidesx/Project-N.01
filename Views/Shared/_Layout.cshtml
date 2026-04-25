@@ -7,7 +7,7 @@
 	<meta name="author" content="">
 	<title>Home | E-Shopper</title>
 	<link href="~/css/bootstrap.min.css" rel="stylesheet">
-	<link href="~/css/font-awesome.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
 	<link href="~/css/prettyPhoto.css" rel="stylesheet">
 	<link href="~/css/price-range.css" rel="stylesheet">
 	<link href="~/css/animate.css" rel="stylesheet">
@@ -89,11 +89,19 @@
 					<div class="col-sm-8">
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
-								<li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-								<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-								<li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
+
+								@if(User.Identity?.IsAuthenticated ?? false)
+								{
+									<li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+									<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
+									<li><a asp-controller="Checkout"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+									<li><a asp-controller="Cart"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a asp-controller="Account" asp-action="Logout"><i class="fa fa-lock"></i>@User.Identity.Name Logout</a></li>
+								}
+								else
+								{
+									<li><a asp-controller="Account" asp-action="Login"><i class="fa fa-lock"></i> Login</a></li>
+								}
 							</ul>
 						</div>
 					</div>
@@ -122,10 +130,7 @@
 									<ul role="menu" class="sub-menu">
 										<li><a asp-action="Index" asp-controller="Category"> Categorey</a></li>
 										<li><a asp-action="Details" asp-controller="Product">Product Details</a></li>
-										<li><a asp-action="Checkout" asp-controller="Cart">Checkout</a></li>
 										<li><a asp-controller="Cart">Cart</a></li>
-										<li><a asp-controller="Login" asp-action="Login">Sign in</a></li>
-										<li><a asp-controller="Login" asp-action="Register">Sign up</a></li>
 									</ul>
 								</li>
 								<li class="dropdown">
@@ -161,18 +166,15 @@
 							<li data-target="#slider-carousel" data-slide-to="1"></li>
 							<li data-target="#slider-carousel" data-slide-to="2"></li>
 						</ol>
-
+						<!-- slider example: <img href "" with= "" >-->
 						<div class="carousel-inner">
 							<div class="item active">
-								<div class="col-sm-6">
-									<h1><span>E</span>-SHOPPER</h1>
-									<h2>Free E-Commerce Template</h2>
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-									<button type="button" class="btn btn-default get">Get it now</button>
+								<div class="col-sm-12">
+									<img src="~/images/1.jpg" alt="Slider Image" width="120"/>
 								</div>
 								<div class="col-sm-6">
-									<img src="images/home/girl1.jpg" class="girl img-responsive" alt="" />
-									<img src="images/home/pricing.png" class="pricing" alt="" />
+									<img src="~/images/home/girl1.jpg" class="girl img-responsive" alt="" />
+									<img src="~/images/home/pricing.png" class="pricing" alt="" />
 								</div>
 							</div>
 							<div class="item">
@@ -392,5 +394,7 @@
 	<script src="~/js/price-range.js"></script>
 	<script src="~/js/jquery.prettyPhoto.js"></script>
 	<script src="~/js/main.js"></script>
+	<script src="~/backend/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

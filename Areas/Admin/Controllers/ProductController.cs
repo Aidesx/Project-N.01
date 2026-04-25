@@ -8,7 +8,7 @@ using Project_385.Repositery;
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "1")]
+    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly DataContext _dataContext;

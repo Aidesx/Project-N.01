@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
 
 namespace Project_385.Repositery
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<AppUserModels>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -12,6 +13,6 @@ namespace Project_385.Repositery
         public DbSet<BrandModels> Brands { get; set; }
         public DbSet<CategoryModel> Categories { get; set; }
         public DbSet<ProductModels> Products { get; set; }
-        public DbSet<LoginModels> Users { get; set; }
+
     }
 }

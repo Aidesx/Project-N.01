@@ -10,9 +10,9 @@ namespace Project_385.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly DataContext _dataContext;
-         
 
-        public HomeController(ILogger<HomeController> logger,DataContext context)
+
+        public HomeController(ILogger<HomeController> logger, DataContext context)
         {
             _logger = logger;
             _dataContext = context;
@@ -20,7 +20,7 @@ namespace Project_385.Controllers
 
 
         public IActionResult Index()
-        {   
+        {
             var product = _dataContext.Products.Include("Category").Include("Brand").ToList();
             return View(product);
         }
@@ -31,9 +31,16 @@ namespace Project_385.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int statusCode)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            if (statusCode == 404)
+            {
+                return View("NotFound");
+            }
+            else
+            {
+                return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+        } 
     }
 }
