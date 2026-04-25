@@ -10,7 +10,6 @@ namespace Project_385.Repositery.Components
         {
             _datacontext = context;
         }
-
-        public async Task<IViewComponentResult> InvokeAsync() => View(await _datacontext.Brands.ToListAsync());
+        public async Task<IViewComponentResult> InvokeAsync() =>View(await _datacontext.Brands.Where(x => x.Status == 1).ToListAsync());
     }
 }
