@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<BrandModels>
 @{
-    ViewData["title"] = "Brand List";
+    ViewData["title"] = "Danh sách nhãn hiệu<";
 }
-<h3>Brand List</h3>
-<a asp-action="Create" asp-controller="Brand" class="btn btn-primary mb-3">Create New Brand</a>
+<h3>Danh sách nhãn hiệu</h3>
+<a asp-action="Create" asp-controller="Brand" class="btn btn-primary mb-3">Tạo nhãn hiệu mới</a>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -24,17 +24,17 @@
                 <td>
                     @if (item.Status == 1)
                     {
-                        <span class="text text-success">Show</span>
+                        <span class="text text-success">Hiện</span>
                     }
                     else
                     {
 
-                        <span class="text text-danger">Hide</span>
+                        <span class="text text-danger">Ẩn</span>
                     }
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-Id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                    <a asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-danger btn-sm confirmDeletion">Delete</a>
+                    <a asp-action="Edit" asp-route-Id="@item.Id" class="btn btn-warning btn-sm">Chỉnh sửa</a>
+                    <a asp-action="Delete" asp-route-Id="@item.Id" class="btn btn-danger btn-sm confirmDeletion">Xoá</a>
                 </td>
             </tr>
         }

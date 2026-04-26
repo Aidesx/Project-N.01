@@ -11,5 +11,6 @@ namespace Project_385.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Total { get; set; }
         public int Status { get; set; }
+        public List<OrderDetailModels> OrderDetails { get; set; }
     }
 }

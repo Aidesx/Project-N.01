@@ -1,6 +1,6 @@
 ﻿@model BrandModels
 @{
-    ViewData["title"] = "Edit Brand";
+    ViewData["title"] = "Chỉnh sửa nhãn hiệu";
 }
 <h3>Edit Brand</h3>
 <div class="col-md-9">
@@ -21,13 +21,13 @@
         <div class="form-group">
             <label>Status</label>
             <select asp-for="Status" class="form-control">
-                <option value="1">Show</option>
-                <option value="0">Hide</option>
+                <option value="1">Hiện</option>
+                <option value="0">Ẩn</option>
             </select>
         </div>
-        <button class="btn btn-primary mt-2">Update</button>
+        <button class="btn btn-primary mt-2">Cập nhật</button>
     </form>
-    <a asp-action="Index">Back to list</a>
+    <a asp-action="Index">Quay lại danh mục nhãn hiệu</a>
 </div>
 
 @section Scripts {

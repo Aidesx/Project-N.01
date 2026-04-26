@@ -1,8 +1,8 @@
 ﻿@model ProductModels
 @{
-    ViewData["title"] = "Create Product";
+    ViewData["title"] = "Tạo sản phẩm";
 }
-<h3>Create Product</h3>
+<h3>Tạo sản phẩm</h3>
 <div class="col-md-9">
     <form asp-action="Create" asp-controller="Product" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -24,14 +24,14 @@
         <div class="form-group">
             <label>Category</label>
             <select asp-for="CategoryID" class="form-control" asp-items="ViewBag.Categories">
-                <option>Choose A Category</option>
+                <option>Chọn danh mục</option>
             </select>
             <span asp-validation-for="CategoryID" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label>Brand</label>
             <select asp-for="BrandID" class="form-control" asp-items="ViewBag.Brands">
-                <option>Chooose A Brand</option>
+                <option>Chọn nhãn hiệu</option>
             </select>
             <span asp-validation-for="BrandID" class="text-danger"></span>
         </div>
@@ -44,10 +44,10 @@
             <img id="imgpreview" src="" alt="Ảnh xem trước" style="display:none; margin-top: 10px;" />
         </div>
         <div class="form-group">
-            <button class="btn btn-primary">Create</button>
+            <button class="btn btn-primary">Tạo mới</button>
         </div>
     </form>
-<a asp-action="Index">Back to list</a>
+<a asp-action="Index">Quay lại danh sách sản phẩm</a>
 </div>
 
 @section Scripts {

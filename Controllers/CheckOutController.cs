@@ -60,7 +60,7 @@ namespace Project_385.Controllers
             var orderDetails = cartItems.Select(cart => new OrderDetailModels
             {
                 OrderId = order.Id,
-                IdProduct = cart.ProductId,
+                ProductId = cart.ProductId,
                 ProductName = cart.ProductName,
                 Quantity = cart.Quantity,
                 Price = cart.Price

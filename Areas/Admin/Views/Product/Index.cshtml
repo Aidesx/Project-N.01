@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<ProductModels>
 @{
-    ViewData["title"] = "Product List";
+    ViewData["title"] = "Danh sách sản phẩm";
 }   
 
-<h3>Product List</h3>
-<a  asp-action="Create" asp-controller="Product">Create New Product</a>
+<h3>Danh sách sản phẩm</h3>
+<a  asp-action="Create" asp-controller="Product" class="btn btn-primary mb-3">Tạo sản phẩm mới</a>
 <table class="table">
     <thead>
         <tr>
@@ -32,8 +32,8 @@
                 <td>@item.Category?.Name</td>
                 <td>@item.Brand?.Name</td>
                 <td>
-                    <a asp-action="Edit" class= "btn btn-warning btn-sm " asp-controller="Product" asp-route-Id="@item.Id">Edit</a> |
-                    <a asp-action="Delete" class="btn btn-danger btn-sm confirmDeletion" asp-controller="Product" asp-route-Id="@item.Id">Delete</a>
+                    <a asp-action="Edit" class= "btn btn-warning btn-sm " asp-controller="Product" asp-route-Id="@item.Id">Chỉnh sửa</a> |
+                    <a asp-action="Delete" class="btn btn-danger btn-sm confirmDeletion" asp-controller="Product" asp-route-Id="@item.Id">Xoá</a>
             </tr>
         }
         

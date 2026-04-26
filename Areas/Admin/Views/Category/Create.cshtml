@@ -1,8 +1,8 @@
 ﻿@model CategoryModel
 @{
-    ViewData["title"] = "Create Category";
+    ViewData["title"] = "Tạo danh mục mới";
 }
-<h3>Create Category</h3>
+<h3>Tạo danh mục mới</h3>
 <div class="col-md-9">
     <form asp-action="Create" asp-controller="Category" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -19,16 +19,16 @@
         <div class="form-group">
             <label>Status</label>
             <select asp-for="Status" class="form-control">
-                <option value="1">Show</option>
-                <option value="0">Hide</option>
+                <option value="1">Hiện</option>
+                <option value="0">Ẩn</option>
             </select>
             <span asp-validation-for="Status" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <button class="btn btn-primary">Create</button>
+            <button class="btn btn-primary">Tạo mới</button>
         </div>
     </form>
-    <a asp-action="Index">Back to list category </a>
+    <a asp-action="Index">Quay lại danh sách danh mục</a>
 </div>
 
 @section Scripts {
