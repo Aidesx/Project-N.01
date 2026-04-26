@@ -9,7 +9,7 @@ using Project_385.Services;
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class BrandController : Controller
     {
         private readonly DataContext _dataContext;
@@ -22,15 +22,26 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [Route("Index")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pg = 1)
         {
             if (!await _permissionService.HasPermissionAsync(User, "ManageBrand"))
                 return Forbid();
-            return View(await _dataContext.Brands.OrderByDescending(p => p.Id).ToListAsync());
+
+            List<BrandModels> brands = await _dataContext.Brands.OrderByDescending(p => p.Id).ToListAsync();
+
+            const int pageSize = 10;
+            if (pg < 1) pg = 1;
+
+            int recsCount = brands.Count();
+            var pager = new Paginate(recsCount, pg, pageSize);
+            int recSkip = (pg - 1) * pageSize;
+            var data = brands.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            ViewBag.Pager = pager;
+            return View(data);
         }
 
         [HttpGet]
-        [Route("Create")] 
         public IActionResult Create()
         {
             return View();
@@ -38,7 +49,6 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Create")]
         public async Task<IActionResult> Create(BrandModels brand)
         {
             if (ModelState.IsValid)
@@ -64,7 +74,6 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(int? Id)
         {
             if (Id == null) return NotFound();
@@ -77,7 +86,6 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(BrandModels brand)
         {
             if (ModelState.IsValid)

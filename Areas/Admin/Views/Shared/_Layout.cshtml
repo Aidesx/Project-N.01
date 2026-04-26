@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Project_385.Services
+@inject PermissionService _permissionService
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
@@ -64,12 +66,31 @@
 						</div>
 						<ul class="nav navbar-nav collapse navbar-collapse">
 							<li><a asp-controller="Home" asp-action="Index" class="active">Home</a></li>
-                            <li><a asp-controller="Product" asp-action="Index">Products</a></li>
-							<li><a asp-controller="Category" asp-action="Index">Categories</a></li>
-							<li><a asp-controller="Brand" asp-action="Index">Brands</a></li>
-                            <li><a asp-controller="Order" asp-action="Index">Orders</a></li>
-							<li><a asp-area="Admin" asp-controller="User" asp-action="Index">User</a></li>
-							<li><a asp-area="Admin" asp-controller="Role" asp-action="Index">Role</a></li>
+							@if (await _permissionService.HasPermissionAsync(User, "ManageProduct"))
+							{
+								<li><a asp-controller="Product" asp-action="Index" class="active">Quản lý sản phẩm</a></li>
+							}
+							@if (await _permissionService.HasPermissionAsync(User, "ManageOrder"))
+							{
+								<li><a asp-controller="Order" asp-action="Index" class="active">Quản lý đơn hàng</a></li>
+							}
+
+							@if (await _permissionService.HasPermissionAsync(User, "ManageBrand"))
+							{
+								<li><a asp-controller="Brand" asp-action="Index" class="active">Quản lý thương hiệu</a></li>
+							}
+							@if (await _permissionService.HasPermissionAsync(User, "ManageCategory"))
+							{
+								<li><a asp-controller="Category" asp-action="Index" class="active">Quản lý danh mục</a></li>
+							}
+							@if (await _permissionService.HasPermissionAsync(User, "ManageUser"))
+							{
+								<li><a asp-controller="Role" asp-action="Index" class="active">Quản lý vai trò</a></li>
+							}
+							@if (await _permissionService.HasPermissionAsync(User, "ManageUser"))
+							{
+								<li><a asp-controller="User" asp-action="Index" class="active">Quản lý người dùng</a></li>
+							}
 						</ul>
 						</div>
 					</div>

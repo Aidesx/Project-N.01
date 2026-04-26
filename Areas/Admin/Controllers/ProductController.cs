@@ -9,7 +9,7 @@ using Project_385.Services;
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly DataContext _dataContext;
@@ -23,19 +23,25 @@ namespace Project_385.Areas.Admin.Controllers
             _permissionService = permissionService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pg = 1)
         {
             if (!await _permissionService.HasPermissionAsync(User, "ManageProduct"))
                 return Forbid();
-            return View(await _dataContext.Products
-                .OrderByDescending(p => p.Id)
-                .Include(p => p.Category)
-                .Include(p => p.Brand)
-                .ToListAsync());
+            var products = await _dataContext.Products.Include(p => p.Category).Include(p => p.Brand).OrderByDescending(p => p.Id).ToListAsync();
+
+            const int pageSize = 10;
+            if (pg < 1) pg = 1;
+
+            int recsCount = products.Count;
+            var pager = new Paginate(recsCount, pg, pageSize);
+            int recSkip = (pg - 1) * pageSize;
+            var data = products.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            ViewBag.Pager = pager;
+            return View(data);
         }
 
         [HttpGet]
-        [Route("Create")]
         public IActionResult Create()
         {
             PopulateViewBag();
@@ -43,7 +49,6 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Route("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductModels product)
         {
@@ -107,7 +112,6 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(int? Id)
         {
             if (Id == null) return NotFound();
@@ -123,7 +127,6 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(ProductModels product)
         {
             ViewBag.Categories = new SelectList(_dataContext.Categories, "Id", "Name", product.CategoryID);

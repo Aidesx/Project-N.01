@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Project_385.Models.ViewModels.RolePermissionViewModel>
 @{
     ViewData["Title"] = "Danh sách Role";
+    var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
 <h3>Danh sách Role</h3>
 <a asp-action="Create" class="btn btn-primary mb-3">Tạo Role mới</a>
@@ -48,3 +49,37 @@
         }
     </tbody>
 </table>
+
+@if (pager != null && pager.TotalPage > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-end">
+            @if (pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Role" asp-action="Index" asp-route-pg="1">Đầu</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Role" asp-action="Index" asp-route-pg="@(pager.CurrentPage - 1)">Trước</a>
+                </li>
+            }
+
+            @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
+            {
+                <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-controller="Role" asp-action="Index" asp-route-pg="@pge">@pge</a>
+                </li>
+            }
+
+            @if (pager.CurrentPage < pager.TotalPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Role" asp-action="Index" asp-route-pg="@(pager.CurrentPage + 1)">Tiếp</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-controller="Role" asp-action="Index" asp-route-pg="@(pager.TotalPage)">Cuối</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

@@ -8,7 +8,7 @@ using Project_385.Services;
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")] 
+    [Authorize] 
     public class CategoryController : Controller
     {
         private readonly DataContext _dataContext;
@@ -20,15 +20,29 @@ namespace Project_385.Areas.Admin.Controllers
             _permissionService = permissionService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pg=1)
         {
             if (!await _permissionService.HasPermissionAsync(User, "ManageCategory"))
                 return Forbid();
-            return View(await _dataContext.Categories.OrderByDescending(p => p.Id).ToListAsync());
+
+            List<CategoryModel> category = _dataContext.Categories.ToList();
+
+            const int pageSize = 10; 
+            if (pg < 1) 
+            {
+                pg = 1;
+            }
+            int recsCount = category.Count(); 
+            var pager = new Paginate(recsCount, pg, pageSize);
+            int recSkip = (pg - 1) * pageSize; 
+            var data = category.Skip(recSkip).Take(pager.PageSize).ToList();
+            ViewBag.Pager = pager;
+
+            return View(data);
+
         }
 
         [HttpGet]
-        [Route("Create")]
         public IActionResult Create()
         {
             return View();
@@ -36,7 +50,6 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Create")]
         public async Task<IActionResult> Create(CategoryModel category)
         {
             if (ModelState.IsValid)
@@ -70,7 +83,6 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("Edit/{Id}")] 
         public async Task<IActionResult> Edit(int? Id)
         {
             if (Id == null) return NotFound();
@@ -83,7 +95,6 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(CategoryModel category)
         {
             if (ModelState.IsValid)

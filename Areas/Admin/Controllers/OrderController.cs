@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly DataContext _dataContext;
@@ -21,14 +21,25 @@ namespace Project_385.Areas.Admin.Controllers
             _permissionService = permissionService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pg = 1)
         {
             if (!await _permissionService.HasPermissionAsync(User, "ManageOrder"))
                 return Forbid();
-            return View(await _dataContext.Orders.OrderByDescending(p => p.Id).ToListAsync());
+
+            var orders = await _dataContext.Orders.OrderByDescending(p => p.Id).ToListAsync();
+
+            const int pageSize = 10;
+            if (pg < 1) pg = 1;
+
+            int recsCount = orders.Count;
+            var pager = new Paginate(recsCount, pg, pageSize);
+            int recSkip = (pg - 1) * pageSize;
+            var data = orders.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            ViewBag.Pager = pager;
+            return View(data);
         }
 
-        [Route("ViewOrder/{orderNumber}")]
         public async Task<IActionResult> ViewOrder(string orderNumber)
         {
             var order = await _dataContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);

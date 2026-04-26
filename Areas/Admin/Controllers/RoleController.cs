@@ -10,7 +10,7 @@ using Project_385.Services;
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -24,8 +24,11 @@ namespace Project_385.Areas.Admin.Controllers
             _permissionService = permissionService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pg =1)
         {
+            if (!await _permissionService.HasPermissionAsync(User, "ManageUser"))
+                return Forbid();
+
             var roles = await _roleManager.Roles.ToListAsync();
             var permissions = await _dataContext.RolePermissions.ToListAsync();
 
@@ -36,7 +39,16 @@ namespace Project_385.Areas.Admin.Controllers
                 Permission = permissions.FirstOrDefault(p => p.RoleName == role.Name)
             }).ToList();
 
-            return View(viewModel);
+            const int pageSize = 10;
+            if (pg < 1) pg = 1;
+
+            int recsCount = viewModel.Count();
+            var pager = new Paginate(recsCount, pg, pageSize);
+            int recSkip = (pg - 1) * pageSize;
+            var data = viewModel.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            ViewBag.Pager = pager;
+            return View(data);
         }
 
         [HttpGet]

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Project_385.Services
+@inject PermissionService _permissionService
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
@@ -101,7 +103,7 @@
 											<span class="caret"></span>
 										</a>
 										<ul class="dropdown-menu">
-											@if (User.IsInRole("Admin"))
+											@if (await _permissionService.CanAccessAdminAsync(User))
 											{
 												<li>
 													<a asp-area="Admin" asp-controller="Product" asp-action="Index">
