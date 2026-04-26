@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Project_385.Models.ViewModels.RolePermissionViewModel>
+@{
+    ViewData["Title"] = "Danh sách Role";
+}
+<h3>Danh sách Role</h3>
+<a asp-action="Create" class="btn btn-primary mb-3">Tạo Role mới</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Role Name</th>
+            <th>Product</th>
+            <th>Order</th>
+            <th>User</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.RoleName</td>
+                <td>@(item.Permission?.CanManageProduct)</td>
+                <td>@(item.Permission?.CanManageOrder)</td>
+                <td>@(item.Permission?.CanManageUser)</td>
+                <td>@(item.Permission?.CanManageBrand)</td>
+                <td>@(item.Permission?.CanManageCategory)</td>
+                <td>
+                    @if (item.Permission?.Status == 1)
+                    {
+                        <span class="text text-success">Hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="text text-danger">Tắt</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.RoleId" class="btn btn-warning btn-sm">Chỉnh sửa</a>
+                    <form asp-action="Delete" asp-route-id="@item.RoleId" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm confirmDeletion">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

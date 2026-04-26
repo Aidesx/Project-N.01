@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
 using Project_385.Repositery;
+using Project_385.Services;
 
 namespace Project_385.Areas.Admin.Controllers
 {
@@ -11,18 +13,24 @@ namespace Project_385.Areas.Admin.Controllers
     public class BrandController : Controller
     {
         private readonly DataContext _dataContext;
+        private readonly PermissionService _permissionService;
 
-        public BrandController(DataContext context)
+        public BrandController(DataContext context, PermissionService permissionService)
         {
             _dataContext = context;
+            _permissionService = permissionService;
         }
 
+        [Route("Index")]
         public async Task<IActionResult> Index()
         {
+            if (!await _permissionService.HasPermissionAsync(User, "ManageBrand"))
+                return Forbid();
             return View(await _dataContext.Brands.OrderByDescending(p => p.Id).ToListAsync());
         }
 
         [HttpGet]
+        [Route("Create")] 
         public IActionResult Create()
         {
             return View();
@@ -30,6 +38,7 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Create")]
         public async Task<IActionResult> Create(BrandModels brand)
         {
             if (ModelState.IsValid)
@@ -55,6 +64,7 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(int? Id)
         {
             if (Id == null) return NotFound();
@@ -67,6 +77,7 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(BrandModels brand)
         {
             if (ModelState.IsValid)

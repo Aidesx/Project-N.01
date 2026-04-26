@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
 using Project_385.Repositery;
+using Project_385.Services;
 
 namespace Project_385.Areas.Admin.Controllers
 {
@@ -13,15 +14,19 @@ namespace Project_385.Areas.Admin.Controllers
     {
         private readonly DataContext _dataContext;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly PermissionService _permissionService;
 
-        public ProductController(DataContext context, IWebHostEnvironment webHostEnvironment)
+        public ProductController(DataContext context, IWebHostEnvironment webHostEnvironment, PermissionService permissionService)
         {
             _dataContext = context;
             _webHostEnvironment = webHostEnvironment;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index()
         {
+            if (!await _permissionService.HasPermissionAsync(User, "ManageProduct"))
+                return Forbid();
             return View(await _dataContext.Products
                 .OrderByDescending(p => p.Id)
                 .Include(p => p.Category)
@@ -30,6 +35,7 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Route("Create")]
         public IActionResult Create()
         {
             PopulateViewBag();
@@ -37,6 +43,7 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Route("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductModels product)
         {
@@ -100,6 +107,7 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(int? Id)
         {
             if (Id == null) return NotFound();
@@ -115,6 +123,7 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(ProductModels product)
         {
             ViewBag.Categories = new SelectList(_dataContext.Categories, "Id", "Name", product.CategoryID);

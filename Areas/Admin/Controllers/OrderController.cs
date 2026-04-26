@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
 using Project_385.Repositery;
+using Project_385.Services;
 using System.Threading.Tasks;
 
 namespace Project_385.Areas.Admin.Controllers
@@ -12,15 +13,22 @@ namespace Project_385.Areas.Admin.Controllers
     public class OrderController : Controller
     {
         private readonly DataContext _dataContext;
-        public OrderController(DataContext context)
+        private readonly PermissionService _permissionService;
+
+        public OrderController(DataContext context, PermissionService permissionService)
         {
             _dataContext = context;
-        } 
-        public async Task<IActionResult> Index()
-        {
-            return View(await _dataContext.Orders.OrderByDescending(p=>p.Id).ToListAsync());
+            _permissionService = permissionService;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            if (!await _permissionService.HasPermissionAsync(User, "ManageOrder"))
+                return Forbid();
+            return View(await _dataContext.Orders.OrderByDescending(p => p.Id).ToListAsync());
+        }
+
+        [Route("ViewOrder/{orderNumber}")]
         public async Task<IActionResult> ViewOrder(string orderNumber)
         {
             var order = await _dataContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);

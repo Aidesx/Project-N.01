@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
 using Project_385.Repositery;
+using Project_385.Services;
 
 namespace Project_385.Areas.Admin.Controllers
 {
@@ -11,18 +12,23 @@ namespace Project_385.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         private readonly DataContext _dataContext;
+        private readonly PermissionService _permissionService;
 
-        public CategoryController(DataContext context)
+        public CategoryController(DataContext context, PermissionService permissionService)
         {
             _dataContext = context;
+            _permissionService = permissionService;
         }
 
         public async Task<IActionResult> Index()
         {
+            if (!await _permissionService.HasPermissionAsync(User, "ManageCategory"))
+                return Forbid();
             return View(await _dataContext.Categories.OrderByDescending(p => p.Id).ToListAsync());
         }
 
         [HttpGet]
+        [Route("Create")]
         public IActionResult Create()
         {
             return View();
@@ -30,6 +36,7 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Create")]
         public async Task<IActionResult> Create(CategoryModel category)
         {
             if (ModelState.IsValid)
@@ -63,6 +70,7 @@ namespace Project_385.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Route("Edit/{Id}")] 
         public async Task<IActionResult> Edit(int? Id)
         {
             if (Id == null) return NotFound();
@@ -75,6 +83,7 @@ namespace Project_385.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Edit/{Id?}")]
         public async Task<IActionResult> Edit(CategoryModel category)
         {
             if (ModelState.IsValid)

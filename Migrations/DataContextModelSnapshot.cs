@@ -301,8 +301,6 @@ namespace Project_385.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductId");
-
                     b.ToTable("OrderDetails");
                 });
 
@@ -374,6 +372,37 @@ namespace Project_385.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Project_385.Models.RoleModels", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CanManageBrand")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanManageCategory")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanManageOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanManageProduct")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CanManageUser")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RolePermissions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -433,15 +462,7 @@ namespace Project_385.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Project_385.Models.ProductModels", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Order");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Project_385.Models.ProductModels", b =>

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Project_385.Models;
 using Project_385.Repositery;
+using Project_385.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Connection DB
@@ -20,9 +21,9 @@ builder.Services.AddSession(options =>{
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
 builder.Services.AddIdentity<AppUserModels,IdentityRole>()
     .AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
+builder.Services.AddScoped<PermissionService>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -41,6 +42,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
     options.User.RequireUniqueEmail = true;
 });
+
 
 var app = builder.Build();
 
