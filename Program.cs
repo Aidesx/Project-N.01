@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Project_385.Areas.Admin.Repositery;
 using Project_385.Models;
 using Project_385.Repositery;
 using Project_385.Services;
@@ -12,7 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Connection DB
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration["ConnectionStrings:ConnectDB"]));
-
+// Email Sender
+builder.Services.AddTransient<IEmailSender,EmailSender>();
+builder.Services.AddTransient<IEmailTemplateRenderer, EmailTemplateRenderer>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
@@ -21,8 +24,13 @@ builder.Services.AddSession(options =>{
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddIdentity<AppUserModels,IdentityRole>()
+builder.Services.AddIdentity<AppUserModels,IdentityRole>(
+    options =>
+    {
+        options.SignIn.RequireConfirmedEmail = true;
+    })
     .AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
+
 builder.Services.AddScoped<PermissionService>();
 
 builder.Services.ConfigureApplicationCookie(options =>

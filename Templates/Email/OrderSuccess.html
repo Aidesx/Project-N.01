@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: #10b981;
+            padding: 30px;
+            text-align: center;
+        }
+            /* Màu xanh lá thể hiện sự thành công */
+            .header h1 {
+                color: #ffffff;
+                margin: 0;
+                font-size: 24px;
+                text-transform: uppercase;
+            }
+
+        .content {
+            padding: 30px;
+            color: #444444;
+            line-height: 1.6;
+        }
+
+        .order-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #10b981;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+            .table th {
+                background: #eeeeee;
+                padding: 10px;
+                border: 1px solid #dddddd;
+                text-align: center;
+            }
+
+            .table td {
+                padding: 10px;
+                border: 1px solid #dddddd;
+            }
+
+        .total-row {
+            font-size: 18px;
+            font-weight: bold;
+            color: #dc2626;
+            text-align: right;
+        }
+
+        .footer {
+            background: #f9f9f9;
+            padding: 20px;
+            font-size: 12px;
+            color: #888888;
+            text-align: center;
+            border-top: 1px solid #eeeeee;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <h1>🎉 Đặt hàng thành công!</h1>
+        </div>
+        <div class="content">
+            <p>Xin chào <strong>{{UserName}}</strong>,</p>
+            <p>Cảm ơn bạn đã mua sắm tại cửa hàng của chúng tôi. Đơn hàng của bạn đã được ghi nhận trên hệ thống và đang chờ phê duyệt.</p>
+
+            <div class="order-info">
+                <strong>Mã đơn hàng:</strong> {{OrderNumber}}<br />
+                <strong>Ngày đặt:</strong> {{OrderDate}}
+            </div>
+
+            <p><strong>Chi tiết đơn hàng:</strong></p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ItemList}}
+                </tbody>
+            </table>
+
+            <p class="total-row">Tổng thanh toán: {{Total}}</p>
+
+            <p>Chúng tôi sẽ liên hệ hoặc thông báo cho bạn ngay khi đơn hàng được duyệt và bắt đầu giao.</p>
+        </div>
+        <div class="footer">
+            <p>© 2025 Project 385. Tất cả quyền được bảo lưu.</p>
+            <p>Đây là tin nhắn tự động, vui lòng không trả lời email này.</p>
+        </div>
+    </div>
+</body>
+</html>
