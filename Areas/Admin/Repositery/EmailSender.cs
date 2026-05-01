@@ -8,7 +8,7 @@ namespace Project_385.Areas.Admin.Repositery
     {
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            var cilent = new SmtpClient("smtp.gmail.com", 587)
+            var client = new SmtpClient("smtp.gmail.com", 587)
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
@@ -16,12 +16,14 @@ namespace Project_385.Areas.Admin.Repositery
 
             };
 
-            return cilent.SendMailAsync(new MailMessage(
+            var mailMessage = new MailMessage(
                 from: "hphanngoc120@gmail.com",
                 to: email,
                 subject: subject,
                 body: message
-            ));
+            );
+            mailMessage.IsBodyHtml = true;
+            return client.SendMailAsync(mailMessage);
         }
     }
 }
