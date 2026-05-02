@@ -2519,5 +2519,26 @@ h2.title {
 .contact-info .social-networks ul li a:hover{
   color: #FE980F;
 }
+.brands_products .panel {
+	background-color: #FFFFFF;
+	border: 0px;
+	border-radius: 0px;
+	box-shadow: none;
+	margin-bottom: 0px;
+}
 
+.brands_products .panel-default .panel-heading {
+	background-color: #FFFFFF;
+	border: 0 none;
+	color: #FFFFFF;
+	padding: 5px 20px;
+}
+
+.brands_products .panel-default .panel-heading .panel-title a {
+		color: #696763;
+		font-family: 'Roboto', sans-serif;
+		font-size: 14px;
+		text-decoration: none;
+		text-transform: uppercase;
+	}
 

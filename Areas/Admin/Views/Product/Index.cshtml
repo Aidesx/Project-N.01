@@ -6,7 +6,7 @@
 
 <h3>Danh sách sản phẩm</h3>
 <a asp-action="Create" asp-controller="Product" class="btn btn-primary mb-3">Tạo sản phẩm mới</a>
-<table class="table">
+<table class="table" id="my_table">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -27,7 +27,7 @@
                 <th scope="row">@item.Id</th>
                 <td>@item.Name</td>
                 <td>@Html.Raw(item.Description)</td>
-                <td>@item.Price</td>
+                <td>@item.Price.ToString("#,##0 VND")</td>
                 <td><img src="~/images/@item.Image" width="120" /></td>
                 <td>@item.Slug</td>
                 <td>@item.Category?.Name</td>
@@ -78,3 +78,4 @@
         </ul>
     </nav>
 }
+
