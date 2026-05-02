@@ -4,7 +4,7 @@
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
 <h3>Danh sách đơn hàng</h3>
-<table class="table">
+<table class="table" id="my_table">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -13,6 +13,8 @@
             <th scope="col">Order Date</th>
             <th scope="col">Order Total</th>
             <th scope="col">Order Status</th>
+            <th scope="col">Status Description</th>
+            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -23,7 +25,7 @@
                 <td>@item.UserName</td>
                 <td>@item.OrderNumber</td>
                 <td>@item.OrderDate</td>
-                <td>@item.Total</td>
+                <td>@item.Total.ToString("#,##0 VND")</td>
                 <td>@item.Status</td>
                 <td>
                     @if (item.Status == 1)

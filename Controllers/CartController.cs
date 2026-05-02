@@ -30,24 +30,24 @@ namespace Project_385.Controllers
             return View("~/Views/Checkout/Index.cshtml");
         }
 
+        [HttpPost]
         public async Task<IActionResult> Add(int id)
         {
             ProductModels product = await _dataContext.Products.FindAsync(id);
+
+            if (product == null)
+                return Json(false);
+
             List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             CartItemModel cartItem = cart.Where(x => x.ProductId == id).FirstOrDefault();
 
             if (cartItem == null)
-            {
                 cart.Add(new CartItemModel(product));
-            }
             else
-            {
                 cartItem.Quantity += 1;
-            }
 
             HttpContext.Session.SetJson("Cart", cart);
-            TempData["Success"] = "Product added to cart successfully!";
-            return Redirect(Request.Headers["Referer"].ToString());
+            return Json(true);
         }
 
 
@@ -72,7 +72,7 @@ namespace Project_385.Controllers
             {
                 HttpContext.Session.SetJson("Cart", cart);
             }
-            TempData["Success"] = "Product quantity increased successfully!";
+            TempData["Success"] = "Cập nhật số lượng thành công";
             return RedirectToAction("Index");
         }
 
@@ -101,7 +101,7 @@ namespace Project_385.Controllers
             {
                 HttpContext.Session.SetJson("Cart", cart);
             }
-            TempData["Success"] = "Product quantity decreased successfully!";
+            TempData["Success"] = "Cập nhật số lượng thành công";
             return RedirectToAction("Index");
         }
 
@@ -118,14 +118,14 @@ namespace Project_385.Controllers
             {
                 HttpContext.Session.SetJson("Cart", cart);
             }
-            TempData["Success"] = "Product removed from cart successfully!";
+            TempData["Success"] = "Đã xóa sản phẩm khỏi giỏ hàng";
             return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Clear()
         {
             HttpContext.Session.Remove("Cart");
-            TempData["Success"] = "Cart cleared successfully!";
+            TempData["Success"] = "Đã xóa toàn bộ giỏ hàng";
             return RedirectToAction("Index");
         }
     }

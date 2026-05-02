@@ -15,11 +15,7 @@ namespace Project_385.Controllers
         private readonly IEmailSender _emailSender;
         private readonly IEmailTemplateRenderer _emailRenderer;
 
-        public AccountController(
-            UserManager<AppUserModels> userManager,
-            SignInManager<AppUserModels> signInManager,
-            IEmailSender emailSender,
-            IEmailTemplateRenderer emailRenderer)
+        public AccountController(UserManager<AppUserModels> userManager,SignInManager<AppUserModels> signInManager,IEmailSender emailSender,IEmailTemplateRenderer emailRenderer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -115,13 +111,12 @@ namespace Project_385.Controllers
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
-            if (result.Succeeded)
-            {
-                TempData["Success"] = "Xác nhận Email thành công! Bạn có thể đăng nhập ngay.";
-                return RedirectToAction("Login");
-            }
 
-            TempData["Error"] = "Xác nhận Email thất bại hoặc link đã hết hạn.";
+            if (result.Succeeded)
+                TempData["Success"] = "Xác nhận Email thành công! Bạn có thể đăng nhập ngay.";
+            else
+                TempData["Error"] = "Xác nhận Email thất bại hoặc link đã hết hạn.";
+
             return RedirectToAction("Login");
         }
 
@@ -134,7 +129,7 @@ namespace Project_385.Controllers
             if (string.IsNullOrEmpty(email))
             {
                 TempData["Error"] = "Vui lòng nhập Email.";
-                return View();
+                return RedirectToAction("Login");
             }
 
             var user = await _userManager.FindByEmailAsync(email);
@@ -154,7 +149,7 @@ namespace Project_385.Controllers
             }
 
             TempData["Success"] = "Nếu Email tồn tại, một liên kết đặt lại mật khẩu đã được gửi đi.";
-            return View();
+            return RedirectToAction("Login");
         }
 
         [HttpGet]

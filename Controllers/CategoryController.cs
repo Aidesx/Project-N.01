@@ -21,18 +21,14 @@ namespace Project_385.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var category = await _dataContext.Categories
-                .FirstOrDefaultAsync(c => c.Slug == Slug);
+            var category = await _dataContext.Categories.FirstOrDefaultAsync(c => c.Slug == Slug);
 
             if (category == null)
             {
-                return NotFound($"Lỗi: Không tìm thấy danh mục có Slug là: {Slug}");
+                return NotFound($"Lỗi: Không tìm thấy danh mục là: {Slug}");
             }
 
-            var productsByCategory = _dataContext.Products
-                .Where(p => p.CategoryID == category.Id)
-                .Include(p => p.Category)
-                .Include(p => p.Brand);
+            var productsByCategory = _dataContext.Products.Where(p => p.CategoryID == category.Id).Include(p => p.Category).Include(p => p.Brand);
 
             ViewBag.CategoryName = category.Name;
 

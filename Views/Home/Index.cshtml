@@ -24,12 +24,13 @@
                         <div class="productinfo text-center">
                             <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id">
                                 <img src="~/images/@item.Image" alt="@item.Name" width="100%" />
-                                <h2>@item.Price</h2>
+                                <h2>@item.Price.ToString("#,##0 VND")</h2>
                                 <p>@item.Name</p>
                                 <p>Danh mục: @item.Category.Name</p>
                                 <p>Thương hiệu: @item.Brand.Name</p>
-                                <a class="btn btn-default add-to-cart" asp-action="Add" asp-controller="Cart" asp-route-Id="@item.Id"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+
                             </a>
+                            <button class="btn btn-default add-to-cart" data-product-id="@item.Id"><i class="fa fa-shopping-cart"></i>Add to cart</button>
                         </div>
 
                     </div>
@@ -77,3 +78,36 @@
         </ul>
     }
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.add-to-cart').click(function () {
+                var Id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("Add", "Cart")',
+                    type: 'POST',
+                    data: { Id: Id },
+                    success: function (result) {
+                        if (result) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Thêm giỏ hàng thành công!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function (result) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            text: 'Có lỗi với việc thêm giỏ hàng'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
