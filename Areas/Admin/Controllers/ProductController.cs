@@ -63,7 +63,7 @@ namespace Project_385.Areas.Admin.Controllers
                     .FirstOrDefaultAsync(p => p.Slug == product.Slug);
                 if (existingSlug != null)
                 {
-                    ModelState.AddModelError("", "Sản phẩm đã có");
+                    TempData["Error"] = "Sản phẩm đã có";
                     PopulateViewBag();
                     return View(product);
                 }
@@ -74,7 +74,7 @@ namespace Project_385.Areas.Admin.Controllers
                     string fileExtension = Path.GetExtension(product.ImageUpLoad.FileName).ToLower();
                     if (!allowedExtensions.Contains(fileExtension))
                     {
-                        ModelState.AddModelError("", "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .webp)");
+                        TempData["Error"] = "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .webp)";
                         PopulateViewBag();
                         return View(product);
                     }
@@ -97,7 +97,7 @@ namespace Project_385.Areas.Admin.Controllers
 
                 _dataContext.Add(product);
                 await _dataContext.SaveChangesAsync();
-                TempData["success"] = "Thêm sản phẩm thành công";
+                TempData["Success"] = "Thêm sản phẩm thành công";
                 return RedirectToAction("Index");
             }
 
@@ -106,7 +106,7 @@ namespace Project_385.Areas.Admin.Controllers
                 foreach (var error in value.Errors)
                     errors.Add(error.ErrorMessage);
 
-            TempData["error"] = string.Join("\n", errors);
+            TempData["Error"] = string.Join("\n", errors);
             PopulateViewBag();
             return View(product);
         }
@@ -146,7 +146,7 @@ namespace Project_385.Areas.Admin.Controllers
                     .FirstOrDefaultAsync(p => p.Slug == product.Slug && p.Id != product.Id);
                 if (slugExists != null)
                 {
-                    ModelState.AddModelError("", "Slug đã tồn tại trong một sản phẩm khác.");
+                    TempData["Error"] = "Slug đã tồn tại trong một sản phẩm khác.";
                     return View(product);
                 }
 
@@ -156,7 +156,7 @@ namespace Project_385.Areas.Admin.Controllers
                     string fileExtension = Path.GetExtension(product.ImageUpLoad.FileName).ToLower();
                     if (!allowedExtensions.Contains(fileExtension))
                     {
-                        ModelState.AddModelError("", "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .webp)");
+                        TempData["Error"] = "Chỉ chấp nhận file ảnh (.jpg, .jpeg, .png, .webp)";
                         return View(product);
                     }
 
@@ -194,7 +194,7 @@ namespace Project_385.Areas.Admin.Controllers
 
                 _dataContext.Update(existingProduct);
                 await _dataContext.SaveChangesAsync();
-                TempData["success"] = "Cập nhật sản phẩm thành công";
+                TempData["Success"] = "Cập nhật sản phẩm thành công";
                 return RedirectToAction("Index");
             }
 
@@ -203,7 +203,7 @@ namespace Project_385.Areas.Admin.Controllers
                 foreach (var error in value.Errors)
                     errors.Add(error.ErrorMessage);
 
-            TempData["error"] = string.Join("\n", errors);
+            TempData["Error"] = string.Join("\n", errors);
             return View(product);
         }
 
@@ -228,11 +228,11 @@ namespace Project_385.Areas.Admin.Controllers
 
                 _dataContext.Products.Remove(product);
                 await _dataContext.SaveChangesAsync();
-                TempData["success"] = "Xóa sản phẩm thành công";
+                TempData["Success"] = "Xóa sản phẩm thành công";
             }
             else
             {
-                TempData["error"] = "Sản phẩm không tồn tại";
+                TempData["Error"] = "Sản phẩm không tồn tại";
             }
 
             return RedirectToAction("Index");

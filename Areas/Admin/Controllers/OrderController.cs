@@ -53,7 +53,12 @@ namespace Project_385.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var order = await _dataContext.Orders.FindAsync(id);
-            if (order == null) return NotFound();
+            if (order == null)
+            {
+                TempData["Error"] = "Không tìm thấy đơn hàng này!";
+                return RedirectToAction("Index");
+            }
+            
 
             var orderDetails = await _dataContext.OrderDetails
                 .Where(o => o.OrderId == id)

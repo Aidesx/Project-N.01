@@ -66,7 +66,7 @@ namespace Project_385.Areas.Admin.Controllers
                 var roleExists = await _roleManager.RoleExistsAsync(model.RoleName);
                 if (roleExists)
                 {
-                    ModelState.AddModelError("", "Role này đã tồn tại");
+                    TempData["Error"] = "Role này đã tồn tại";
                     return View(model);
                 }
 
@@ -77,9 +77,10 @@ namespace Project_385.Areas.Admin.Controllers
                 _dataContext.RolePermissions.Add(model);
                 await _dataContext.SaveChangesAsync();
 
-                TempData["success"] = "Tạo role thành công";
+                TempData["Success"] = "Tạo role thành công";
                 return RedirectToAction("Index");
             }
+            TempData["Error"] = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.";
             return View(model);
         }
 
@@ -89,7 +90,11 @@ namespace Project_385.Areas.Admin.Controllers
             if (id == null) return NotFound();
 
             var role = await _roleManager.FindByIdAsync(id);
-            if (role == null) return NotFound();
+            if (role == null)
+            {
+                TempData["Error"] = "Không tìm thấy ID của Role.";
+                return RedirectToAction("Index");
+            }
 
             var permission = await _dataContext.RolePermissions
                 .FirstOrDefaultAsync(p => p.RoleName == role.Name);
@@ -114,7 +119,12 @@ namespace Project_385.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var role = await _roleManager.FindByIdAsync(model.Id);
-                if (role == null) return NotFound();
+                if (role == null)
+                {
+                    TempData["Error"] = "Role không tồn tại.";
+                    return RedirectToAction("Index");
+                }
+                
 
                 if (role.Name != model.RoleName)
                 {
@@ -142,9 +152,10 @@ namespace Project_385.Areas.Admin.Controllers
                 }
 
                 await _dataContext.SaveChangesAsync();
-                TempData["success"] = "Cập nhật role thành công";
+                TempData["Success"] = "Cập nhật role thành công";
                 return RedirectToAction("Index");
             }
+            TempData["Error"] = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.";
             return View(model);
         }
 
@@ -152,7 +163,11 @@ namespace Project_385.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                TempData["Error"] = "Không tìm thấy ID...";
+                return RedirectToAction("Index");
+            }
 
             var role = await _roleManager.FindByIdAsync(id);
             if (role != null)
@@ -166,11 +181,11 @@ namespace Project_385.Areas.Admin.Controllers
                 }
 
                 await _roleManager.DeleteAsync(role);
-                TempData["success"] = "Xóa role thành công";
+                TempData["Success"] = "Xóa role thành công";
             }
             else
             {
-                TempData["error"] = "Role không tồn tại";
+                TempData["Error"] = "Role không tồn tại";
             }
 
             return RedirectToAction("Index");
