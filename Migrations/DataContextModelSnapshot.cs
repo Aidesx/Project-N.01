@@ -274,6 +274,27 @@ namespace Project_385.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Project_385.Models.CompareModels", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("CompareModels");
+                });
+
             modelBuilder.Entity("Project_385.Models.OrderDetailModels", b =>
                 {
                     b.Property<int>("Id")
@@ -372,6 +393,39 @@ namespace Project_385.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Project_385.Models.RatingModels", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Rating")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Ratings");
+                });
+
             modelBuilder.Entity("Project_385.Models.RoleModels", b =>
                 {
                     b.Property<string>("Id")
@@ -401,6 +455,27 @@ namespace Project_385.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RolePermissions");
+                });
+
+            modelBuilder.Entity("Project_385.Models.WishListModels", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("WishList");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -454,6 +529,17 @@ namespace Project_385.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Project_385.Models.CompareModels", b =>
+                {
+                    b.HasOne("Project_385.Models.ProductModels", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Project_385.Models.OrderDetailModels", b =>
                 {
                     b.HasOne("Project_385.Models.OrderModels", "Order")
@@ -484,9 +570,36 @@ namespace Project_385.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Project_385.Models.RatingModels", b =>
+                {
+                    b.HasOne("Project_385.Models.ProductModels", "Product")
+                        .WithMany("Ratings")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Project_385.Models.WishListModels", b =>
+                {
+                    b.HasOne("Project_385.Models.ProductModels", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Project_385.Models.OrderModels", b =>
                 {
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("Project_385.Models.ProductModels", b =>
+                {
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }

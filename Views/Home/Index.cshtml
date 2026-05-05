@@ -28,18 +28,19 @@
                                 <p>@item.Name</p>
                                 <p>Danh mục: @item.Category.Name</p>
                                 <p>Thương hiệu: @item.Brand.Name</p>
-
                             </a>
                             <button class="btn btn-default add-to-cart" data-product-id="@item.Id"><i class="fa fa-shopping-cart"></i>Add to cart</button>
                         </div>
-
                     </div>
 
                     <div class="choose">
-                        <ul class="nav nav-pills nav-justified">
-                            <li><a href="#"><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
-                            <li><a href="#"><i class="fa fa-plus-square"></i>Add to compare</a></li>
-                        </ul>
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <ul class="nav nav-pills nav-justified">
+                                <li><a asp-action="WishList" asp-controller="Home" class="btn btn-default add-btn-wishlist" data-product-id="@item.Id">Add to wishlist</a></li>
+                                <li><a asp-action="Compare" asp-controller="Home"  class="btn btn-default add-btn-compare" data-product-id="@item.Id">Add to compare</a></li>
+                            </ul>
+                        }
                     </div>
                 </div>
             </div>
@@ -104,6 +105,69 @@
                             icon: 'error',
                             title: 'Thất bại',
                             text: 'Có lỗi với việc thêm giỏ hàng'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.add-btn-wishlist').click(function (e) {
+                e.preventDefault();
+                var Id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("AddWishList", "Home")',
+                    type: 'POST',
+                    data: { Id: Id },
+                    success: function (result) {
+                        if (result.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Thêm yêu thích thành công!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function (result) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            text: 'Có lỗi với việc thêm yêu thích'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+        
+    <script>
+        $(document).ready(function () {
+            $('.add-btn-compare').click(function (e) {
+                 e.preventDefault();
+                var Id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("AddCompare", "Home")',
+                    type: 'POST',
+                    data: { Id: Id },
+                    success: function (result) {
+                        if (result.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Thêm so sánh thành công!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function (result) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            text: 'Có lỗi với việc thêm so sánh'
                         });
                     }
                 });

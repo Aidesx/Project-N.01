@@ -1,0 +1,113 @@
+﻿@using Project_385.Models.ViewModels
+@model List<CompareViewModel>
+@{
+    ViewData["title"] = "So sánh sản phẩm";
+}
+
+<div class="container">
+    <h3 class="text-center">So sánh sản phẩm</h3>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped text-center">
+                <tbody>
+                    <tr>
+                        <th class="align-middle" style="width: 15%; text-align:left;">Hình ảnh</th>
+                        @foreach (var item in Model)
+                        {
+                            <td>
+                                <img src="~/images/@item.Product.Image" alt="@item.Product.Name" style="max-width: 150px; height: auto;" />
+                            </td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th class="align-middle" style="text-align:left;">Tên Sản Phẩm</th>
+                        @foreach (var item in Model)
+                        {
+                            <td><strong>@item.Product.Name</strong></td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th class="align-middle" style="text-align:left;">Mức giá</th>
+                        @foreach (var item in Model)
+                        {
+                            <td class="text-danger font-weight-bold">@item.Product.Price.ToString("#,##0 VND")</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th class="align-middle" style="text-align:left;">Mô tả chi tiết</th>
+                        @foreach (var item in Model)
+                        {
+                            <td style="text-align: left;">@Html.Raw(item.Product.Description)</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th class="align-middle" style="text-align:left;">Mua hàng</th>
+                        @foreach (var item in Model)
+                        {
+                            <td>
+                                <button class="btn btn-primary add-to-cart" data-product-id="@item.Product.Id">
+                                    <i class="fa fa-shopping-cart"></i> Thêm giỏ hàng
+                                </button>
+                            </td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th class="align-middle" style="text-align:left;">Thao tác</th>
+                        @foreach (var item in Model)
+                        {
+                            <td>
+                                <a class="btn btn-danger btn-sm" asp-action="RemoveCompare" asp-controller="Home" asp-route-Id="@item.Compares.Id">
+                                    <i class="fa fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            Bạn chưa có sản phẩm nào trong danh sách so sánh.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>        $(document).ready(function () {
+            $('.add-to-cart').click(function (e) {
+                e.preventDefault();
+                var id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("Add", "Cart")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (result) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: 'Đã thêm sản phẩm vào giỏ hàng!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            text: 'Có lỗi xảy ra khi thêm vào giỏ hàng.'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

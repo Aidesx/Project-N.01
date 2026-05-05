@@ -17,5 +17,9 @@ namespace Project_385.Repositery
         public DbSet<OrderDetailModels> OrderDetails { get; set; }
         public DbSet<RoleModels> RolePermissions { get; set; }
 
+        public DbSet<RatingModels> Ratings { get; set; }
+        public DbSet<WishListModels> WishList { get; set; }
+        public DbSet<CompareModels> CompareModels { get; set; }
+
     }
 }

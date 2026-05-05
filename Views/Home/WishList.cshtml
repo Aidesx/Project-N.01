@@ -1,0 +1,44 @@
+﻿@using Project_385.Models.ViewModels
+@model List<WishListViewModel>
+@{
+    ViewData["title"] = "Danh sách mong muốn";
+    var pager = ViewBag.Pager as Project_385.Models.Paginate;
+}
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+</head>
+<body>
+    <h3>Danh sách mong muốn</h3>
+
+    <table class="table" id="myTable">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Giới thiệu sản phẩm</th>
+                <th>Giá sản phẩm</th>
+                <th>Hình ảnh sản phẩm</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int key = 0;
+            }
+            @foreach (var wishlist_product in Model)
+            {
+                key++;
+                <tr>
+                    <td>@key</td>
+                    <td>@wishlist_product.Product.Name</td>
+                    <td>@Html.Raw(wishlist_product.Product.Description)</td>
+                    <td>@wishlist_product.Product.Price.ToString("#,##0 VND")</td>
+                    <td><img src="~/images/@wishlist_product.Product.Image" alt="Product Image" width="120" height="100" /></td>
+                    <td><a class="btn btn-danger confirmDeletion" asp-action="RemoveWishList" asp-controller="Home" asp-route-Id="@wishlist_product.WishList.Id">Xóa</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>
