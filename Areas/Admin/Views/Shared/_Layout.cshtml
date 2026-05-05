@@ -68,7 +68,7 @@
 							</button>
 						</div>
 						<ul class="nav navbar-nav collapse navbar-collapse">
-							<li><a asp-controller="Home" asp-action="Index" class="active">Home</a></li>
+							<li><a asp-area="" asp-controller="Home" asp-action="Index" class="active">Home</a></li>
 							@if (await _permissionService.HasPermissionAsync(User, "ManageProduct"))
 							{
 								<li><a asp-controller="Product" asp-action="Index" class="active">Quản lý sản phẩm</a></li>

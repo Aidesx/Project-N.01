@@ -1,8 +1,9 @@
-﻿@model ProductModels
+﻿@using Project_385.Models
+@using Project_385.Models.ViewModels
+@model ProductDetailViewModels
 @{
     var relatedByCategory = ViewBag.RelatedByCategory as List<ProductModels> ?? new List<ProductModels>();
     var relatedByBrand = ViewBag.RelatedByBrand as List<ProductModels> ?? new List<ProductModels>();
-}
 }
 
 <div class="row">
@@ -14,41 +15,47 @@
         <div class="product-details">
             <div class="col-sm-5">
                 <div class="view-product">
-                    <img src="~/images/@Model.Image" class="newarrival" alt="@Model.Name" />
+                    <img src="~/images/@Model.Product.Image" class="newarrival" alt="@Model.Product.Name" />
                 </div>
-
             </div>
             <div class="col-sm-7">
                 <div class="product-information">
-                    <h2>@Model.Name</h2>
+                    <h2>@Model.Product.Name</h2>
                     <span>
-                        <span>@Model.Price.ToString("N0") đ</span>
+                        <span>@Model.Product.Price.ToString("N0") đ</span>
                         <input type="text" value="1" />
-                        <button type="button" class="btn btn-default cart add-to-cart" data-product-id="@Model.Id">
+                        <button type="button" class="btn btn-default cart add-to-cart" data-product-id="@Model.Product.Id">
                             <i class="fa fa-shopping-cart"></i>
                             Add to cart
                         </button>
                     </span>
                     <p><b>Availability:</b> In Stock</p>
                     <p><b>Condition:</b> New</p>
-                    <p><b>Brand:</b> @Model.Brand.Name</p>
-                    <p><b>Category:</b> @Model.Category.Name</p>
+                    <p><b>Brand:</b> @Model.Product.Brand.Name</p>
+                    <p><b>Category:</b> @Model.Product.Category.Name</p>
+                    <a href=""><img src="~/images/share.png" class="share img-responsive" alt="" /></a>
                 </div>
             </div>
-        </div><div class="category-tab shop-details-tab">
+        </div>
+
+        <div class="category-tab shop-details-tab">
             <div class="col-sm-12">
                 <ul class="nav nav-tabs">
-                    <li><a href="#details" data-toggle="tab">Details</a></li>
+                    <li><a href="#details" data-toggle="tab">Description</a></li>
                     <li><a href="#companyprofile" data-toggle="tab">Company Profile</a></li>
                     <li><a href="#tag" data-toggle="tab">Tag</a></li>
-                    <li class="active"><a href="#reviews" data-toggle="tab">Reviews</a></li>
+                    <li class="active"><a href="#reviews" data-toggle="tab">Reviews (@Model.Ratings.Count)</a></li>
                 </ul>
             </div>
             <div class="tab-content">
+                <!-- Tab Details -->
                 <div class="tab-pane fade" id="details">
-                    @Html.Raw(Model.Description)
+                    <div class="col-sm-12">
+                        @Html.Raw(Model.Product.Description)
+                    </div>
                 </div>
 
+                <!-- Tab Company Profile -->
                 <div class="tab-pane fade" id="companyprofile">
                     @foreach (var related in relatedByBrand)
                     {
@@ -71,6 +78,7 @@
                     }
                 </div>
 
+                <!-- Tab Tag -->
                 <div class="tab-pane fade" id="tag">
                     @foreach (var related in relatedByCategory)
                     {
@@ -93,32 +101,91 @@
                     }
                 </div>
 
+                <!-- Tab Reviews -->
                 <div class="tab-pane fade active in" id="reviews">
                     <div class="col-sm-12">
-                        <ul>
-                            <li><a href=""><i class="fa fa-user"></i>@Model.Brand.Name</a></li>
-                            <li><a href=""><i class="fa fa-clock-o"></i>@DateTime.Now.ToString("HH:mm")</a></li>
-                            <li><a href=""><i class="fa fa-calendar-o"></i>@DateTime.Now.ToString("dd MMM yyyy")</a></li>
-                        </ul>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        @if (Model.Ratings != null && Model.Ratings.Any())
+                        {
+                            foreach (var review in Model.Ratings)
+                            {
+                                <ul>
+                                    <li><a href="javascript:void(0)"><i class="fa fa-user"></i>@review.Name</a></li>
+                                    <li><a href="javascript:void(0)"><i class="fa fa-envelope"></i>@review.Email</a></li>
+                                </ul>
+                                <p>
+                                    <span style="color: #FE980F;">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (int.TryParse(review.Rating, out int rVal) && i <= rVal)
+                                            {
+                                                <i class="fa fa-star"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-star-o"></i>
+                                            }
+                                        }
+                                    </span>
+                                    <br />
+                                    @review.Comment
+                                </p>
+                                <hr />
+                            }
+                        }
+
                         <p><b>Write Your Review</b></p>
 
-                        <form action="#">
-                            <span>
-                                <input type="text" placeholder="Your Name" />
-                                <input type="email" placeholder="Email Address" />
-                            </span>
-                            <textarea name=""></textarea>
-                            <b>Rating: </b> <img src="~/images/product-details/rating.png" alt="" />
-                            <button type="button" class="btn btn-default pull-right">Submit </button>
-                        </form>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @if (ViewBag.HasReviewed)
+                            {
+                                <div class="alert alert-info">
+                                    Bạn đã gửi đánh giá cho sản phẩm này. Mỗi tài khoản chỉ được đánh giá một lần.
+                                </div>
+                            }
+                            else
+                            {
+                                <form autocomplete="off" asp-action="CommentProduct" asp-controller="Product" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" asp-for="Rating.ProductId" />
+
+                                    <span>
+                                        <input asp-for="Rating.Name" type="text" value="@ViewBag.UserName" readonly style="background:#f0f0f0; cursor: not-allowed;" />
+                                        <input asp-for="Rating.Email" type="email" value="@ViewBag.UserEmail" readonly style="background:#f0f0f0; cursor: not-allowed;" />
+                                    </span>
+
+                                    <textarea asp-for="Rating.Comment" placeholder="Viết cảm nghĩ của bạn về sản phẩm..."></textarea>
+                                    <span asp-validation-for="Rating.Comment" class="text-danger"></span>
+
+                                    <div style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
+                                        <b>Rating: </b>
+                                        <span id="star-rating" style="cursor: pointer; color: #FE980F; font-size: 20px;">
+                                            <i class="fa fa-star" data-value="1"></i>
+                                            <i class="fa fa-star" data-value="2"></i>
+                                            <i class="fa fa-star" data-value="3"></i>
+                                            <i class="fa fa-star" data-value="4"></i>
+                                            <i class="fa fa-star" data-value="5"></i>
+                                        </span>
+                                        <input type="hidden" asp-for="Rating.Rating" id="RatingValue" value="5" />
+                                    </div>
+
+                                    <button type="submit" class="btn btn-default pull-right">Submit</button>
+                                </form>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                Vui lòng <a asp-area="" asp-controller="Account" asp-action="Login" style="color: #FE980F; font-weight: bold;">đăng nhập</a> để đánh giá.
+                            </div>
+                        }
                     </div>
                 </div>
-
             </div>
-        </div><div class="recommended_items">
-            <h2 class="title text-center">recommended items</h2>
+        </div>
 
+        <div class="recommended_items">
+            <h2 class="title text-center">Recommended Items</h2>
             <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     @{
@@ -170,12 +237,27 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Script cho Rating Stars
+            $('#star-rating i').on('click', function () {
+                var selectedValue = $(this).data('value');
+                $('#RatingValue').val(selectedValue);
+
+                $('#star-rating i').each(function () {
+                    if ($(this).data('value') <= selectedValue) {
+                        $(this).removeClass('fa-star-o').addClass('fa-star');
+                    } else {
+                        $(this).removeClass('fa-star').addClass('fa-star-o');
+                    }
+                });
+            });
+
+            // Script cho Add to cart
             $('.add-to-cart').click(function () {
                 var Id = $(this).data('product-id');
                 $.ajax({
                     url: '@Url.Action("Add", "Cart")',
                     type: 'POST',
-                    data: { Id: Id },
+                    data: { Id: Id }, // Sửa lại thành Id để khớp với Controller
                     success: function (result) {
                         if (result) {
                             Swal.fire({
@@ -187,11 +269,11 @@
                             });
                         }
                     },
-                    error: function (result) {
+                    error: function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Thất bại',
-                            text: 'Có lỗi với việc thêm giỏ hàng'
+                            text: 'Có lỗi xảy ra'
                         });
                     }
                 });
