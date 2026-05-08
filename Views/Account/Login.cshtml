@@ -33,8 +33,21 @@
                             </span>
                         </div>
 
+                        <div class="form-group">
+                            <span>
+                                <input asp-for="RememberMe" type="checkbox" class="checkbox" style="display:inline-block;">
+                                Ghi nhớ đăng nhập
+                            </span>
+                        </div>
+
                         <button type="submit" class="btn btn-default">Đăng nhập</button>
                         <a asp-action="Create" asp-controller="Account" class="btn btn-primary">Đăng ký</a>
+                        <hr />
+                        <a asp-action="LoginGoogle" asp-controller="Account"
+                           asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                           class="btn btn-danger">
+                            <i class="fa fa-google"></i> Đăng nhập bằng Google
+                        </a>
                     </form>
 
                     <hr />

@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Project_385.Areas.Admin.Repositery;
 using Project_385.Models;
 using Project_385.Models.ViewModels;
 using Project_385.Repositery;
-using Project_385.Areas.Admin.Repositery;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Project_385.Controllers
 {
@@ -15,7 +16,7 @@ namespace Project_385.Controllers
         private readonly IEmailSender _emailSender;
         private readonly IEmailTemplateRenderer _emailRenderer;
 
-        public AccountController(UserManager<AppUserModels> userManager,SignInManager<AppUserModels> signInManager,IEmailSender emailSender,IEmailTemplateRenderer emailRenderer)
+        public AccountController(UserManager<AppUserModels> userManager, SignInManager<AppUserModels> signInManager, IEmailSender emailSender, IEmailTemplateRenderer emailRenderer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -48,7 +49,12 @@ namespace Project_385.Controllers
                     return View(login);
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(login.UserName, login.Password, false, false);
+                var result = await _signInManager.PasswordSignInAsync(
+                    login.UserName,
+                    login.Password,
+                    isPersistent: login.RememberMe, 
+                    lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
                     TempData["Success"] = "Đăng nhập thành công!";
@@ -192,6 +198,66 @@ namespace Project_385.Controllers
             await _signInManager.SignOutAsync();
             TempData["Success"] = "Bạn đã đăng xuất thành công.";
             return Redirect(string.IsNullOrEmpty(returnUrl) ? "/" : returnUrl);
+        }
+
+        [HttpGet]
+        public IActionResult LoginGoogle(string returnUrl = "/")
+        {
+            var redirectUrl = Url.Action("GoogleResponse", "Account",
+                new { returnUrl }, Request.Scheme);
+
+            var properties = _signInManager
+                .ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+
+            return Challenge(properties, "Google");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GoogleResponse(string returnUrl = "/")
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                TempData["Error"] = "Đăng nhập Google thất bại.";
+                return RedirectToAction("Login");
+            }
+
+            var result = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider,
+                info.ProviderKey,
+                isPersistent: false);
+
+            if (result.Succeeded)
+                return Redirect(returnUrl);
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email)!;
+            var userName = email.Split('@')[0];
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new AppUserModels
+                {
+                    UserName = userName,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    TempData["Error"] = "Không thể tạo tài khoản từ Google.";
+                    return RedirectToAction("Login");
+                }
+
+                await _userManager.AddToRoleAsync(user, "User");
+            }
+
+            await _userManager.AddLoginAsync(user, info);
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            return Redirect(returnUrl);
         }
     }
 }

@@ -12,5 +12,7 @@ namespace Project_385.Models.ViewModels
 
 
         public string ReturnUrl { get; set; }
+
+        public bool RememberMe { get; set; }
     }
 }

@@ -1,5 +1,20 @@
-﻿@*
-    <h1>Checkout</h1>
-*@
+﻿@using Project_385.Models.ViewModels
+@model CartItemViewModel
+
 @{
+    ViewData["Title"] = "Xác nhận Thanh toán";
 }
+
+<div class="container" style="margin-top: 50px;">
+    <h2>Xác nhận Đơn hàng</h2>
+    <p>Tổng số tiền bạn cần thanh toán là: <strong>@Model.GrandTotal.ToString("#,##0") VND</strong></p>
+
+    <form method="post" asp-controller="Payment" asp-action="CreatePaymentMomo">
+        <button type="submit" class="btn btn-danger">Xác nhận & Thanh toán qua MoMo</button>
+        <a asp-controller="Cart" asp-action="Index" class="btn btn-default">Quay lại giỏ hàng</a>
+    </form>
+    
+    <form method="post" asp-controller="Payment" asp-action="CreatePaymentVNPay">
+        <button type="submit" class="btn btn-danger">Xác nhận & Thanh toán qua VNpay</button>
+    </form>
+</div>

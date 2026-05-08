@@ -6,30 +6,43 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Project_385.Areas.Admin.Repositery;
 using Project_385.Models;
+using Project_385.Models.MoMo;
 using Project_385.Repositery;
 using Project_385.Services;
+using Project_385.Services.MoMo;
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+// checkouut
+builder.Services.Configure<MoMoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
+builder.Services.AddScoped<IMomoService, MoMoService>();
 
 // Connection DB
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration["ConnectionStrings:ConnectDB"]));
+
+
 // Email Sender
-builder.Services.AddTransient<IEmailSender,EmailSender>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IEmailTemplateRenderer, EmailTemplateRenderer>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>{ 
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(15);  //15 phút
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddIdentity<AppUserModels,IdentityRole>(
-    options =>
-    {
-        options.SignIn.RequireConfirmedEmail = true;
-    })
-    .AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
+
+builder.Services.AddIdentity<AppUserModels, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = true;
+})
+.AddEntityFrameworkStores<DataContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddScoped<PermissionService>();
 
@@ -37,12 +50,19 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/Login";
+
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    options.SlidingExpiration = true; 
+
+    options.Cookie.MaxAge = TimeSpan.FromDays(30);
 });
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
 });
+
 builder.Services.AddAuthentication()
     .AddGoogle(options =>
     {
@@ -50,31 +70,27 @@ builder.Services.AddAuthentication()
         options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
         options.CallbackPath = "/signin-google";
     });
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Password settings.
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
     options.Password.RequiredLength = 8;
 
-
     options.User.RequireUniqueEmail = true;
 });
 
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios.
     app.UseHsts();
 }
 
-app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}"); 
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
 app.UseSession();
 
 app.UseHttpsRedirection();

@@ -1,37 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Project_385.Models;
 using Project_385.Models.ViewModels;
 using Project_385.Repositery;
-using Project_385.Areas.Admin.Repositery;
-using System.Collections.Generic;
+using Project_385.Services.MoMo;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Project_385.Controllers
 {
     public class CheckOutController : Controller
     {
         private readonly DataContext _dataContext;
-        private readonly IEmailSender _emailSender;
-        private readonly IEmailTemplateRenderer _emailRenderer;
+        private readonly IMomoService _momoService;
 
-        public CheckOutController(IEmailSender emailSender, DataContext dataContext, IEmailTemplateRenderer emailRenderer)
+        public CheckOutController(DataContext dataContext, IMomoService momoService)
         {
             _dataContext = dataContext;
-            _emailSender = emailSender;
-            _emailRenderer = emailRenderer;
+            _momoService = momoService;
         }
 
         public IActionResult Index()
         {
-            var cartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart")
-                            ?? new List<CartItemModel>();
-
+            var cartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             var viewModel = new CartItemViewModel
             {
                 CartItems = cartItems,
                 GrandTotal = cartItems.Sum(x => x.Price * x.Quantity)
             };
-
             return View(viewModel);
         }
 
@@ -39,12 +35,9 @@ namespace Project_385.Controllers
         public async Task<IActionResult> CheckOut()
         {
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
-            if (userEmail == null)
-                return RedirectToAction("Login", "Account");
+            if (userEmail == null) return RedirectToAction("Login", "Account");
 
-            var cartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart")
-                            ?? new List<CartItemModel>();
-
+            var cartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             if (!cartItems.Any())
             {
                 TempData["Error"] = "Giỏ hàng trống";
@@ -53,15 +46,15 @@ namespace Project_385.Controllers
 
             var order = new OrderModels
             {
-                OrderNumber = Guid.NewGuid().ToString(),
-                UserName = userEmail,
+                OrderNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
                 OrderDate = DateTime.Now,
+                UserName = userEmail,
                 Total = cartItems.Sum(x => x.Price * x.Quantity),
-                Status = 1
+                Status = 0 
             };
 
             _dataContext.Orders.Add(order);
-            await _dataContext.SaveChangesAsync();
+            await _dataContext.SaveChangesAsync(); 
 
             var orderDetails = cartItems.Select(cart => new OrderDetailModels
             {
@@ -75,29 +68,22 @@ namespace Project_385.Controllers
             _dataContext.OrderDetails.AddRange(orderDetails);
             await _dataContext.SaveChangesAsync();
 
-            HttpContext.Session.Remove("Cart");
-
-
-            var itemListHtml = "";
-            foreach (var item in cartItems)
+            var requestInfo = new OrderInfoModel
             {
-                itemListHtml += $"<tr><td style='padding:8px; border:1px solid #ddd;'>{item.ProductName}</td>" +
-                                $"<td style='padding:8px; border:1px solid #ddd; text-align:center;'>{item.Quantity}</td>" +
-                                $"<td style='padding:8px; border:1px solid #ddd; text-align:right;'>{item.Price.ToString("#,##0")} đ</td></tr>";
+                FullName = order.UserName,
+                OrderId = order.OrderNumber,
+                OrderInfo = "Thanh toán đơn hàng " + order.OrderNumber,
+                Amount = ((long)order.Total).ToString()
+            };
+
+            var responseFromMomo = await _momoService.CreatePaymentMomo(requestInfo);
+
+            if (responseFromMomo != null && !string.IsNullOrEmpty(responseFromMomo.PayUrl))
+            {
+                return Redirect(responseFromMomo.PayUrl);
             }
 
-            var body = await _emailRenderer.RenderAsync("OrderSuccess", new Dictionary<string, string>
-            {
-                { "UserName", userEmail },
-                { "OrderNumber", order.OrderNumber },
-                { "OrderDate", order.OrderDate.ToString("dd/MM/yyyy HH:mm") },
-                { "Total", order.Total.ToString("#,##0") + " đ" },
-                { "ItemList", itemListHtml }
-            });
-
-            await _emailSender.SendEmailAsync(userEmail, $"Xác nhận đơn hàng #{order.OrderNumber} từ Project 385", body);
-
-            TempData["Success"] = "Checkout thành công, vui lòng chờ duyệt đơn hàng. Chi tiết đơn hàng đã được gửi vào email của bạn.";
+            TempData["Error"] = "Không thể khởi tạo giao dịch MoMo. Vui lòng thử lại.";
             return RedirectToAction("Index", "Cart");
         }
     }
