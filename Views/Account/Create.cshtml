@@ -3,76 +3,90 @@
     ViewData["Title"] = "Đăng ký";
 }
 
-<section id="register-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-8 col-sm-offset-1">
-                <div class="signup-form">
-                    <h2>Đăng ký tài khoản</h2>
+<link rel="stylesheet" href="~/css/account_login.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-                    <!-- Hiển thị thông báo (nếu có) -->
-                    @if (TempData["Success"] != null)
-                    {
-                        <div class="alert alert-success">@TempData["Success"]</div>
-                    }
-                    @if (TempData["Error"] != null)
-                    {
-                        <div class="alert alert-danger">@TempData["Error"]</div>
-                    }
+<div class="login-card">
+    <h2><i class="fa fa-user-plus"></i> @ViewData["Title"] tài khoản</h2>
 
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                    <!-- Form Đăng ký -->
-                    <form asp-action="Create" asp-controller="Account" method="post">
-                        @Html.AntiForgeryToken()
-
-                        <div class="form-group">
-                            <label asp-for="UserName">Tên đăng nhập</label>
-                            <input asp-for="UserName" class="form-control" placeholder="Nhập tên đăng nhập..." />
-                            <span asp-validation-for="UserName" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="Email">Email</label>
-                            <input asp-for="Email" type="email" class="form-control" placeholder="Nhập địa chỉ email..." />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="Password">Mật khẩu</label>
-                            <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu..." />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
-                            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Nhập lại mật khẩu..." />
-                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                        </div>
-
-                        <button type="submit" class="btn btn-default">Đăng ký</button>
-                        <a asp-action="Login" asp-controller="Account" class="btn btn-primary">Đã có tài khoản? Đăng nhập</a>
-                    </form>
-
-                    <hr />
-
-                    <!-- Form Quên mật khẩu -->
-                    <form asp-action="ForgotPassword" method="post" style="margin-top:20px;">
-                        @Html.AntiForgeryToken()
-                        <div class="form-group">
-                            <label>Quên mật khẩu?</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="email" name="Email" class="form-control" placeholder="Nhập email để lấy lại mật khẩu" required style="max-width: 300px;" />
-                                <button type="submit" class="btn btn-warning">Gửi yêu cầu</button>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="background:#064e3b; border-color:#059669; color:#34d399; border-radius: 8px;">
+            <i class="fa fa-check-circle"></i> @TempData["Success"]
         </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" style="background:#451a03; border-color:#b45309; color:#f87171; border-radius: 8px;">
+            <i class="fa fa-exclamation-circle"></i> @TempData["Error"]
+        </div>
+    }
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <form asp-action="Create" asp-controller="Account" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label asp-for="UserName">Tên đăng nhập</label>
+            <input asp-for="UserName" class="form-control" placeholder="Nhập tên đăng nhập..." />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" type="email" class="form-control" placeholder="Nhập địa chỉ email..." />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password">Mật khẩu</label>
+            <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu..." id="passwordInput" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Nhập lại mật khẩu..." id="confirmPasswordInput" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <div class="checkbox-inline" style="margin-bottom: 1.5rem;">
+            <input type="checkbox" id="showPassword" onclick="togglePassword()" />
+            <label for="showPassword" style="color: #cbd5e1; font-weight: normal; margin-left: 5px; cursor: pointer;">Hiển thị mật khẩu</label>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <button type="submit" class="btn-login"><i class="fa fa-check"></i> Đăng ký</button>
+            <a asp-action="Login" asp-controller="Account" class="btn-register"><i class="fa fa-sign-in"></i> Đăng nhập ngay</a>
+        </div>
+    </form>
+
+    <div class="forgot-section">
+        <form asp-action="ForgotPassword" method="post">
+            @Html.AntiForgeryToken()
+            <label style="color:#cbd5e1; font-weight:500;">Quên mật khẩu?</label>
+            <div style="display: flex; gap: 10px; margin-top: 0.5rem;">
+                <input type="email" name="Email" class="form-control" placeholder="Nhập email để lấy lại mật khẩu" required style="max-width:260px;" />
+                <button type="submit" class="btn-forgot"><i class="fa fa-envelope"></i> Gửi</button>
+            </div>
+        </form>
     </div>
-</section>
+</div>
+
+<script>
+    function togglePassword() {
+        var input1 = document.getElementById("passwordInput");
+        var input2 = document.getElementById("confirmPasswordInput");
+        if (input1.type === "password") {
+            input1.type = "text";
+            input2.type = "text";
+        } else {
+            input1.type = "password";
+            input2.type = "password";
+        }
+    }
+</script>
 
 @section Scripts {
     @{

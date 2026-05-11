@@ -98,5 +98,17 @@ namespace Project_385.Controllers
 
             return RedirectToAction("Details", new { Id = Rating.ProductId });
         }
+        [HttpPost]
+        public async Task<IActionResult> Search(string search)
+        {
+            var products = await _dataContext.Products
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .Where(p => p.Name.Contains(search) || p.Description.Contains(search))
+                .ToListAsync();
+
+            ViewBag.Keyword = search;
+            return View(products);
+        }
     }
 }
