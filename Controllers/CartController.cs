@@ -27,7 +27,7 @@ namespace Project_385.Controllers
 
         public IActionResult Checkout()
         {
-            return View("~/Views/Checkout/Index.cshtml");
+            return View("~/Views/CheckOut/Index.cshtml");
         }
 
         [HttpPost]

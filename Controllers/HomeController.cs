@@ -132,7 +132,40 @@ namespace Project_385.Controllers
                 return StatusCode(500, "Có lỗi với việc thêm so sánh");
             }
         }
+        public async Task<IActionResult> RemoveWishList(int Id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized("Vui lòng đăng nhập");
+
+            var item = await _dataContext.WishList
+                .FirstOrDefaultAsync(w => w.ProductID == Id && w.UserId == user.Id);
+
+            if (item != null)
+            {
+                _dataContext.WishList.Remove(item);
+                await _dataContext.SaveChangesAsync();
+            }
+
+            return RedirectToAction("WishList");
+        }
+
+        public async Task<IActionResult> RemoveCompare(int Id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized("Vui lòng đăng nhập");
+
+            var item = await _dataContext.CompareModels
+                .FirstOrDefaultAsync(c => c.ProductID == Id && c.UserId == user.Id);
+
+            if (item != null)
+            {
+                _dataContext.CompareModels.Remove(item);
+                await _dataContext.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Compare");
+        }
     }
-    }
+}
 
 

@@ -1,44 +1,110 @@
 ﻿@using Project_385.Models.ViewModels
 @model List<WishListViewModel>
 @{
-    ViewData["title"] = "Danh sách mong muốn";
+    ViewData["Title"] = "Danh sách yêu thích";
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-</head>
-<body>
-    <h3>Danh sách mong muốn</h3>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <table class="table" id="myTable">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Tên Sản Phẩm</th>
-                <th>Giới thiệu sản phẩm</th>
-                <th>Giá sản phẩm</th>
-                <th>Hình ảnh sản phẩm</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                int key = 0;
-            }
-            @foreach (var wishlist_product in Model)
-            {
-                key++;
+<div class="admin-card">
+    <h4 style="margin-bottom: 1.5rem;">
+        <i class="fa fa-heart"></i> @ViewData["Title"]
+    </h4>
+
+    <div class="table-responsive">
+        <table class="table" id="my_table">
+            <thead>
                 <tr>
-                    <td>@key</td>
-                    <td>@wishlist_product.Product.Name</td>
-                    <td>@Html.Raw(wishlist_product.Product.Description)</td>
-                    <td>@wishlist_product.Product.Price.ToString("#,##0 VND")</td>
-                    <td><img src="~/images/@wishlist_product.Product.Image" alt="Product Image" width="120" height="100" /></td>
-                    <td><a class="btn btn-danger confirmDeletion" asp-action="RemoveWishList" asp-controller="Home" asp-route-Id="@wishlist_product.WishList.Id">Xóa</a></td>
+                    <th>#</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Mô tả</th>
+                    <th>Giá</th>
+                    <th>Ảnh</th>
+                    <th>Thao tác</th>
                 </tr>
+            </thead>
+            <tbody>
+                @{
+                    int index = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    index++;
+                    <tr>
+                        <td>@index</td>
+                        <td>@item.Product.Name</td>
+                        <td>@Html.Raw(item.Product.Description)</td>
+                        <td>@item.Product.Price.ToString("#,##0 VND")</td>
+                        <td>
+                            <img src="~/images/@item.Product.Image" alt="@item.Product.Name" style="max-width: 80px; border-radius: 0.25rem;" />
+                        </td>
+                        <td>
+                            <a class="btn btn-sm confirmDeletion"
+                               style="background:#7f1d1d; color:#fecaca; border:1px solid #b91c1c; padding:0.25rem 0.75rem; font-size:15px;"
+                               asp-action="RemoveWishList" asp-controller="Home" asp-route-Id="@item.WishList.Id">
+                                <i class="fa fa-trash"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (pager != null && pager.TotalPage > 1)
+    {
+        <ul class="pagination justify-content-end" style="margin-top: 1rem;">
+            @if (pager.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="WishList" asp-route-pg="1">Đầu</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-action="WishList" asp-route-pg="@(pager.CurrentPage - 1)">Trước</a>
+                </li>
             }
-        </tbody>
-    </table>
-</body>
-</html>
+            @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
+            {
+                <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="WishList" asp-route-pg="@pge">@pge</a>
+                </li>
+            }
+            @if (pager.CurrentPage < pager.TotalPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="WishList" asp-route-pg="@(pager.CurrentPage + 1)">Tiếp</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" asp-action="WishList" asp-route-pg="@(pager.TotalPage)">Cuối</a>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.confirmDeletion').click(function (e) {
+                e.preventDefault();
+                var link = $(this).attr('href');
+                Swal.fire({
+                    title: 'Bạn chắc chắn?',
+                    text: 'Sản phẩm sẽ bị xóa khỏi danh sách yêu thích!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    background: '#0d1117',
+                    color: '#e2e8f0',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = link;
+                    }
+                });
+            });
+        });
+    </script>
+}

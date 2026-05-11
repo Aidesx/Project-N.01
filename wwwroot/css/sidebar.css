@@ -1,0 +1,87 @@
+.sidebar-dark {
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background-color: #0d1117;
+        border: 1px solid #1a1f35;
+    }
+
+    .sidebar-dark h2 {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #60a5fa;
+        padding: 0.75rem 1rem;
+        margin: 0;
+        border-bottom: 1px solid #1a1f35;
+        background: #0b0f17;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sidebar-dark .panel-group {
+        margin-bottom: 0;
+    }
+
+    .sidebar-dark .panel {
+        background: transparent;
+        border: none;
+        margin: 0;
+    }
+
+    .sidebar-dark .panel-heading {
+        background: transparent;
+        border-bottom: 1px solid #1a1f35;
+        padding: 0;
+    }
+
+    .sidebar-dark .panel-title {
+        margin: 0;
+    }
+
+    .sidebar-dark .panel-title a {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        color: #cbd5e1;
+        font-size: 15px;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar-dark .panel-title a:hover,
+    .sidebar-dark .panel-title a:focus {
+        background: #1e293b;
+        color: #60a5fa;
+        border-left-color: #3b82f6;
+    }
+
+    .sidebar-dark .panel-body {
+        padding: 0;
+        border-top: none;
+    }
+
+    .sidebar-dark .panel-body ul {
+        list-style: none;
+        padding-left: 1.5rem;
+        margin: 0;
+    }
+
+    .sidebar-dark .panel-body ul li a {
+        display: block;
+        padding: 0.4rem 1rem;
+        color: #94a3b8;
+        font-size: 15px;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar-dark .panel-body ul li a:hover {
+        background: #1e293b;
+        color: #60a5fa;
+        border-left-color: #3b82f6;
+    }

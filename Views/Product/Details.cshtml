@@ -6,34 +6,127 @@
     var relatedByBrand = ViewBag.RelatedByBrand as List<ProductModels> ?? new List<ProductModels>();
 }
 
+<link rel="stylesheet" href="~/css/product_detail.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+    /* Ép Bootstrap Tabs sang Dark Mode */
+    .shop-details-tab .nav-tabs {
+        border-bottom: 1px solid #1a1f35 !important;
+    }
+
+        .shop-details-tab .nav-tabs > li > a {
+            color: #94a3b8;
+            border: none !important;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+            .shop-details-tab .nav-tabs > li > a:hover {
+                background: transparent !important;
+                color: #60a5fa;
+            }
+
+        .shop-details-tab .nav-tabs > li.active > a,
+        .shop-details-tab .nav-tabs > li.active > a:hover,
+        .shop-details-tab .nav-tabs > li.active > a:focus {
+            background: transparent !important;
+            color: #3b82f6 !important;
+            border: none !important;
+            border-bottom: 2px solid #3b82f6 !important;
+        }
+
+    /* Input Review Dark Mode */
+    .form-control {
+        background: #1e293b !important;
+        border: 1px solid #334155 !important;
+        color: #f8fafc !important;
+    }
+
+        .form-control:focus {
+            border-color: #3b82f6 !important;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.2) !important;
+        }
+
+    /* Box sản phẩm Dark Mode */
+    .product-details, .category-tab, .recommended_items {
+        background: #0d1117;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #1a1f35;
+        margin-bottom: 20px;
+    }
+
+    .mini-product-card {
+        background: #111827;
+        border: 1px solid #1e293b;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+        .mini-product-card h5 {
+            color: #f8fafc;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .mini-product-card .price {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+    .review-item {
+        background: #111827;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #1e293b;
+        margin-bottom: 15px;
+    }
+</style>
+
 <div class="row">
     <div class="col-sm-3">
         @Html.Partial("_Sidebar")
     </div>
 
-    <div class="col-sm-9 padding-right">
+    <div class="col-sm-9">
         <div class="product-details">
-            <div class="col-sm-5">
-                <div class="view-product">
-                    <img src="~/images/@Model.Product.Image" class="newarrival" alt="@Model.Product.Name" />
+            <div class="product-main" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="product-img-box" style="flex: 1; min-width: 250px; background: #111827; padding: 15px; border-radius: 8px; border: 1px solid #1e293b; text-align: center;">
+                    <img src="~/images/@Model.Product.Image" alt="@Model.Product.Name" style="max-width: 100%; border-radius: 8px;" />
                 </div>
-            </div>
-            <div class="col-sm-7">
-                <div class="product-information">
-                    <h2>@Model.Product.Name</h2>
-                    <span>
-                        <span>@Model.Product.Price.ToString("N0") đ</span>
-                        <input type="text" value="1" />
-                        <button type="button" class="btn btn-default cart add-to-cart" data-product-id="@Model.Product.Id">
-                            <i class="fa fa-shopping-cart"></i>
-                            Add to cart
+                <div class="product-info-box" style="flex: 1.5; min-width: 300px;">
+                    <h2 style="color: #f8fafc; margin-top: 0; font-size: 24px; font-weight: bold;">@Model.Product.Name</h2>
+                    <div class="price-section" style="margin: 15px 0;">
+                        <span class="price-current" style="font-size: 24px; color: #3b82f6; font-weight: bold;">@Model.Product.Price.ToString("N0") đ</span>
+                    </div>
+                    <div class="quantity-box" style="margin-bottom: 15px;">
+                        <span style="color:#94a3b8;">Số lượng:</span>
+                        <input type="number" value="1" min="1" class="form-control" style="width: 70px; display: inline-block; margin-left: 10px; text-align: center;" />
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <button type="button" class="btn-add-cart add-to-cart" data-product-id="@Model.Product.Id" style="background: #3b82f6; color: #fff; border: none; padding: 10px 20px; border-radius: 5px;">
+                            <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
                         </button>
-                    </span>
-                    <p><b>Availability:</b> In Stock</p>
-                    <p><b>Condition:</b> New</p>
-                    <p><b>Brand:</b> @Model.Product.Brand.Name</p>
-                    <p><b>Category:</b> @Model.Product.Category.Name</p>
-                    <a href=""><img src="~/images/share.png" class="share img-responsive" alt="" /></a>
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <button class="btn-wishlist add-btn-wishlist" data-product-id="@Model.Product.Id" style="background:none; border:1px solid #334155; color:#cbd5e1; padding:10px 20px; border-radius:5px; margin-left:5px; transition:0.2s;">
+                                <i class="fa fa-heart"></i> Yêu thích
+                            </button>
+                            <button class="btn-compare add-btn-compare" data-product-id="@Model.Product.Id" style="background:none; border:1px solid #334155; color:#cbd5e1; padding:10px 20px; border-radius:5px; margin-left:5px; transition:0.2s;">
+                                <i class="fa fa-exchange"></i> So sánh
+                            </button>
+                        }
+                    </div>
+                    <div class="meta-info" style="color: #94a3b8;font-size:13px; border-top: 1px dashed #1e293b; padding-top: 15px;">
+                        <p><b>Availability:</b> <span style="color: #10b981;">In Stock</span></p>
+                        <p><b>Condition:</b> <span style="color: #e2e8f0;">Mới</span></p>
+                        <p><b>Brand:</b> <span style="color: #e2e8f0;">@Model.Product.Brand.Name</span></p>
+                        <p><b>Category:</b> <span style="color: #e2e8f0;">@Model.Product.Category.Name</span></p>
+                    </div>
+                    <a href=""><img src="~/images/share.png" class="share img-responsive" alt="Share" style="margin-top: 15px;" /></a>
                 </div>
             </div>
         </div>
@@ -41,79 +134,71 @@
         <div class="category-tab shop-details-tab">
             <div class="col-sm-12">
                 <ul class="nav nav-tabs">
-                    <li><a href="#details" data-toggle="tab">Description</a></li>
-                    <li><a href="#companyprofile" data-toggle="tab">Company Profile</a></li>
-                    <li><a href="#tag" data-toggle="tab">Tag</a></li>
-                    <li class="active"><a href="#reviews" data-toggle="tab">Reviews (@Model.Ratings.Count)</a></li>
+                    <li><a href="#details" data-toggle="tab">Mô tả</a></li>
+                    <li><a href="#companyprofile" data-toggle="tab">Cùng thương hiệu</a></li>
+                    <li><a href="#tag" data-toggle="tab">Cùng danh mục</a></li>
+                    <li class="active"><a href="#reviews" data-toggle="tab">Đánh giá (@Model.Ratings.Count)</a></li>
                 </ul>
             </div>
-            <div class="tab-content">
-                <!-- Tab Details -->
+            <div class="tab-content" style="padding-top: 20px; clear: both;">
                 <div class="tab-pane fade" id="details">
-                    <div class="col-sm-12">
+                    <div class="col-sm-12" style="color:#cbd5e1; line-height: 1.6;">
                         @Html.Raw(Model.Product.Description)
                     </div>
                 </div>
 
-                <!-- Tab Company Profile -->
                 <div class="tab-pane fade" id="companyprofile">
-                    @foreach (var related in relatedByBrand)
-                    {
-                        <div class="col-sm-3">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <a asp-action="Details" asp-controller="Product" asp-route-Id="@related.Id">
-                                            <img src="~/images/@related.Image" alt="@related.Name" />
-                                            <h2>@related.Price.ToString("N0") đ</h2>
-                                            <p>@related.Name</p>
-                                        </a>
-                                        <button type="button" class="btn btn-default add-to-cart" data-product-id="@related.Id">
-                                            <i class="fa fa-shopping-cart"></i>Add to cart
-                                        </button>
-                                    </div>
+                    <div class="mini-product-grid" style="display: flex; gap: 15px; flex-wrap: wrap; padding: 0 15px;">
+                        @foreach (var related in relatedByBrand)
+                        {
+                            <div class="mini-product-card" style="width: calc(25% - 15px); min-width: 150px;">
+                                <a asp-action="Details" asp-controller="Product" asp-route-Id="@related.Id">
+                                    <img src="~/images/@related.Image" alt="@related.Name" style="max-width: 100%; border-radius: 5px;" />
+                                </a>
+                                <div class="caption">
+                                    <h5>@related.Name</h5>
+                                    <div class="price">@related.Price.ToString("N0") đ</div>
+                                    <button type="button" class="btn-add-cart add-to-cart" data-product-id="@related.Id" style="background: #3b82f6; color: #fff; border: none; margin-top:0.5rem; padding:0.3rem 0.8rem; font-size:0.75rem; border-radius: 3px;">
+                                        <i class="fa fa-shopping-cart"></i> Thêm
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
 
-                <!-- Tab Tag -->
                 <div class="tab-pane fade" id="tag">
-                    @foreach (var related in relatedByCategory)
-                    {
-                        <div class="col-sm-3">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <a asp-action="Details" asp-controller="Product" asp-route-Id="@related.Id">
-                                            <img src="~/images/@related.Image" alt="@related.Name" />
-                                            <h2>@related.Price.ToString("N0") đ</h2>
-                                            <p>@related.Name</p>
-                                        </a>
-                                        <button type="button" class="btn btn-default add-to-cart" data-product-id="@related.Id">
-                                            <i class="fa fa-shopping-cart"></i>Add to cart
-                                        </button>
-                                    </div>
+                    <div class="mini-product-grid" style="display: flex; gap: 15px; flex-wrap: wrap; padding: 0 15px;">
+                        @foreach (var related in relatedByCategory)
+                        {
+                            <div class="mini-product-card" style="width: calc(25% - 15px); min-width: 150px;">
+                                <a asp-action="Details" asp-controller="Product" asp-route-Id="@related.Id">
+                                    <img src="~/images/@related.Image" alt="@related.Name" style="max-width: 100%; border-radius: 5px;" />
+                                </a>
+                                <div class="caption">
+                                    <h5>@related.Name</h5>
+                                    <div class="price">@related.Price.ToString("N0") đ</div>
+                                    <button type="button" class="btn-add-cart add-to-cart" data-product-id="@related.Id" style="background: #3b82f6; color: #fff; border: none; margin-top:0.5rem; padding:0.3rem 0.8rem; font-size:0.75rem; border-radius: 3px;">
+                                        <i class="fa fa-shopping-cart"></i> Thêm
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
+                    </div>
                 </div>
 
-                <!-- Tab Reviews -->
                 <div class="tab-pane fade active in" id="reviews">
                     <div class="col-sm-12">
                         @if (Model.Ratings != null && Model.Ratings.Any())
                         {
                             foreach (var review in Model.Ratings)
                             {
-                                <ul>
-                                    <li><a href="javascript:void(0)"><i class="fa fa-user"></i>@review.Name</a></li>
-                                    <li><a href="javascript:void(0)"><i class="fa fa-envelope"></i>@review.Email</a></li>
-                                </ul>
-                                <p>
-                                    <span style="color: #FE980F;">
+                                <div class="review-item">
+                                    <div class="review-header" style="border-bottom: 1px solid #1e293b; padding-bottom: 10px; margin-bottom: 10px;">
+                                        <strong style="color: #f8fafc;"><i class="fa fa-user"></i> @review.Name</strong>
+                                        <span style="margin-left:1rem; color: #94a3b8;"><i class="fa fa-envelope"></i> @review.Email</span>
+                                    </div>
+                                    <div class="star-rating" style="margin:0.3rem 0; color: #fbbf24;">
                                         @for (int i = 1; i <= 5; i++)
                                         {
                                             if (int.TryParse(review.Rating, out int rVal) && i <= rVal)
@@ -125,21 +210,19 @@
                                                 <i class="fa fa-star-o"></i>
                                             }
                                         }
-                                    </span>
-                                    <br />
-                                    @review.Comment
-                                </p>
-                                <hr />
+                                    </div>
+                                    <p style="color: #cbd5e1; margin-top: 10px;">@review.Comment</p>
+                                </div>
                             }
                         }
 
-                        <p><b>Write Your Review</b></p>
+                        <p style="margin-top:1.5rem;"><b style="color:#f8fafc; font-size: 16px;">Viết đánh giá của bạn</b></p>
 
                         @if (User.Identity.IsAuthenticated)
                         {
                             @if (ViewBag.HasReviewed)
                             {
-                                <div class="alert alert-info">
+                                <div class="alert alert-info" style="background:#1e293b; border-color:#2563eb; color:#93c5fd;">
                                     Bạn đã gửi đánh giá cho sản phẩm này. Mỗi tài khoản chỉ được đánh giá một lần.
                                 </div>
                             }
@@ -147,19 +230,25 @@
                             {
                                 <form autocomplete="off" asp-action="CommentProduct" asp-controller="Product" method="post">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" asp-for="Rating.ProductId" />
+                                    <input type="hidden" asp-for="Rating.ProductId" value="@Model.Product.Id" />
 
-                                    <span>
-                                        <input asp-for="Rating.Name" type="text" value="@ViewBag.UserName" readonly style="background:#f0f0f0; cursor: not-allowed;" />
-                                        <input asp-for="Rating.Email" type="email" value="@ViewBag.UserEmail" readonly style="background:#f0f0f0; cursor: not-allowed;" />
-                                    </span>
+                                    <div class="form-group" style="margin-bottom:1rem;">
+                                        <label style="color: #94a3b8;">Tên</label>
+                                        <input asp-for="Rating.Name" type="text" value="@ViewBag.UserName" readonly class="form-control" />
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:1rem;">
+                                        <label style="color: #94a3b8;">Email</label>
+                                        <input asp-for="Rating.Email" type="email" value="@ViewBag.UserEmail" readonly class="form-control" />
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:1rem;">
+                                        <label style="color: #94a3b8;">Bình luận</label>
+                                        <textarea asp-for="Rating.Comment" class="form-control" rows="4" placeholder="Viết cảm nghĩ của bạn..."></textarea>
+                                        <span asp-validation-for="Rating.Comment" class="text-danger"></span>
+                                    </div>
 
-                                    <textarea asp-for="Rating.Comment" placeholder="Viết cảm nghĩ của bạn về sản phẩm..."></textarea>
-                                    <span asp-validation-for="Rating.Comment" class="text-danger"></span>
-
-                                    <div style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
-                                        <b>Rating: </b>
-                                        <span id="star-rating" style="cursor: pointer; color: #FE980F; font-size: 20px;">
+                                    <div class="form-group" style="display:flex; align-items:center; gap:1rem; margin-bottom: 1rem;">
+                                        <label style="color: #94a3b8; margin: 0;">Rating: </label>
+                                        <span id="star-rating" style="cursor:pointer; color:#fbbf24; font-size:1.3rem;">
                                             <i class="fa fa-star" data-value="1"></i>
                                             <i class="fa fa-star" data-value="2"></i>
                                             <i class="fa fa-star" data-value="3"></i>
@@ -169,14 +258,14 @@
                                         <input type="hidden" asp-for="Rating.Rating" id="RatingValue" value="5" />
                                     </div>
 
-                                    <button type="submit" class="btn btn-default pull-right">Submit</button>
+                                    <button type="submit" class="btn-submit-review" style="background: #3b82f6; color: #fff; border: none; padding: 10px 20px; border-radius: 5px;">Gửi đánh giá</button>
                                 </form>
                             }
                         }
                         else
                         {
-                            <div class="alert alert-warning">
-                                Vui lòng <a asp-area="" asp-controller="Account" asp-action="Login" style="color: #FE980F; font-weight: bold;">đăng nhập</a> để đánh giá.
+                            <div class="alert alert-warning" style="background:#1e293b; border-color:#fbbf24; color:#fcd34d;">
+                                Vui lòng <a asp-area="" asp-controller="Account" asp-action="Login" style="color: #fbbf24; font-weight: bold;">đăng nhập</a> để đánh giá.
                             </div>
                         }
                     </div>
@@ -185,48 +274,46 @@
         </div>
 
         <div class="recommended_items">
-            <h2 class="title text-center">Recommended Items</h2>
+            <h2 style="color: #f8fafc; font-size: 20px; margin-bottom: 20px; text-transform: uppercase;"><i class="fa fa-star" style="color: #3b82f6;"></i> Sản phẩm đề xuất</h2>
             <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     @{
-                        int count = 0;
+                        int recCount = 0;
                         foreach (var related in relatedByBrand)
                         {
-                            if (count % 3 == 0)
+                            if (recCount % 3 == 0)
                             {
-                                string activeClass = count == 0 ? "active" : "";
-                                @Html.Raw($"<div class=\"item {activeClass}\">")
+                                string activeClass = recCount == 0 ? "active" : "";
+                                @Html.Raw($"<div class=\"item {activeClass}\"><div class=\"row\">")
                             }
 
                             <div class="col-sm-4">
-                                <div class="product-image-wrapper">
-                                    <div class="single-products">
-                                        <div class="productinfo text-center">
-                                            <a asp-action="Details" asp-controller="Product" asp-route-Id="@related.Id">
-                                                <img src="~/images/@related.Image" alt="@related.Name" />
-                                                <h2>@related.Price.ToString("N0") đ</h2>
-                                                <p>@related.Name</p>
-                                            </a>
-                                            <button type="button" class="btn btn-default add-to-cart" data-product-id="@related.Id">
-                                                <i class="fa fa-shopping-cart"></i>Add to cart
-                                            </button>
-                                        </div>
+                                <div class="mini-product-card" style="margin-bottom:0;">
+                                    <a asp-action="Details" asp-controller="Product" asp-route-Id="@related.Id">
+                                        <img src="~/images/@related.Image" alt="@related.Name" style="max-width: 100%; border-radius: 5px;" />
+                                    </a>
+                                    <div class="caption">
+                                        <h5>@related.Name</h5>
+                                        <div class="price">@related.Price.ToString("N0") đ</div>
+                                        <button type="button" class="btn-add-cart add-to-cart" data-product-id="@related.Id" style="background: #3b82f6; color: #fff; border: none; margin-top:0.3rem; padding:0.25rem 0.7rem; font-size:0.7rem; border-radius: 3px;">
+                                            <i class="fa fa-shopping-cart"></i> Thêm
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
-                            if (count % 3 == 2 || count == relatedByBrand.Count - 1)
+                            if (recCount % 3 == 2 || recCount == relatedByBrand.Count - 1)
                             {
-                                @Html.Raw("</div>")
+                                @Html.Raw("</div></div>")
                             }
-                            count++;
+                            recCount++;
                         }
                     }
                 </div>
-                <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+                <a class="left carousel-control" href="#recommended-item-carousel" data-slide="prev" style="background: none; color: #3b82f6;">
                     <i class="fa fa-angle-left"></i>
                 </a>
-                <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+                <a class="right carousel-control" href="#recommended-item-carousel" data-slide="next" style="background: none; color: #3b82f6;">
                     <i class="fa fa-angle-right"></i>
                 </a>
             </div>
@@ -237,7 +324,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Script cho Rating Stars
+            // Star rating
             $('#star-rating i').on('click', function () {
                 var selectedValue = $(this).data('value');
                 $('#RatingValue').val(selectedValue);
@@ -251,19 +338,22 @@
                 });
             });
 
-            // Script cho Add to cart
-            $('.add-to-cart').click(function () {
-                var Id = $(this).data('product-id');
+            // Add to cart AJAX
+            $(document).on('click', '.add-to-cart', function (e) {
+                e.preventDefault();
+                var id = $(this).data('product-id');
                 $.ajax({
                     url: '@Url.Action("Add", "Cart")',
                     type: 'POST',
-                    data: { Id: Id }, // Sửa lại thành Id để khớp với Controller
+                    data: { Id: id },
                     success: function (result) {
                         if (result) {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Thành công',
-                                text: 'Thêm giỏ hàng thành công!',
+                                text: 'Đã thêm vào giỏ hàng!',
+                                background: '#0d1117',
+                                color: '#e2e8f0',
                                 showConfirmButton: false,
                                 timer: 1500
                             });
@@ -273,7 +363,73 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Thất bại',
-                            text: 'Có lỗi xảy ra'
+                            text: 'Có lỗi xảy ra',
+                            background: '#0d1117',
+                            color: '#e2e8f0'
+                        });
+                    }
+                });
+            });
+
+            // Wishlist buttons
+            $(document).on('click', '.add-btn-wishlist', function (e) {
+                e.preventDefault();
+                var id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("AddWishList", "Home")',
+                    type: 'POST',
+                    data: { Id: id },
+                    success: function (result) {
+                        if (result.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Đã thêm vào yêu thích',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                background: '#0d1117',
+                                color: '#e2e8f0'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Không thể thêm yêu thích',
+                            background: '#0d1117',
+                            color: '#e2e8f0'
+                        });
+                    }
+                });
+            });
+
+            // Compare buttons
+            $(document).on('click', '.add-btn-compare', function (e) {
+                e.preventDefault();
+                var id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("AddCompare", "Home")',
+                    type: 'POST',
+                    data: { Id: id },
+                    success: function (result) {
+                        if (result.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Đã thêm vào so sánh',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                background: '#0d1117',
+                                color: '#e2e8f0'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Không thể thêm so sánh',
+                            background: '#0d1117',
+                            color: '#e2e8f0'
                         });
                     }
                 });

@@ -1,39 +1,190 @@
 ﻿@model IEnumerable<ProductModels>
+@{
+    var pager = ViewBag.Pager as Project_385.Models.Paginate;
+}
+<link rel="stylesheet" href="~/css/category_index.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<div class="col-sm-3">
-	@Html.Partial("_Sidebar")
+<div class="row">
+    <div class="col-sm-3">
+        @Html.Partial("_Sidebar")
+    </div>
+
+    <div class="col-sm-9">
+        <div class="features_items">
+            <div class="section-header" style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
+                <div style="width:4px; height:22px; border-radius:2px; background:linear-gradient(180deg,#1d4ed8,#3b82f6);"></div>
+                <h2 style="font-size:0.9rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#60a5fa; margin:0;">
+                    Thương hiệu: @ViewBag.BrandName
+                </h2>
+            </div>
+
+            <div class="product-grid">
+                @foreach (var item in Model)
+                {
+                    <div class="product-card">
+                        <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" style="text-decoration:none;">
+                            <div class="product-img">
+                                <img src="~/images/@item.Image" alt="@item.Name" />
+                            </div>
+                        </a>
+                        <div class="card-body">
+                            <p class="card-details">Danh mục: @item.Category?.Name</p>
+                            <p class="card-details">Thương hiệu: @item.Brand?.Name</p>
+                            <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="card-title">
+                                @item.Name
+                            </a>
+
+                            <div class="card-price-row">
+                                <div>
+                                    <p class="price-current">@item.Price.ToString("#,##0 VND")</p>
+                                </div>
+                                <button class="btn-add-cart add-to-cart" data-product-id="@item.Id">
+                                    <i class="fa fa-shopping-cart"></i> Thêm
+                                </button>
+                            </div>
+                            @if (User.Identity?.IsAuthenticated ?? false)
+                            {
+                                <div class="card-actions">
+                                    <button class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id">
+                                        <i class="fa fa-plus-square"></i> Yêu thích
+                                    </button>
+                                    <button class="btn-compare add-btn-compare" data-product-id="@item.Id">
+                                        <i class="fa fa-plus-square"></i> So sánh
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (pager != null && pager.TotalPage > 1)
+            {
+                <ul class="pagination-container">
+                    @if (pager.CurrentPage > 1)
+                    {
+                        <li class="page-item"><a asp-action="Index" asp-route-brand="@ViewBag.BrandSlug" asp-route-pg="1">Đầu</a></li>
+                        <li class="page-item"><a asp-action="Index" asp-route-brand="@ViewBag.BrandSlug" asp-route-pg="@(pager.CurrentPage - 1)">Trước</a></li>
+                    }
+                    @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
+                    {
+                        <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
+                            <a asp-action="Index" asp-route-brand="@ViewBag.BrandSlug" asp-route-pg="@pge">@pge</a>
+                        </li>
+                    }
+                    @if (pager.CurrentPage < pager.TotalPage)
+                    {
+                        <li class="page-item"><a asp-action="Index" asp-route-brand="@ViewBag.BrandSlug" asp-route-pg="@(pager.CurrentPage + 1)">Tiếp</a></li>
+                        <li class="page-item"><a asp-action="Index" asp-route-brand="@ViewBag.BrandSlug" asp-route-pg="@(pager.TotalPage)">Cuối</a></li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
 </div>
-<!-- Chỉnh các cấu hình trong file db-->
 
-<div class="col-sm-9 padding-right">
-	<div class="features_items">
-		<!--features_items-->
-		<h2 class="title text-center">Thương hiệu: @ViewBag.BrandName</h2>
-			@foreach (var item in Model){
-			<div class="col-sm-4">
-				<div class="product-image-wrapper">
-					
-						<div class="single-products">
-							<div class="productinfo text-center">
-								<a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id">
-									<img src="~/images/@item.Image" alt="@item.Name" width="100%" />
-									<h2>@item.Price.ToString("#,##0 VND")</h2>
-									<p>@item.Name</p>
-									<p>Danh mục: @item.Category.Name</p>
-									<p>Thương hiệu: @item.Brand.Name</p>
-									<a class="btn btn-default add-to-cart" asp-action="Add" asp-controller="Cart" asp-route-Id="@item.Id"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-								</a>
-							</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Add to cart
+            $(document).on('click', '.add-to-cart', function (e) {
+                e.preventDefault();
+                var id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("Add", "Cart")',
+                    type: 'POST',
+                    data: { Id: id },
+                    success: function (result) {
+                        if (result) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Thêm giỏ hàng thành công!',
+                                showConfirmButton: false,
+                                background: '#0d1117',
+                                color: '#e2e8f0',
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            text: 'Có lỗi khi thêm giỏ hàng',
+                            background: '#0d1117',
+                            color: '#e2e8f0'
+                        });
+                    }
+                });
+            });
 
-						</div>
+            // Add to wishlist
+            $(document).on('click', '.add-btn-wishlist', function (e) {
+                e.preventDefault();
+                var id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("AddWishList", "Home")',
+                    type: 'POST',
+                    data: { Id: id },
+                    success: function (result) {
+                        if (result.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Thêm yêu thích thành công!',
+                                background: '#0d1117',
+                                color: '#e2e8f0',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            text: 'Có lỗi khi thêm yêu thích',
+                            background: '#0d1117',
+                            color: '#e2e8f0'
+                        });
+                    }
+                });
+            });
 
-					<div class="choose">
-						<ul class="nav nav-pills nav-justified">
-							<li><a href="#"><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
-							<li><a href="#"><i class="fa fa-plus-square"></i>Add to compare</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
+            // Add to compare
+            $(document).on('click', '.add-btn-compare', function (e) {
+                e.preventDefault();
+                var id = $(this).data('product-id');
+                $.ajax({
+                    url: '@Url.Action("AddCompare", "Home")',
+                    type: 'POST',
+                    data: { Id: id },
+                    success: function (result) {
+                        if (result.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Thêm so sánh thành công!',
+                                showConfirmButton: false,
+                                background: '#0d1117',
+                                color: '#e2e8f0',
+                                timer: 1500
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            background: '#0d1117',
+                                color: '#e2e8f0',
+                            text: 'Có lỗi khi thêm so sánh'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 }

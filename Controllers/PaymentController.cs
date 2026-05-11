@@ -44,11 +44,12 @@ namespace Project_385.Controllers
                         order.Status = 1;
                         await _context.SaveChangesAsync();
 
-                        var cartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
-
+                        var orderDetails = await _context.OrderDetails
+                        .Where(od => od.OrderId == order.Id)
+                        .ToListAsync();
                         try
                         {
-                            await SendOrderEmail(order.UserName, order, cartItems);
+                            await SendOrderEmail(order.UserName, order, orderDetails);
                         }
                         catch (Exception ex)
                         {
@@ -78,22 +79,22 @@ namespace Project_385.Controllers
             }
         }
 
-        private async Task SendOrderEmail(string userEmail, OrderModels order, List<CartItemModel> cartItems)
+        private async Task SendOrderEmail(string userEmail, OrderModels order, List<OrderDetailModels> orderDetails)
         {
             var itemListHtml = "";
-            foreach (var item in cartItems)
+            foreach (var item in orderDetails)
             {
                 itemListHtml += $"<tr><td>{item.ProductName}</td><td>{item.Quantity}</td><td>{item.Price.ToString("#,##0")} đ</td></tr>";
             }
 
             var body = await _emailRenderer.RenderAsync("OrderSuccess", new Dictionary<string, string>
-            {
-                { "UserName", userEmail },
-                { "OrderNumber", order.OrderNumber },
-                { "OrderDate", order.OrderDate.ToString("dd/MM/yyyy HH:mm") },
-                { "Total", order.Total.ToString("#,##0") + " đ" },
-                { "ItemList", itemListHtml }
-            });
+    {
+        { "UserName", userEmail },
+        { "OrderNumber", order.OrderNumber },
+        { "OrderDate", order.OrderDate.ToString("dd/MM/yyyy HH:mm") },
+        { "Total", order.Total.ToString("#,##0") + " đ" },
+        { "ItemList", itemListHtml }
+    });
 
             await _emailSender.SendEmailAsync(userEmail, $"Xác nhận đơn hàng #{order.OrderNumber}", body);
         }

@@ -3,175 +3,222 @@
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
 
-<div class="col-sm-3">
-    @Html.Partial("_Sidebar")
-</div>
-<style>
-    .product-image-wrapper {
-        height: 400px;
-    }
-</style>
-<div class="col-sm-9 padding-right">
-    <div class="features_items">
-        <h2 class="title text-center">Features Items</h2>
-        @foreach (var item in Model)
+<link rel="stylesheet" href="~/css/home_index.css" />
+
+<section class="hero-slider">
+    <div class="hero-bg-glow"></div>
+    <div class="hero-grid-bg"></div>
+
+    @if (Model != null && Model.Any())
+    {
+        var sliderItems = Model.Take(3).ToList();
+        for (int i = 0; i < sliderItems.Count; i++)
         {
-            <div class="col-sm-4">
-                <div class="product-image-wrapper">
+            var item = sliderItems[i];
+            <div class="hero-slide @(i == 0 ? "active" : "")" data-slide="@i" style="position: relative;">
 
-                    <div class="single-products">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Id"
+                   style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; display: block;"></a>
 
-                        <div class="productinfo text-center">
-                            <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id">
-                                <img src="~/images/@item.Image" alt="@item.Name" width="100%" />
-                                <h2>@item.Price.ToString("#,##0 VND")</h2>
-                                <p>@item.Name</p>
-                                <p>Danh mục: @item.Category.Name</p>
-                                <p>Thương hiệu: @item.Brand.Name</p>
-                            </a>
-                            <button class="btn btn-default add-to-cart" data-product-id="@item.Id"><i class="fa fa-shopping-cart"></i>Add to cart</button>
+                <div class="hero-content" style="position: relative; z-index: 2; pointer-events: none;">
+                    <span class="hero-tag" style="color: #60a5fa;font-size: 20px;">Sản phẩm nổi bật</span>
+                    <h1 class="hero-title" style="color: #ffffff !important;font-size: 18px; margin-top: 15px; margin-bottom: 10px;">@item.Name</h1>
+                    <p class="hero-desc" style="color: #cbd5e1 !important; font-size: 14px; margin-bottom: 25px;">
+                        Thương hiệu: @item.Brand?.Name <br />
+                        Giá: <span style="color: #3b82f6;font-size: 14px; font-weight: bold;">@item.Price.ToString("#,##0 VND")</span>
+                    </p>
+
+                    <div class="hero-action-group" style="display: flex; flex-direction: column; gap: 10px; width: 280px; pointer-events: auto;">
+                        <button class="add-to-cart" data-product-id="@item.Id"
+                                style="display: flex; align-items: center; justify-content: center; background: #3b82f6; color: #fff !important; padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer;">
+                            <i class="fa fa-shopping-cart" style="margin-right: 8px;"></i> Thêm vào giỏ hàng
+                        </button>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button class="add-btn-wishlist" data-product-id="@item.Id"
+                                    style="flex: 1; display: flex; align-items: center; justify-content: center; background: rgba(30, 41, 59, 0.8); color: #cbd5e1 !important; padding: 10px; border-radius: 8px; border: 1px solid #334155; cursor: pointer;">
+                                <i class="fa fa-heart"></i>
+                            </button>
+                            <button class="add-btn-compare" data-product-id="@item.Id"
+                                    style="flex: 1; display: flex; align-items: center; justify-content: center; background: rgba(30, 41, 59, 0.8); color: #cbd5e1 !important; padding: 10px; border-radius: 8px; border: 1px solid #334155; cursor: pointer;">
+                                <i class="fa fa-exchange"></i>
+                            </button>
                         </div>
                     </div>
+                </div>
 
-                    <div class="choose">
-                        @if (User.Identity?.IsAuthenticated ?? false)
-                        {
-                            <ul class="nav nav-pills nav-justified">
-                                <li><a asp-action="WishList" asp-controller="Home" class="btn btn-default add-btn-wishlist" data-product-id="@item.Id">Add to wishlist</a></li>
-                                <li><a asp-action="Compare" asp-controller="Home"  class="btn btn-default add-btn-compare" data-product-id="@item.Id">Add to compare</a></li>
-                            </ul>
-                        }
-                    </div>
+                <div class="hero-img-wrap" style="position: relative; z-index: 2; pointer-events: none;">
+                    <div class="hero-img-glow"></div>
+                    <img src="~/images/@item.Image" alt="@item.Name" />
                 </div>
             </div>
         }
-    </div>
-
-    @if (pager != null && pager.TotalPage > 1)
-    {
-        <ul class="pagination">
-            @if (pager.CurrentPage > 1)
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pg="1">Đầu</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pg="@(pager.CurrentPage - 1)">Trước</a>
-                </li>
-            }
-
-            @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
-            {
-                <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
-                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pg="@pge">@pge</a>
-                </li>
-            }
-
-            @if (pager.CurrentPage < pager.TotalPage)
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pg="@(pager.CurrentPage + 1)">Tiếp</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pg="@(pager.TotalPage)">Cuối</a>
-                </li>
-            }
-        </ul>
     }
-</div>
+
+    <button class="hero-nav hero-prev" style="z-index: 15;" onclick="changeSlide(-1)"><i class="fa fa-chevron-left"></i></button>
+    <button class="hero-nav hero-next" style="z-index: 15;" onclick="changeSlide(1)"><i class="fa fa-chevron-right"></i></button>
+</section>
+
+<section class="services-bar">
+    <div class="services-container">
+        <div class="service-item"><div class="service-icon"><i class="fa fa-truck"></i></div><div><p>Giao Hàng Miễn Phí</p></div></div>
+        <div class="service-item"><div class="service-icon"><i class="fa fa-shield"></i></div><div><p>Bảo Hành Uy Tín</p></div></div>
+        <div class="service-item"><div class="service-icon"><i class="fa fa-refresh"></i></div><div><p>Đổi Trả Dễ Dàng</p></div></div>
+    </div>
+</section>
+
+<section class="main-content">
+    <div class="main-flex" style="display: flex; gap: 20px;">
+        <aside class="sidebar-col" style="flex: 0 0 250px;">
+            @Html.Partial("_Sidebar")
+        </aside>
+
+        <div class="products-col" style="flex: 1;">
+
+            <div class="product-grid">
+                @foreach (var item in Model)
+                {
+                    <div class="product-card">
+                        <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" style="text-decoration:none;">
+                            <div class="product-img">
+                                <img src="~/images/@item.Image" alt="@item.Name" />
+                            </div>
+                        </a>
+                        <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="card-title">
+                            @item.Name
+                        </a>
+
+                        <div class="card-body">
+                            <p class="card-details">Danh mục: @item.Category?.Name</p>
+                            <p class="card-details">Thương hiệu: @item.Brand?.Name</p>
+
+                            
+
+                            <div class="card-price-row">
+                                <div>
+                                    <p class="price-current">@item.Price.ToString("#,##0 VND")</p>
+                                </div>
+                                <button class="btn-add-cart add-to-cart" data-product-id="@item.Id">
+                                    <i class="fa fa-shopping-cart"></i> Thêm
+                                </button>
+                            </div>
+
+                            @if (User.Identity?.IsAuthenticated ?? false)
+                            {
+                                <div class="card-actions">
+                                    <button class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id">
+                                        <i class="fa fa-plus-square"></i> Yêu thích
+                                    </button>
+                                    <button class="btn-compare add-btn-compare" data-product-id="@item.Id">
+                                        <i class="fa fa-plus-square"></i> So sánh
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            @if (pager != null && pager.TotalPage > 1)
+            {
+                <div class="pagination-wrapper" style="margin-top: 40px; text-align: center;">
+                    <ul class="pagination-container" style="display: inline-flex; list-style: none; gap: 8px;">
+                        @if (pager.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a asp-action="Index" asp-route-pg="1" class="page-link">Đầu</a></li>
+                            <li class="page-item"><a asp-action="Index" asp-route-pg="@(pager.CurrentPage - 1)" class="page-link">Trước</a></li>
+                        }
+
+                        @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
+                        {
+                            <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
+                                <a asp-action="Index" asp-route-pg="@pge" class="page-link">@pge</a>
+                            </li>
+                        }
+
+                        @if (pager.CurrentPage < pager.TotalPage)
+                        {
+                            <li class="page-item"><a asp-action="Index" asp-route-pg="@(pager.CurrentPage + 1)" class="page-link">Tiếp</a></li>
+                            <li class="page-item"><a asp-action="Index" asp-route-pg="@(pager.TotalPage)" class="page-link">Cuối</a></li>
+                        }
+                    </ul>
+                </div>
+            }
+
+        </div>
+    </div>
+</section>
 
 @section Scripts {
     <script>
+        // XỬ LÝ AJAX
         $(document).ready(function () {
-            $('.add-to-cart').click(function () {
-                var Id = $(this).data('product-id');
-                $.ajax({
-                    url: '@Url.Action("Add", "Cart")',
-                    type: 'POST',
-                    data: { Id: Id },
-                    success: function (result) {
-                        if (result) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công',
-                                text: 'Thêm giỏ hàng thành công!',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                    },
-                    error: function (result) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Thất bại',
-                            text: 'Có lỗi với việc thêm giỏ hàng'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            $('.add-btn-wishlist').click(function (e) {
+            // Ngăn chặn nổi bọt sự kiện cho tất cả các nút
+            $(document).on('click', '.add-to-cart, .add-btn-wishlist, .add-btn-compare', function (e) {
                 e.preventDefault();
-                var Id = $(this).data('product-id');
+                e.stopPropagation();
+
+                var $btn = $(this);
+                var id = $btn.data('product-id');
+                var url = '';
+                var msg = '';
+
+                if ($btn.hasClass('add-to-cart')) {
+                    url = '@Url.Action("Add", "Cart")';
+                    msg = 'Đã thêm sản phẩm vào giỏ hàng!';
+                }
+                else if ($btn.hasClass('add-btn-wishlist')) {
+                    url = '@Url.Action("AddWishList", "Home")';
+                    msg = 'Đã thêm vào yêu thích!';
+                }
+                else {
+                    url = '@Url.Action("AddCompare", "Home")';
+                    msg = 'Đã thêm vào so sánh!';
+                }
+
                 $.ajax({
-                    url: '@Url.Action("AddWishList", "Home")',
+                    url: url,
                     type: 'POST',
-                    data: { Id: Id },
-                    success: function (result) {
-                        if (result.success) {
+                    data: { Id: id },
+                    success: function (r) {
+                        // Check if the response implies success (wishlist/compare return JSON with success flag usually)
+                        if (r.success !== false) {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Thành công',
-                                text: 'Thêm yêu thích thành công!',
+                                title: msg,
                                 showConfirmButton: false,
-                                timer: 1500
+                                timer: 1500,
+                                background: '#0d1117',
+                                color: '#e2e8f0'
                             });
                         }
                     },
-                    error: function (result) {
+                    error: function() {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Thất bại',
-                            text: 'Có lỗi với việc thêm yêu thích'
+                            title: 'Thất bại!',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại.',
+                            background: '#0d1117',
+                            color: '#e2e8f0'
                         });
                     }
                 });
             });
         });
-    </script>
-        
-    <script>
-        $(document).ready(function () {
-            $('.add-btn-compare').click(function (e) {
-                 e.preventDefault();
-                var Id = $(this).data('product-id');
-                $.ajax({
-                    url: '@Url.Action("AddCompare", "Home")',
-                    type: 'POST',
-                    data: { Id: Id },
-                    success: function (result) {
-                        if (result.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Thành công',
-                                text: 'Thêm so sánh thành công!',
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
-                        }
-                    },
-                    error: function (result) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Thất bại',
-                            text: 'Có lỗi với việc thêm so sánh'
-                        });
-                    }
-                });
-            });
-        });
+
+        // ĐIỀU KHIỂN SLIDER
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        function showSlide(index) {
+            if (slides.length === 0) return;
+            $('.hero-slide').removeClass('active');
+            $(slides[index]).addClass('active');
+            currentSlide = index;
+        }
+        function changeSlide(dir) {
+            showSlide((currentSlide + dir + slides.length) % slides.length);
+        }
+        if (slides.length > 0) {
+            setInterval(() => changeSlide(1), 5000);
+        }
     </script>
 }

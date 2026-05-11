@@ -1,4 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "404 Not Found";
+    ViewData["Title"] = "404 - Not Found";
 }
-<h1>404 - Not Found</h1>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="admin-card" style="max-width: 600px; margin: 4rem auto; text-align: center;">
+    <div style="font-size: 5rem; font-weight: 800; color: #3b82f6; line-height: 1; margin-bottom: 0.5rem;">404</div>
+    <div style="font-size: 1.5rem; color: #f0f4ff; margin-bottom: 0.5rem;">Không tìm thấy trang</div>
+    <p style="color: #94a3b8; margin-bottom: 2rem;">
+        Trang bạn đang tìm kiếm không tồn tại hoặc đã bị xóa. Vui lòng kiểm tra lại URL hoặc quay về trang chủ để tiếp tục khám phá.
+    </p>
+    <a asp-controller="Home" asp-action="Index" class="btn-admin-primary" style="padding:0.6rem 1.5rem;">
+        <i class="fa fa-home"></i> Quay về trang chủ
+    </a>
+</div>

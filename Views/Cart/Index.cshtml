@@ -1,100 +1,84 @@
 ﻿@using Project_385.Models.ViewModels
 @model CartItemViewModel
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show text-center" role="alert" style="margin-top: 20px;">
-        <strong>Thất bại!</strong> @TempData["Error"]
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-}
-<section id="cart_items">
-    <div class="container">
-        <div class="breadcrumbs">
-            <ol class="breadcrumb">
-                <li><a href="#">Home</a></li>
-                <li class="active">Shopping Cart</li>
-            </ol>
-        </div>
-        <div class="table-responsive cart_info">
-            <table class="table table-condensed">
-                <thead>
-                    <tr class="cart_menu">
-                        <td class="image">Item</td>
-                        <td class="description"></td>
-                        <td class="price">Price</td>
-                        <td class="quantity">Quantity</td>
-                        <td class="total">Total</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.CartItems != null && Model.CartItems.Count > 0)
-                    {
-                        @foreach (var item in Model.CartItems)
-                        {
-                            <tr>
-                                <td class="cart_product">
-                                    <a href=""><img src="~/images/@item.Image" alt="@item.ProductName" style="width: 80px; height: auto;"></a>
-                                </td>
-                                <td class="cart_description">
-                                    <h4><a href="">@item.ProductName</a></h4>
-                                </td>
-                                <td class="cart_price">
-                                    <p>@item.Price.ToString("#,##0 VND")</p>
-                                </td>
-                                <td class="cart_quantity">
-                                    <div class="cart_quantity_button">
-                                        <a asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId">+</a>
-                                        <input class="cart_quantity_input" type="text" name="quantity" value="@item.Quantity" autocomplete="off" size="2">
-                                        <a asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId">-</a>
-                                        <a asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId">Remove</a>
-                                    </div>
-                                </td>
-                                <td class="cart_total">
-                                    <p class="cart_total_price">@item.Total.ToString("0.00")</p>
-                                </td>
-                                <td class="cart_delete">
-                                    <div><i class="fa fa-times"></i></div>
-                                </td>
-                            </tr>
-                        }
+<link rel="stylesheet" href="~/css/cart_index.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-                        <tr style="vertical-align: middle;">
-                            <td colspan="6">Grand Total: <a class="cart_total_price">@Model.GrandTotal.ToString("0.00")</a></td>
-                            <td style="vertical-align: middle;">
-                                <a class="btn btn-danger btn-sm" asp-controller="Cart" asp-action="Clear">Clear</a>
-                            </td>
-                            <td style="vertical-align: middle;">
-                                @if (User.Identity?.IsAuthenticated ?? false)
-                                {
-                                    <form method="post" asp-controller="CheckOut" asp-action="CheckOut" style="margin: 0;">
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn thanh toán không?');">Thanh toán với MoMo</button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <a class="btn btn-warning btn-sm"
-                                       asp-controller="Account"
-                                       asp-action="Login"
-                                       asp-route-returnUrl="/Cart">Login to Checkout</a>
-                                }
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center">Your cart is empty.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+<div class="cart-container">
+    <h2><i class="fa fa-shopping-cart"></i> Giỏ hàng của bạn</h2>
+
+    @if (Model.CartItems != null && Model.CartItems.Count > 0)
+    {
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems)
+                {
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <img src="~/images/@item.Image" alt="@item.ProductName" />
+                                <a href="#" class="cart-product-name">@item.ProductName</a>
+                            </div>
+                        </td>
+                        <td class="cart-price">@item.Price.ToString("#,##0 VND")</td>
+                        <td>
+                            <div class="qty-control">
+                                <a asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId" class="qty-btn">−</a>
+                                <input class="qty-input" type="text" value="@item.Quantity" readonly />
+                                <a asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId" class="qty-btn">+</a>
+                            </div>
+                        </td>
+                        <td class="cart-total">@item.Total.ToString("#,##0 VND")</td>
+                        <td>
+                            <a asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId" class="remove-btn">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="cart-actions">
+            <div>
+                <span class="grand-total">Tổng cộng: @Model.GrandTotal.ToString("#,##0 VND")</span>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <a asp-controller="Cart" asp-action="Clear" class="btn-clear">
+                    <i class="fa fa-trash-o"></i> Xóa hết
+                </a>
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <form asp-controller="CheckOut" asp-action="CheckOut" method="post" style="margin:0;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-checkout">
+                            <i class="fa fa-credit-card"></i> Thanh toán
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="/Cart" class="btn-login-checkout">
+                        <i class="fa fa-sign-in"></i> Đăng nhập để thanh toán
+                    </a>
+                }
+            </div>
         </div>
-    </div>
-</section>
+    }
+    else
+    {
+        <div class="empty-cart">
+            <i class="fa fa-shopping-cart" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+            Giỏ hàng của bạn đang trống.
+        </div>
+    }
+</div>

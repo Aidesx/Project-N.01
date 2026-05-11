@@ -1,6 +1,52 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Chính sách bảo mật";
 }
-<h1>@ViewData["Title"]</h1>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div style="max-width: 800px; margin: 2rem auto;">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+        <div style="width: 4px; height: 24px; background: linear-gradient(180deg, #1d4ed8, #3b82f6); border-radius: 2px;"></div>
+        <h2 style="color: #f0f4ff; font-size: 1.5rem; margin: 0;">@ViewData["Title"]</h2>
+    </div>
+
+    <div style="background: #0d1117; border: 1px solid #1a1f35; border-radius: 0.75rem; padding: 2rem 2.5rem; color: #cbd5e1; line-height: 1.6;">
+        <p>
+            Chúng tôi cam kết bảo vệ quyền riêng tư của bạn. Chính sách này giải thích cách chúng tôi thu thập,
+            sử dụng và bảo vệ thông tin cá nhân khi bạn sử dụng website của chúng tôi.
+        </p>
+
+        <h3 style="color: #60a5fa; font-size: 1.1rem; margin-top: 2rem;">1. Thông tin chúng tôi thu thập</h3>
+        <p>
+            Khi bạn tạo tài khoản hoặc đặt hàng, chúng tôi có thể yêu cầu các thông tin như tên, địa chỉ email,
+            số điện thoại, địa chỉ giao hàng... Mọi thông tin được thu thập một cách hợp pháp và có sự đồng ý của bạn.
+        </p>
+
+        <h3 style="color: #60a5fa; font-size: 1.1rem; margin-top: 2rem;">2. Cách chúng tôi sử dụng thông tin</h3>
+        <p>
+            Thông tin của bạn được sử dụng để xử lý đơn hàng, cải thiện trải nghiệm người dùng, và gửi các thông báo
+            liên quan đến đơn hàng hoặc chương trình khuyến mãi (nếu bạn đồng ý).
+        </p>
+
+        <h3 style="color: #60a5fa; font-size: 1.1rem; margin-top: 2rem;">3. Bảo mật thông tin</h3>
+        <p>
+            Chúng tôi áp dụng các biện pháp kỹ thuật và tổ chức phù hợp để bảo vệ dữ liệu cá nhân của bạn khỏi
+            truy cập trái phép, mất mát hoặc tiết lộ.
+        </p>
+
+        <h3 style="color: #60a5fa; font-size: 1.1rem; margin-top: 2rem;">4. Chia sẻ thông tin</h3>
+        <p>
+            Chúng tôi không bán, trao đổi hoặc chia sẻ thông tin cá nhân của bạn cho bên thứ ba, trừ khi cần thiết
+            để hoàn thành dịch vụ (ví dụ: đối tác vận chuyển) hoặc theo yêu cầu của pháp luật.
+        </p>
+
+        <h3 style="color: #60a5fa; font-size: 1.1rem; margin-top: 2rem;">5. Liên hệ</h3>
+        <p>
+            Nếu bạn có bất kỳ câu hỏi nào về chính sách bảo mật, vui lòng liên hệ chúng tôi qua email
+            <a href="mailto:privacy@eshopper.com" style="color: #60a5fa;">privacy@eshopper.com</a>.
+        </p>
+
+        <p style="margin-top: 2rem; color: #4b5e7a; font-size: 0.8rem;">
+            Cập nhật lần cuối: @DateTime.Now.ToString("dd/MM/yyyy")
+        </p>
+    </div>
+</div>

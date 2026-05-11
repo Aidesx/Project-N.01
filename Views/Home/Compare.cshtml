@@ -1,69 +1,67 @@
 ﻿@using Project_385.Models.ViewModels
 @model List<CompareViewModel>
 @{
-    ViewData["title"] = "So sánh sản phẩm";
+    ViewData["Title"] = "So sánh sản phẩm";
 }
 
-<div class="container">
-    <h3 class="text-center">So sánh sản phẩm</h3>
+<link rel="stylesheet" href="~/css/home_compare.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="compare-container">
+    <h2><i class="fa fa-exchange"></i> @ViewData["Title"]</h2>
 
     @if (Model != null && Model.Count > 0)
     {
         <div class="table-responsive">
-            <table class="table table-bordered table-striped text-center">
+            <table class="compare-table">
                 <tbody>
                     <tr>
-                        <th class="align-middle" style="width: 15%; text-align:left;">Hình ảnh</th>
+                        <th>Hình ảnh</th>
                         @foreach (var item in Model)
                         {
                             <td>
-                                <img src="~/images/@item.Product.Image" alt="@item.Product.Name" style="max-width: 150px; height: auto;" />
+                                <img src="~/images/@item.Product.Image" alt="@item.Product.Name" />
                             </td>
                         }
                     </tr>
-
                     <tr>
-                        <th class="align-middle" style="text-align:left;">Tên Sản Phẩm</th>
+                        <th>Tên sản phẩm</th>
                         @foreach (var item in Model)
                         {
-                            <td><strong>@item.Product.Name</strong></td>
+                            <td><span class="compare-name">@item.Product.Name</span></td>
                         }
                     </tr>
-
                     <tr>
-                        <th class="align-middle" style="text-align:left;">Mức giá</th>
+                        <th>Giá</th>
                         @foreach (var item in Model)
                         {
-                            <td class="text-danger font-weight-bold">@item.Product.Price.ToString("#,##0 VND")</td>
+                            <td><span class="compare-price">@item.Product.Price.ToString("#,##0 VND")</span></td>
                         }
                     </tr>
-
                     <tr>
-                        <th class="align-middle" style="text-align:left;">Mô tả chi tiết</th>
+                        <th>Mô tả</th>
                         @foreach (var item in Model)
                         {
-                            <td style="text-align: left;">@Html.Raw(item.Product.Description)</td>
+                            <td class="compare-desc">@Html.Raw(item.Product.Description)</td>
                         }
                     </tr>
-
                     <tr>
-                        <th class="align-middle" style="text-align:left;">Mua hàng</th>
+                        <th>Mua hàng</th>
                         @foreach (var item in Model)
                         {
                             <td>
-                                <button class="btn btn-primary add-to-cart" data-product-id="@item.Product.Id">
-                                    <i class="fa fa-shopping-cart"></i> Thêm giỏ hàng
+                                <button class="btn-add-cart add-to-cart" data-product-id="@item.Product.Id">
+                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
                                 </button>
                             </td>
                         }
                     </tr>
-
                     <tr>
-                        <th class="align-middle" style="text-align:left;">Thao tác</th>
+                        <th>Thao tác</th>
                         @foreach (var item in Model)
                         {
                             <td>
-                                <a class="btn btn-danger btn-sm" asp-action="RemoveCompare" asp-controller="Home" asp-route-Id="@item.Compares.Id">
+                                <a class="btn-remove" asp-action="RemoveCompare" asp-controller="Home" asp-route-Id="@item.Compares.Id">
                                     <i class="fa fa-trash"></i> Xóa
                                 </a>
                             </td>
@@ -75,14 +73,16 @@
     }
     else
     {
-        <div class="alert alert-info text-center">
+        <div class="empty-compare">
+            <i class="fa fa-exchange" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
             Bạn chưa có sản phẩm nào trong danh sách so sánh.
         </div>
     }
 </div>
 
 @section Scripts {
-    <script>        $(document).ready(function () {
+    <script>
+        $(document).ready(function () {
             $('.add-to-cart').click(function (e) {
                 e.preventDefault();
                 var id = $(this).data('product-id');
@@ -96,6 +96,8 @@
                             title: 'Thành công',
                             text: 'Đã thêm sản phẩm vào giỏ hàng!',
                             showConfirmButton: false,
+                            confirmButtonText: 'Xóa',
+                            background: '#0d1117',
                             timer: 1500
                         });
                     },
@@ -103,6 +105,8 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Thất bại',
+                            confirmButtonText: 'Xóa',
+                            background: '#0d1117',
                             text: 'Có lỗi xảy ra khi thêm vào giỏ hàng.'
                         });
                     }

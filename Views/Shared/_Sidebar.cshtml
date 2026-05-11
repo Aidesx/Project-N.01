@@ -1,16 +1,22 @@
-﻿<div class="left-sidebar">
-	<h2>Category</h2>
-	<div class="panel-group category-products" id="accordian">
-		<!--category-productsr-->
+﻿@* _Sidebar.cshtml *@
+<div style="font-size: 15px;" class="sidebar-dark">
+    <h2>
+        <svg width="14" height="14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">
+            <path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\" />
+        </svg>
+        Category
+    </h2>
+    <div class="panel-group category-products" style="border: 0px;" id="accordian">
+        <vc:categories></vc:categories>
+    </div>
 
-		<vc:categories></vc:categories>
-
-	</div><!--/category-products-->
-
-	<h2>Brands</h2>
-	<div class="panel-group brands_products" id="accordian">
-		<!--brands_products-->
+    <h2>
+        <svg width="14" height="14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">
+            <path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\" />
+        </svg>
+        Brands
+    </h2>
+    <div class=\"panel-group brands_products\" style=\"border: 0px;\" id=\"accordian\">
         <vc:brands></vc:brands>
-	</div><!--/brands_products-->
-
+    </div>
 </div>

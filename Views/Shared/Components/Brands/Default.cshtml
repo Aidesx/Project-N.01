@@ -1,11 +1,23 @@
 ﻿@using Project_385.Models
 @model IEnumerable<BrandModels>
 
-@foreach (var item in Model)
+@if (Model != null && Model.Any())
 {
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title"><a asp-action="Index" asp-controller="Brand" asp-route-Slug="@item.Slug">@item.Name</a></h4>
-        </div>
-    </div>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+        @foreach (var item in Model.Take(5))
+        {
+            <li style="border-bottom: 1px solid #1a1f35;">
+                <a asp-action="Index" asp-controller="Brand" asp-route-Slug="@item.Slug"
+                   style="display: block; padding: 0.6rem 1rem; color: #cbd5e1; text-decoration: none; font-size: 14px; transition: all 0.2s;"
+                   onmouseover="this.style.background='#1e293b'; this.style.color='#60a5fa';"
+                   onmouseout="this.style.background='transparent'; this.style.color='#cbd5e1';">
+                    @item.Name
+                </a>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p style="color: #4b5e7a; padding: 1rem; text-align: center; font-size: 14px;">Chưa có thương hiệu nào.</p>
 }
