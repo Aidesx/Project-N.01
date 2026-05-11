@@ -3,163 +3,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="">
-	<meta name="author" content="">
-	<title>@ViewData["title"] - Admin</title>
-	<link href="~/css/bootstrap.min.css" rel="stylesheet">
-	<link href="~/css/font-awesome.min.css" rel="stylesheet">
-	<link href="~/css/prettyPhoto.css" rel="stylesheet">
-	<link href="~/css/price-range.css" rel="stylesheet">
-	<link href="~/css/animate.css" rel="stylesheet">
-	<link href="~/css/main.css" rel="stylesheet">
-	<link href="~/css/responsive.css" rel="stylesheet">
-	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.24/dist/sweetalert2.min.css" rel="stylesheet">
-	<link href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@(ViewData["Title"] ?? ViewData["title"]) - Admin</title>
 
-	<!--[if lt IE 9]>
-	<script src="js/html5shiv.js"></script>
-	<script src="js/respond.min.js"></script>
-	<![endif]-->
-	<link rel="shortcut icon" href="images/ico/favicon.ico">
-	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-	<link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-</head><!--/head-->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/prettyPhoto.css" rel="stylesheet">
+    <link href="~/css/price-range.css" rel="stylesheet">
+    <link href="~/css/animate.css" rel="stylesheet">
+    <link href="~/css/main.css" rel="stylesheet">
+    <link href="~/css/responsive.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.24/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <style>
+
+        :root {
+            --admin-bg: #0b0f17;
+            --admin-sidebar: #0d1117;
+            --admin-card: #1e293b;
+            --admin-border: #1a1f35;
+            --admin-primary: #3b82f6;
+            --admin-accent: #60a5fa;
+            --admin-text: #e2e8f0;
+            --admin-muted: #4b5e7a;
+        }
+
+        body {
+            background: var(--admin-bg);
+            color: var(--admin-text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+        }
+
+        /* Navbar */
+        .admin-navbar {
+            background: var(--admin-card);
+            border-bottom: 1px solid var(--admin-border);
+            padding: 0.75rem 0;
+            position: sticky;
+            font-size: 16px;
+            top: 0;
+            z-index: 1000;
+        }
+
+            .admin-navbar .container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .admin-navbar .logo img {
+                height: 35px;
+                filter: drop-shadow(0 0 6px rgba(59,130,246,0.5));
+            }
+
+        .admin-nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
+
+            .admin-nav-menu li a {
+                color: var(--admin-muted);
+                text-decoration: none;
+                font-size: 16px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                transition: color 0.2s;
+            }
+
+                .admin-nav-menu li a:hover,
+                .admin-nav-menu li a.active {
+                    color: var(--admin-accent);
+                }
+
+        /* Content */
+        .admin-content {
+            padding: 2rem 0;
+            min-height: 80vh;
+        }
+
+        /* Cards */
+        .admin-card {
+            background: var(--admin-card);
+            border: 1px solid var(--admin-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+            .admin-card h4 {
+                color: var(--admin-accent);
+                margin-bottom: 1rem;
+                font-size: 16px;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+        /* Table override */
+        table.dataTable {
+            border-collapse: collapse;
+            width: 100%;
+            background: var(--admin-card);
+            color: var(--admin-text);
+            border: 2px solid var(--admin-border);
+            border-radius: 0.95rem;
+            overflow: hidden;
+        }
+
+            table.dataTable thead th {
+                background: #1e293b;
+                color: #94a3b8;
+                border-bottom: 2px solid var(--admin-primary);
+            }
+
+            table.dataTable tbody tr {
+                background: transparent;
+            }
+
+                table.dataTable tbody tr:hover {
+                    background: #1e293b;
+                }
+
+            table.dataTable td {
+                color: #60a5fa;
+                border-color: var(--admin-border);
+            }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            color: #e2e8f0 !important;
+            font-size: 14px !important;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button {
+                color: var(--admin-accent) !important;
+                background: #1e293b;
+                border: 1px solid var(--admin-border);
+                font-size: 14px !important;
+                padding: 0.4rem 0.8rem !important;
+            }
+
+                .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                    background: var(--admin-primary);
+                    color: white !important;
+                    border-color: var(--admin-primary);
+                }
+
+        /* Buttons */
+        .btn-admin-primary {
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            border: none;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 0.4rem;
+            transition: filter 0.2s;
+        }
+
+            .btn-admin-primary:hover {
+                filter: brightness(1.1);
+                color: white;
+            }
+
+        /* Footer */
+        .admin-footer {
+            background: var(--admin-card);
+            border-top: 1px solid var(--admin-border);
+            padding: 1.5rem 0;
+            text-align: center;
+            color: var(--admin-muted);
+            font-size: 0.8rem;
+        }
+        /* CKEditor border */ 
+        .cke {
+            border: 1px solid #1e3a5f !important;
+            border-radius: 0.25rem !important;
+        }
+    </style>
+</head>
 <body>
-<header>
-		<div class="header_top">
-			<!--header_top-->
-			<div class="container">
-				<div class="row">
+    <nav class="admin-navbar">
+        <div class="container">
+            <div class="logo">
+                <a asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/home/logo.png" alt="The Awesome Store" />
+                </a>
+            </div>
+            <ul class="admin-nav-menu">
+                <li><a asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-home"></i> Home</a></li>
 
-				</div>
-			</div>
-		</div><!--/header_top-->
-		<div class="header-middle">
-			<!--header-middle-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="logo pull-left">
-							<a asp-controller="Home" asp-action="Index"><img src="images/home/logo.png" alt="" /></a>
-						</div>
-						<div class="btn-group pull-right">
+                @if (await _permissionService.HasPermissionAsync(User, "ManageProduct"))
+                {
+                    <li><a asp-controller="Product" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" ? "active" : "")"><i class="fa fa-cubes"></i> Sản phẩm</a></li>
+                }
+                @if (await _permissionService.HasPermissionAsync(User, "ManageOrder"))
+                {
+                    <li><a asp-controller="Order" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Order" ? "active" : "")"><i class="fa fa-shopping-cart"></i> Đơn hàng</a></li>
+                }
+                @if (await _permissionService.HasPermissionAsync(User, "ManageBrand"))
+                {
+                    <li><a asp-controller="Brand" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Brand" ? "active" : "")"><i class="fa fa-tag"></i> Thương hiệu</a></li>
+                }
+                @if (await _permissionService.HasPermissionAsync(User, "ManageCategory"))
+                {
+                    <li><a asp-controller="Category" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Category" ? "active" : "")"><i class="fa fa-folder"></i> Danh mục</a></li>
+                }
+                @if (await _permissionService.HasPermissionAsync(User, "ManageUser"))
+                {
+                    <li><a asp-controller="Role" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Role" ? "active" : "")"><i class="fa fa-users"></i> Vai trò</a></li>
+                    <li><a asp-controller="User" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "User" ? "active" : "")"><i class="fa fa-user"></i> Người dùng</a></li>
+                }
+            </ul>
+        </div>
+    </nav>
 
-						</div>
-					</div>
-					</div>
-				</div>
-			</div><!--/header-middle-->
-		<div class="header-bottom">
-			<!--header-bottom-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-9">
-						<div class="navbar-header">
-							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-								<span class="sr-only">Toggle navigation</span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-							</button>
-						</div>
-						<ul class="nav navbar-nav collapse navbar-collapse">
-							<li><a asp-area="" asp-controller="Home" asp-action="Index" class="active">Home</a></li>
-							@if (await _permissionService.HasPermissionAsync(User, "ManageProduct"))
-							{
-								<li><a asp-controller="Product" asp-action="Index" class="active">Quản lý sản phẩm</a></li>
-							}
-							@if (await _permissionService.HasPermissionAsync(User, "ManageOrder"))
-							{
-								<li><a asp-controller="Order" asp-action="Index" class="active">Quản lý đơn hàng</a></li>
-							}
+    <section class="admin-content">
+        <div class="container">
+            <div class="row">
+                @RenderBody()
+            </div>
+        </div>
+    </section>
 
-							@if (await _permissionService.HasPermissionAsync(User, "ManageBrand"))
-							{
-								<li><a asp-controller="Brand" asp-action="Index" class="active">Quản lý thương hiệu</a></li>
-							}
-							@if (await _permissionService.HasPermissionAsync(User, "ManageCategory"))
-							{
-								<li><a asp-controller="Category" asp-action="Index" class="active">Quản lý danh mục</a></li>
-							}
-							@if (await _permissionService.HasPermissionAsync(User, "ManageUser"))
-							{
-								<li><a asp-controller="Role" asp-action="Index" class="active">Quản lý vai trò</a></li>
-							}
-							@if (await _permissionService.HasPermissionAsync(User, "ManageUser"))
-							{
-								<li><a asp-controller="User" asp-action="Index" class="active">Quản lý người dùng</a></li>
-							}
-						</ul>
-						</div>
-					</div>
-					<div class="col-sm-3">
-						<div class="search_box pull-right">
-							<input type="text" placeholder="Search" />
-						</div>
-					</div>
-				</div>
-			</div>
-		</div><!--/header-bottom-->
+    <footer class="admin-footer">
+        <div class="container">
+            &copy; @DateTime.Now.Year - The Awesome Store Admin Panel
+        </div>
+    </footer>
 
-	</header>
-	<section>
-		<div class="container">
-			<div class="row">
-                
-				@RenderBody()
-			</div>
-		</div>
-	</section>
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/jquery.scrollUp.min.js"></script>
+    <script src="~/js/price-range.js"></script>
+    <script src="~/js/jquery.prettyPhoto.js"></script>
+    <script src="~/js/main.js"></script>
+    <script src="~/backend/js/site.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.24/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
 
-	<footer id="footer">
-		<!--Footer-->
+    <script>
+        $(function () {
+            var successMessage = '@Html.Raw(TempData["Success"])';
+            if (successMessage != '') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: successMessage,
+                    confirmButtonColor: '#3085d6'
+                });
+            }
 
-	</footer><!--/Footer-->
+            var errorMessage = '@Html.Raw(TempData["Error"])';
+            if (errorMessage != '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thất bại!',
+                    text: errorMessage,
+                    confirmButtonColor: '#d33'
+                });
+            }
+        });
 
+        $(document).ready(function() {
+            if ($('#my_table').length) {
 
+                function forceStyle() {
+                    $('.dataTables_paginate .paginate_button').each(function() {
+                        $(this).attr('style', 'font-size:14px !important; color:#f1f5f9 !important; padding:0.4rem 0.8rem !important;');
+                    });
+                    $('.dataTables_info').attr('style', 'color:#f1f5f9 !important; font-size:14px !important;');
+                    $('.dataTables_filter label, .dataTables_length label').attr('style', 'color:#f1f5f9 !important; font-size:14px !important;');
+                }
 
-	<script src="~/js/jquery.js"></script>
-	<script src="~/js/bootstrap.min.js"></script>
-	<script src="~/js/jquery.scrollUp.min.js"></script>
-	<script src="~/js/price-range.js"></script>
-	<script src="~/js/jquery.prettyPhoto.js"></script>
-	<script src="~/js/main.js"></script>
-	<script src="~/backend/js/site.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.24/dist/sweetalert2.all.min.js"></script>
-	<script src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
-	<script>
-		$(function () {
-		var successMessage = '@Html.Raw(TempData["Success"])';
-			if (successMessage != '') {
-				Swal.fire({
-					icon: 'success',
-					title: 'Thành công!',
-					text: successMessage,
-					confirmButtonColor: '#3085d6'
-				});
-			}
+                $('#my_table').DataTable({
+                    language: {
+                        search: "Tìm kiếm:",
+                        lengthMenu: "Hiển thị _MENU_ dòng",
+                        info: "Đang hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+                        paginate: {
+                            first: "Đầu",
+                            last: "Cuối",
+                            next: "Tiếp",
+                            previous: "Trước"
+                        }
+                    },
+                    initComplete: function() {
+                        forceStyle();
+                    },
+                    drawCallback: function() {
+                        forceStyle();
+                    }
+                });
 
-		var errorMessage = '@Html.Raw(TempData["Error"])';
-			if (errorMessage != '') {
-				Swal.fire({
-					icon: 'error',
-					title: 'Thất bại!',
-					text: errorMessage,
-					confirmButtonColor: '#d33'
-				});
-			}
-		});
-	</script>
-	<script>
-		$(document).ready(function() {
-			let table = $('#my_table').DataTable();
-		});
-	</script>
+            }
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

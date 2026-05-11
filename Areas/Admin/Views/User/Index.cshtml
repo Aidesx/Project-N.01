@@ -1,44 +1,89 @@
 ﻿@model IEnumerable<Project_385.Models.ViewModels.UserWithRoleViewModel>
 @{
-    ViewData["title"] = "Danh sách User";
+    ViewData["Title"] = "Danh sách User";
 }
-<h3>Danh sách User</h3>
-<a asp-action="Create" class="btn btn-primary mb-3">Tạo User mới</a>
-<table class="table table-bordered" id="my_table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>User Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Id</td>
-                <td>@item.UserName</td>
-                <td>@item.Email</td>
-                <td>
-                    @if (item.Role == "Admin")
-                    {
-                        <span class="text text-danger">@item.Role</span>
+
+<div class="admin-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h4 style="margin: 0;"><i class="fa fa-user"></i> @ViewData["Title"]</h4>
+        <a asp-action="Create" class="btn-admin-primary">
+            <i class="fa fa-plus"></i> Tạo User mới
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table" id="my_table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.UserName</td>
+                        <td>@item.Email</td>
+                        <td>
+                            @if (item.Role == "Admin")
+                            {
+                                <span class="badge" style="background: #7f1d1d; color: #fecaca;">@item.Role</span>
+                            }
+                            else
+                            {
+                                <span class="badge" style="background: #065f46; color: #a7f3d0;">@item.Role</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn-admin-primary btn-sm"
+                                   style="padding:0.25rem 0.75rem; font-size:15px;">
+                                    <i class="fa fa-edit"></i> Sửa
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm confirmDeletion"
+                                            style="background:#7f1d1d; color:#fecaca; border:1px solid #b91c1c; padding:0.25rem 0.75rem; font-size:15px;">
+                                        <i class="fa fa-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.confirmDeletion').click(function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Bạn chắc chắn?',
+                    text: 'User sẽ bị xóa vĩnh viễn!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    background: '#0d1117',
+                    color: '#e2e8f0',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
                     }
-                    else
-                    {
-                        <span class="text text-success">@item.Role</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Chỉnh sửa</a>
-                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm confirmDeletion">Xóa</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                });
+            });
+        });
+    </script>
+}

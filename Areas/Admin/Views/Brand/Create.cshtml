@@ -1,34 +1,46 @@
 ﻿@model BrandModels
 @{
-    ViewData["title"] = "Tạo nhãn hiệu mới";
+    ViewData["Title"] = "Tạo thương hiệu mới";
 }
-<h3>Create Brand</h3>
-<div class="col-md-9">
+
+<div class="admin-card" style="max-width: 800px; margin: 0 auto;">
+    <h4 style="margin-bottom: 1.5rem;">
+        <i class="fa fa-plus-circle"></i> @ViewData["Title"]
+    </h4>
+
     <form asp-action="Create" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 1rem;"></div>
+
         <div class="form-group">
-            <label>Name</label>
-            <input asp-for="Name" class="form-control" />
+            <label style="color: #cbd5e1; font-weight: 500;">Tên thương hiệu</label>
+            <input asp-for="Name" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
+
         <div class="form-group">
-            <label>Description</label>
-            <textarea asp-for="Description" class="form-control"></textarea>
+            <label style="color: #cbd5e1; font-weight: 500;">Mô tả</label>
+            <textarea asp-for="Description" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
+
         <div class="form-group">
-            <label>Status</label>
-            <select asp-for="Status" class="form-control">
-                <option value="1">Hiện</option>
+            <label style="color: #cbd5e1; font-weight: 500;">Trạng thái</label>
+            <select asp-for="Status" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;">
+                <option value="1">Hiển thị</option>
                 <option value="0">Ẩn</option>
             </select>
             <span asp-validation-for="Status" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <button class="btn btn-primary">Tạo mới</button>
+
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <button type="submit" class="btn-admin-primary">
+                <i class="fa fa-check"></i> Tạo mới
+            </button>
+            <a asp-action="Index" style="color: #60a5fa; text-decoration: none;">
+                <i class="fa fa-arrow-left"></i> Quay lại danh sách
+            </a>
         </div>
     </form>
-    <a asp-action="Index">Quay lại danh sách nhãn hiệu</a>
 </div>
 
 @section Scripts {
@@ -36,5 +48,26 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script src="https://cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
-    <script>CKEDITOR.replace('Description');</script>
+    <script>
+        CKEDITOR.replace('Description', {
+            versionCheck:false,
+            skin: 'moono-lisa',
+            height: 300,
+                on: {
+            instanceReady: function(e) {
+                e.editor.container.setStyle('border', '1px solid #1e3a5f');
+                e.editor.container.setStyle('border-radius', '0.25rem');
+            }
+        },
+            toolbar: [
+                { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+                { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
+                { name: 'insert', items: ['Image', 'Table', 'HorizontalRule'] },
+                { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
+                { name: 'colors', items: ['TextColor', 'BGColor'] }
+            ],
+            removeButtons: 'Subscript,Superscript',
+            format_tags: 'p;h1;h2;h3;pre'
+        });
+    </script>
 }

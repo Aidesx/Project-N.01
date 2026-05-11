@@ -3,57 +3,72 @@
     ViewData["Title"] = "Danh sách Role";
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
-<h3>Danh sách Role</h3>
-<a asp-action="Create" class="btn btn-primary mb-3">Tạo Role mới</a>
-<table class="table" id="my_table">
-    <thead>
-        <tr>
-            <th>Role Name</th>
-            <th>Product</th>
-            <th>Order</th>
-            <th>User</th>
-            <th>Brand</th>
-            <th>Category</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.RoleName</td>
-                <td>@(item.Permission?.CanManageProduct)</td>
-                <td>@(item.Permission?.CanManageOrder)</td>
-                <td>@(item.Permission?.CanManageUser)</td>
-                <td>@(item.Permission?.CanManageBrand)</td>
-                <td>@(item.Permission?.CanManageCategory)</td>
-                <td>
-                    @if (item.Permission?.Status == 1)
-                    {
-                        <span class="text text-success">Hoạt động</span>
-                    }
-                    else
-                    {
-                        <span class="text text-danger">Tắt</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.RoleId" class="btn btn-warning btn-sm">Chỉnh sửa</a>
-                    <form asp-action="Delete" asp-route-id="@item.RoleId" method="post" style="display:inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm confirmDeletion">Xóa</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
 
-@if (pager != null && pager.TotalPage > 1)
-{
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-end">
+<div class="admin-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h4 style="margin: 0;"><i class="fa fa-users"></i> @ViewData["Title"]</h4>
+        <a asp-controller="Role" asp-action="Create" class="btn-admin-primary">
+            <i class="fa fa-plus"></i> Tạo Role mới
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table" id="my_table">
+            <thead>
+                <tr>
+                    <th>Tên Role</th>
+                    <th>Sản phẩm</th>
+                    <th>Đơn hàng</th>
+                    <th>Người dùng</th>
+                    <th>Thương hiệu</th>
+                    <th>Danh mục</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.RoleName</td>
+                        <td>@(item.Permission?.CanManageProduct == 1 ? "✅" : "❌")</td>
+                        <td>@(item.Permission?.CanManageOrder == 1 ? "✅" : "❌")</td>
+                        <td>@(item.Permission?.CanManageUser == 1 ? "✅" : "❌")</td>
+                        <td>@(item.Permission?.CanManageBrand == 1 ? "✅" : "❌")</td>
+                        <td>@(item.Permission?.CanManageCategory == 1 ? "✅" : "❌")</td>
+                        <td>
+                            @if (item.Permission?.Status == 1)
+                            {
+                                <span class="badge" style="background: #065f46; color: #a7f3d0;">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge" style="background: #7f1d1d; color: #fecaca;">Tắt</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a asp-controller="Role" asp-action="Edit" asp-route-id="@item.RoleId" class="btn-admin-primary btn-sm" style="padding:0.25rem 0.75rem; font-size:15px;">
+                                    <i class="fa fa-edit"></i> Sửa
+                                </a>
+                                <form asp-controller="Role" asp-action="Delete" asp-route-id="@item.RoleId" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm confirmDeletion"
+                                            style="background:#7f1d1d; color:#fecaca; border:1px solid #b91c1c; padding:0.25rem 0.75rem; font-size:15px;">
+                                        <i class="fa fa-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (pager != null && pager.TotalPage > 1)
+    {
+        <ul class="pagination justify-content-end" style="margin-top: 1rem;">
             @if (pager.CurrentPage > 1)
             {
                 <li class="page-item">
@@ -63,14 +78,12 @@
                     <a class="page-link" asp-controller="Role" asp-action="Index" asp-route-pg="@(pager.CurrentPage - 1)">Trước</a>
                 </li>
             }
-
             @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
             {
                 <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
                     <a class="page-link" asp-controller="Role" asp-action="Index" asp-route-pg="@pge">@pge</a>
                 </li>
             }
-
             @if (pager.CurrentPage < pager.TotalPage)
             {
                 <li class="page-item">
@@ -81,6 +94,32 @@
                 </li>
             }
         </ul>
-    </nav>
-}
+    }
+</div>
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.confirmDeletion').click(function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Bạn chắc chắn?',
+                    text: 'Role sẽ bị xóa vĩnh viễn!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    background: '#0d1117',
+                    color: '#e2e8f0',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

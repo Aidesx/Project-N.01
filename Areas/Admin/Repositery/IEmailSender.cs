@@ -1,4 +1,4 @@
-﻿namespace Project_385.Areas.Admin.Repositery
+﻿    namespace Project_385.Areas.Admin.Repositery
 {
     public interface IEmailSender
     {

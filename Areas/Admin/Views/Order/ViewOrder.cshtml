@@ -2,28 +2,38 @@
 @{
     ViewData["Title"] = "Chi tiết đơn hàng";
 }
-<h3>Chi tiết đơn hàng</h3>
-<a asp-action="Index" class="btn btn-default mb-3">Quay lại</a>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Đơn giá</th>
-            <th>Thành tiền</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Id</td>
-                <td>@item.ProductName</td>
-                <td>@item.Quantity</td>
-                <td>@item.Price.ToString("0.00")</td>
-                <td>@((item.Price * item.Quantity).ToString("0.00"))</td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<div class="admin-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h4 style="margin: 0;"><i class="fa fa-list-alt"></i> @ViewData["Title"]</h4>
+        <a asp-action="Index" class="btn-admin-primary" style="padding:0.4rem 1rem;">
+            <i class="fa fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table" id="my_table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price.ToString("#,##0 VND")</td>
+                        <td>@((item.Price * item.Quantity).ToString("#,##0 VND"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

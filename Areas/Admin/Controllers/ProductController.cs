@@ -85,7 +85,6 @@ namespace Project_385.Areas.Admin.Controllers
                         Directory.CreateDirectory(uploadDir);
                     }
 
-                    // Dùng Path.GetFileName() để tránh path traversal
                     string imageName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(product.ImageUpLoad.FileName);
                     string filePath = Path.Combine(uploadDir, imageName);
                     using (FileStream fs = new FileStream(filePath, FileMode.Create))

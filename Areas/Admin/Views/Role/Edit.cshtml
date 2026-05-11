@@ -2,57 +2,84 @@
 @{
     ViewData["Title"] = "Chỉnh sửa Role";
 }
-<h3>Chỉnh sửa Role</h3>
-<a asp-action="Index" class="btn btn-default mb-3">Quay lại</a>
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group mb-3">
-        <label>Tên Role</label>
-        <input asp-for="RoleName" class="form-control" />
-    </div>
-    <div class="form-group mb-3">
-        <label>Quản lý Sản phẩm</label>
-        <select asp-for="CanManageProduct" class="form-control">
-            <option value="1">Cho phép</option>
-            <option value="0">Không cho phép</option>
-        </select>
-    </div>
-    <div class="form-group mb-3">
-        <label>Quản lý Đơn hàng</label>
-        <select asp-for="CanManageOrder" class="form-control">
-            <option value="1">Cho phép</option>
-            <option value="0">Không cho phép</option>
-        </select>
-    </div>
-    <div class="form-group mb-3">
-        <label>Quản lý User</label>
-        <select asp-for="CanManageUser" class="form-control">
-            <option value="1">Cho phép</option>
-            <option value="0">Không cho phép</option>
-        </select>
-    </div>
-    <div class="form-group mb-3">
-        <label>Quản lý Brand</label>
-        <select asp-for="CanManageBrand" class="form-control">
-            <option value="1">Cho phép</option>
-            <option value="0">Không cho phép</option>
-        </select>
-    </div>
-    <div class="form-group mb-3">
-        <label>Quản lý Category</label>
-        <select asp-for="CanManageCategory" class="form-control">
-            <option value="1">Cho phép</option>
-            <option value="0">Không cho phép</option>
-        </select>
-    </div>
-    <div class="form-group mb-3">
-        <label>Trạng thái</label>
-        <select asp-for="Status" class="form-control">
-            <option value="1">Hoạt động</option>
-            <option value="0">Tắt</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Cập nhật</button>
-</form>
+
+<div class="admin-card" style="max-width: 800px; margin: 0 auto;">
+    <h4 style="margin-bottom: 1.5rem;">
+        <i class="fa fa-edit"></i> @ViewData["Title"]
+    </h4>
+
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 1rem;"></div>
+
+        <div class="form-group">
+            <label style="color: #cbd5e1; font-weight: 500;">Tên Role</label>
+            <input asp-for="RoleName" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;" />
+            <span asp-validation-for="RoleName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label style="color: #cbd5e1; font-weight: 500;">Quản lý Sản phẩm</label>
+            <select asp-for="CanManageProduct" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;">
+                <option value="1">Cho phép</option>
+                <option value="0">Không cho phép</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label style="color: #cbd5e1; font-weight: 500;">Quản lý Đơn hàng</label>
+            <select asp-for="CanManageOrder" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;">
+                <option value="1">Cho phép</option>
+                <option value="0">Không cho phép</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label style="color: #cbd5e1; font-weight: 500;">Quản lý User</label>
+            <select asp-for="CanManageUser" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;">
+                <option value="1">Cho phép</option>
+                <option value="0">Không cho phép</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label style="color: #cbd5e1; font-weight: 500;">Quản lý Brand</label>
+            <select asp-for="CanManageBrand" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;">
+                <option value="1">Cho phép</option>
+                <option value="0">Không cho phép</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label style="color: #cbd5e1; font-weight: 500;">Quản lý Category</label>
+            <select asp-for="CanManageCategory" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;">
+                <option value="1">Cho phép</option>
+                <option value="0">Không cho phép</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label style="color: #cbd5e1; font-weight: 500;">Trạng thái</label>
+            <select asp-for="Status" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;">
+                <option value="1">Hoạt động</option>
+                <option value="0">Tắt</option>
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <button type="submit" class="btn-admin-primary">
+                <i class="fa fa-check"></i> Cập nhật
+            </button>
+            <a asp-action="Index" style="color: #60a5fa; text-decoration: none;">
+                <i class="fa fa-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

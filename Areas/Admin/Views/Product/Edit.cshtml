@@ -1,54 +1,76 @@
 ﻿@model ProductModels
 @{
-    ViewData["title"] = "Chỉnh sửa sản phẩm";
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
 }
-<h3>Chỉnh sửa sản phẩm</h3>
-<div class="col-md-9">
-    <form asp-action="Edit" asp-controller="Product" method="post" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+<div class="admin-card" style="max-width: 800px; margin: 0 auto;">
+    <h4 style="margin-bottom: 1.5rem;">
+        <i class="fa fa-edit"></i> @ViewData["Title"]
+    </h4>
+
+    <form asp-action="Edit" asp-controller="Product" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 1rem;"></div>
         <input type="hidden" asp-for="Id" />
 
         <div class="form-group">
-            <label>Name</label>
-            <input asp-for="Name" class="form-control" />
+            <label style="color: #cbd5e1; font-weight: 500;">Tên sản phẩm</label>
+            <input asp-for="Name" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
+
         <div class="form-group">
-            <label>Price</label>
-            <input asp-for="Price" class="form-control" />
+            <label style="color: #cbd5e1; font-weight: 500;">Giá</label>
+            <input asp-for="Price" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;" />
             <span asp-validation-for="Price" class="text-danger"></span>
         </div>
+
         <div class="form-group">
-            <label>Description</label>
-            <textarea asp-for="Description" class="form-control"></textarea>
+            <label style="color: #cbd5e1; font-weight: 500;">Mô tả</label>
+            <textarea asp-for="Description" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
+
         <div class="form-group">
-            <label>Category</label>
-            <select asp-for="CategoryID" class="form-control" asp-items="ViewBag.Categories">
-                <option>Chọn danh mục</option>
+            <label style="color: #cbd5e1; font-weight: 500;">Danh mục</label>
+            <select asp-for="CategoryID" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;" asp-items="ViewBag.Categories">
+                <option value="">Chọn danh mục</option>
             </select>
             <span asp-validation-for="CategoryID" class="text-danger"></span>
         </div>
+
         <div class="form-group">
-            <label>Brand</label>
-            <select asp-for="BrandID" class="form-control" asp-items="ViewBag.Brands">
-                <option>Chọn sản phẩm</option>
+            <label style="color: #cbd5e1; font-weight: 500;">Thương hiệu</label>
+            <select asp-for="BrandID" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;" asp-items="ViewBag.Brands">
+                <option value="">Chọn thương hiệu</option>
             </select>
             <span asp-validation-for="BrandID" class="text-danger"></span>
         </div>
+
         <div class="form-group">
-            <label>Image</label>
-            <input asp-for="ImageUpLoad" class="form-control" />
+            <label style="color: #cbd5e1; font-weight: 500;">Hình ảnh</label>
+            <input asp-for="ImageUpLoad" class="form-control" style="background: #111827; border: 1px solid #1e3a5f; color: #f0f4ff;" />
             <span asp-validation-for="ImageUpLoad" class="text-danger"></span>
-            <img src="~/images/@Model.Image" width="120" />
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <div style="margin-top: 10px;">
+                    <p style="color: #94a3b8; font-size: 0.8rem;">Ảnh hiện tại:</p>
+                    <img src="~/images/@Model.Image" style="max-width: 150px; border-radius: 0.5rem; border: 1px solid #1a1f35;" />
+                </div>
+            }
+            <div class="form-group">
+                <img id="imgpreview" src="" alt="Ảnh xem trước" style="display:none; margin-top: 10px; max-width: 200px; border-radius: 0.5rem;" />
+            </div>
         </div>
-        <div class="form-group">
-            <button class="btn btn-primary">Cập nhật</button>
+
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <button type="submit" class="btn-admin-primary">
+                <i class="fa fa-check"></i> Cập nhật
+            </button>
+            <a asp-action="Index" style="color: #60a5fa; text-decoration: none;">
+                <i class="fa fa-arrow-left"></i> Quay lại danh sách
+            </a>
         </div>
     </form>
-    <a asp-action="Index">Quay lại danh mục sản phẩm</a>
 </div>
 
 @section Scripts {
@@ -57,6 +79,39 @@
     }
     <script src="https://cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
     <script>
-        CKEDITOR.replace('Description');
+        CKEDITOR.replace('Description', {
+            versionCheck:false,
+            skin: 'moono-lisa',
+            height: 300,
+                on: {
+            instanceReady: function(e) {
+                e.editor.container.setStyle('border', '1px solid #1e3a5f');
+                e.editor.container.setStyle('border-radius', '0.25rem');
+            }
+        },
+            toolbar: [
+                { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike'] },
+                { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'] },
+                { name: 'insert', items: ['Image', 'Table', 'HorizontalRule'] },
+                { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
+                { name: 'colors', items: ['TextColor', 'BGColor'] }
+            ],
+            removeButtons: 'Subscript,Superscript',
+            format_tags: 'p;h1;h2;h3;pre'
+        });
+    </script>
+    <script>
+        $("#ImageUpLoad").change(function () {
+            readURL(this);
+        });
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imgpreview').attr('src', e.target.result).show();
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
     </script>
 }

@@ -1,54 +1,67 @@
 ﻿@model IEnumerable<ProductModels>
 @{
-    ViewData["title"] = "Danh sách sản phẩm";
+    ViewData["Title"] = "Danh sách sản phẩm";
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
 
-<h3>Danh sách sản phẩm</h3>
-<a asp-action="Create" asp-controller="Product" class="btn btn-primary mb-3">Tạo sản phẩm mới</a>
-<table class="table" id="my_table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Product Name</th>
-            <th scope="col">Product Description</th>
-            <th scope="col">Product Price</th>
-            <th scope="col">Product Image</th>
-            <th scope="col">Product Slug</th>
-            <th scope="col">Product Category</th>
-            <th scope="col">Product Brand</th>
-            <th scope="col">Product Manage</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <th scope="row">@item.Id</th>
-                <td>@item.Name</td>
-                <td>@Html.Raw(item.Description)</td>
-                <td>@item.Price.ToString("#,##0 VND")</td>
-                <td><img src="~/images/@item.Image" width="120" /></td>
-                <td>@item.Slug</td>
-                <td>@item.Category?.Name</td>
-                <td>@item.Brand?.Name</td>
-                <td>
-                    <a asp-action="Edit" asp-controller="Product" asp-route-Id="@item.Id" class="btn btn-warning btn-sm">Chỉnh sửa</a>
-                    <form asp-action="Delete" asp-controller="Product" asp-route-Id="@item.Id" method="post" style="display:inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm confirmDeletion">Xoá</button>
-                    </form>
-                </td>
-            </tr>
-        }
+<div class="admin-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h4 style="margin: 0;"><i class="fa fa-cubes"></i> @ViewData["Title"]</h4>
+        <a asp-controller="Product" asp-action="Create" class="btn-admin-primary">
+            <i class="fa fa-plus"></i> Tạo sản phẩm mới
+        </a>
+    </div>
 
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table" id="my_table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Mô tả</th>
+                    <th>Giá</th>
+                    <th>Ảnh</th>
+                    <th>Slug</th>
+                    <th>Danh mục</th>
+                    <th>Thương hiệu</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@Html.Raw(item.Description)</td>
+                        <td>@item.Price.ToString("#,##0 VND")</td>
+                        <td><img src="~/images/@item.Image" style="max-width: 80px; border-radius: 0.25rem;" /></td>
+                        <td>@item.Slug</td>
+                        <td>@item.Category?.Name</td>
+                        <td>@item.Brand?.Name</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a asp-controller="Product" asp-action="Edit" asp-route-Id="@item.Id" class="btn-admin-primary btn-sm" style="padding:0.25rem 0.75rem; font-size:14px;">
+                                     Sửa
+                                </a>
+                                <form asp-controller="Product" asp-action="Delete" asp-route-Id="@item.Id" method="post" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm confirmDeletion"
+                                            style="background:#7f1d1d; color:#fecaca; border: 1px solid #b91c1c; padding:0.25rem 0.75rem; font-size:14px;">
+                                         Xóa sản phẩm
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-@if (pager != null && pager.TotalPage > 1)
-{
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-end">
+    @if (pager != null && pager.TotalPage > 1)
+    {
+        <ul class="pagination justify-content-end" style="margin-top: 1rem;">
             @if (pager.CurrentPage > 1)
             {
                 <li class="page-item">
@@ -58,14 +71,12 @@
                     <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pg="@(pager.CurrentPage - 1)">Trước</a>
                 </li>
             }
-
             @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
             {
                 <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
                     <a class="page-link" asp-controller="Product" asp-action="Index" asp-route-pg="@pge">@pge</a>
                 </li>
             }
-
             @if (pager.CurrentPage < pager.TotalPage)
             {
                 <li class="page-item">
@@ -76,6 +87,32 @@
                 </li>
             }
         </ul>
-    </nav>
-}
+    }
+</div>
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.confirmDeletion').click(function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Bạn chắc chắn?',
+                    text: 'Sản phẩm sẽ bị xóa vĩnh viễn!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    background: '#0d1117',
+                    color: '#e2e8f0',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
