@@ -12,12 +12,12 @@ namespace Project_385.Areas.Admin.Repositery
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new System.Net.NetworkCredential("hphanngoc120@gmail.com", "ahlqxhlxjenbxdca") //khoa truy cap
+                Credentials = new System.Net.NetworkCredential("devilmandn1003@gmail.com", "bxaoqpvgiauusibj") //khoa truy cap
 
             };
 
             var mailMessage = new MailMessage(
-                from: "hphanngoc120@gmail.com",
+                from: "devilmandn1003@gmail.com",
                 to: email,
                 subject: subject,
                 body: message
