@@ -1,0 +1,178 @@
+@using System.Globalization
+@using Project_385.Models.ViewModels
+@model CartItemViewModel
+
+@{
+    var mode = (ViewData["OrderSummaryMode"] as string) ?? "Cart";
+    var mapSrc = string.Empty;
+}
+
+<div class="order-summary-shell">
+    <div class="order-summary-card">
+        <div class="order-summary-header">
+            <div>
+                <p class="order-summary-kicker">Thanh toán</p>
+                <h2>@(mode == "Checkout" ? "Xác nhận đơn hàng" : "Giỏ hàng của bạn")</h2>
+            </div>
+            <div class="order-summary-badge">
+                @Model.CartItems.Count sản phẩm
+            </div>
+        </div>
+
+        <div class="order-summary-body">
+            @if (Model.CartItems != null && Model.CartItems.Any())
+            {
+                @if (mode == "Checkout")
+                {
+                    mapSrc = $"https://www.google.com/maps?q={Model.StoreLatitude.ToString(CultureInfo.InvariantCulture)},{Model.StoreLongitude.ToString(CultureInfo.InvariantCulture)}&z=16&output=embed";
+
+                    <div class="store-map-panel">
+                        <div class="store-map-copy">
+                            <p class="delivery-location-label">Shop cố định</p>
+                            <h3>@Model.StoreAddress</h3>
+                            <p class="store-map-note">
+                                Bản đồ Google hiển thị vị trí shop cố định để tính phí di chuyển.
+                            </p>
+                        </div>
+                        <div class="store-map-frame">
+                            <iframe
+                                src="@mapSrc"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                title="Bản đồ vị trí shop">
+                            </iframe>
+                        </div>
+                    </div>
+
+                    <div class="delivery-location-panel">
+                        <div class="delivery-location-head">
+                            <div>
+                                <p class="delivery-location-label">Vị trí hiện tại</p>
+                                <h3>Đo khoảng cách giao hàng</h3>
+                            </div>
+                            <button type="button" class="btn-location-action" id="btn-current-location">
+                                <i class="fa fa-location-arrow"></i> Lấy vị trí hiện tại
+                            </button>
+                        </div>
+
+                        <p class="delivery-location-note" id="location-status">
+                            @Model.DeliveryMessage
+                        </p>
+
+                        <div class="delivery-location-meta">
+                            <span>
+                                Khoảng cách:
+                                <strong id="distance-preview">@((Model.DistanceKm.HasValue) ? $"{Model.DistanceKm.Value:0.00} km" : "--")</strong>
+                            </span>
+                            <span>
+                                Phí di chuyển:
+                                <strong id="delivery-fee-preview">Chưa tính</strong>
+                            </span>
+                        </div>
+                    </div>
+                }
+
+                <div class="order-lines">
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="order-line">
+                            <div class="order-line-thumb">
+                                <img src="~/images/@item.Image" alt="@item.ProductName" />
+                            </div>
+                            <div class="order-line-info">
+                                <h3>@item.ProductName</h3>
+                                <p>@item.Price.ToString("#,##0 VND")</p>
+                                @if (mode == "Cart")
+                                {
+                                    <div class="order-quantity-row">
+                                        <a asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId" class="qty-btn">−</a>
+                                        <span class="qty-value">@item.Quantity</span>
+                                        <a asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId" class="qty-btn">+</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p>@item.Quantity sản phẩm</p>
+                                }
+                            </div>
+                            <div class="order-line-actions">
+                                <div class="order-line-total">
+                                    @item.Total.ToString("#,##0 VND")
+                                </div>
+                                @if (mode == "Cart")
+                                {
+                                    <a asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId" class="remove-line-btn">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="order-totals">
+                    <div class="order-total-row">
+                        <span>Tạm tính</span>
+                        <strong id="subtotal-preview">@Model.SubTotal.ToString("#,##0 VND")</strong>
+                    </div>
+                    <div class="order-total-row">
+                        <span>Phí di chuyển</span>
+                        <strong id="delivery-preview">
+                            @(mode == "Checkout" ? "Chưa tính" : "Tính ở bước thanh toán")
+                        </strong>
+                    </div>
+                    <div class="order-total-row grand">
+                        <span>Tổng thanh toán</span>
+                        <strong id="grandtotal-preview">@Model.GrandTotal.ToString("#,##0 VND")</strong>
+                    </div>
+                </div>
+
+                <div class="order-actions">
+                    @if (mode == "Checkout")
+                    {
+                        <form method="post" asp-controller="CheckOut" asp-action="CheckOut" class="order-action-form" id="checkout-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="CurrentLatitude" id="CurrentLatitude" />
+                            <input type="hidden" asp-for="CurrentLongitude" id="CurrentLongitude" />
+                            <input type="hidden" id="StoreLatitude" value="@Model.StoreLatitude" />
+                            <input type="hidden" id="StoreLongitude" value="@Model.StoreLongitude" />
+                            <input type="hidden" id="DistanceKm" value="@((Model.DistanceKm.HasValue) ? Model.DistanceKm.Value.ToString("0.00") : "")" />
+                            <input type="hidden" id="DeliveryFee" value="@Model.DeliveryFee" />
+                            <button type="submit" class="btn-primary-order" id="checkout-submit-btn" disabled="disabled">
+                                <i class="fa fa-credit-card"></i> Xác nhận & Thanh toán qua MoMo
+                            </button>
+                        </form>
+                        <a asp-controller="Cart" asp-action="Index" class="btn-secondary-order">
+                            Quay lại giỏ hàng
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Cart" asp-action="Clear" class="btn-secondary-order">
+                            <i class="fa fa-trash-o"></i> Xóa hết
+                        </a>
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <a asp-controller="CheckOut" asp-action="Index" class="btn-primary-order">
+                                <i class="fa fa-lock"></i> Sang trang thanh toán
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="/Cart" class="btn-primary-order">
+                                <i class="fa fa-sign-in"></i> Đăng nhập để thanh toán
+                            </a>
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-order-state">
+                    <i class="fa fa-shopping-cart"></i>
+                    <p>Giỏ hàng của bạn đang trống.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,26 +1,44 @@
-﻿@using Project_385.Models.MoMo
+@using Project_385.Models.MoMo
 @model MomoExecuteResponseModel
 
 @{
     ViewData["Title"] = "Thanh toán thành công";
 }
 
-<section id="cart_items">
-    <div class="container" style="margin-top: 50px; margin-bottom: 50px; text-align: center;">
+<link rel="stylesheet" href="~/css/order_summary.css" />
 
-        <h2 style="color: #28a745;">🎉 Thanh toán thành công!</h2>
-        <p>Cảm ơn bạn đã đặt hàng tại Project 385.</p>
-
-        <div style="border: 1px solid #ddd; padding: 20px; max-width: 500px; margin: 0 auto; text-align: left; background-color: #f9f9f9;">
-            <p><strong>Mã đơn hàng (OrderId):</strong> @Model.OrderId</p>
-            <p><strong>Nội dung:</strong> @Model.OrderInfo</p>
-            <p><strong>Tổng tiền:</strong> @Convert.ToDouble(Model.Amount).ToString("#,##0") VND</p>
+<section class="order-summary-shell">
+    <div class="order-summary-card">
+        <div class="order-summary-header">
+            <div>
+                <p class="order-summary-kicker">Kết quả thanh toán</p>
+                <h2>Thanh toán thành công</h2>
+            </div>
+            <div class="order-summary-badge" style="background: rgba(16, 185, 129, 0.12); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.25);">
+                Hoàn tất
+            </div>
         </div>
 
-        <div style="margin-top: 30px;">
-            <a class="btn btn-primary" asp-controller="Account" asp-action="History">Xem lịch sử đơn hàng</a>
-            <a class="btn btn-default" asp-controller="Home" asp-action="Index">Về trang chủ</a>
-        </div>
+        <div class="order-summary-body">
+            <div class="delivery-location-panel" style="border-color: rgba(16, 185, 129, 0.25); background: linear-gradient(180deg, rgba(16, 185, 129, 0.10), rgba(15, 23, 42, 0.84));">
+                <p class="delivery-location-label">Thông tin đơn hàng</p>
+                <div class="delivery-location-meta" style="margin-top: 0.5rem;">
+                    <span>Mã đơn: <strong>@Model.OrderId</strong></span>
+                    <span>Tổng tiền: <strong>@Convert.ToDouble(Model.Amount).ToString("#,##0") VND</strong></span>
+                </div>
+                <p class="delivery-location-note" style="margin-bottom: 0;">
+                    @Model.OrderInfo
+                </p>
+            </div>
 
+            <div class="order-actions" style="justify-content: flex-start;">
+                <a class="btn-primary-order" asp-controller="Account" asp-action="History">
+                    Xem lịch sử đơn hàng
+                </a>
+                <a class="btn-secondary-order" asp-controller="Home" asp-action="Index">
+                    Về trang chủ
+                </a>
+            </div>
+        </div>
     </div>
 </section>

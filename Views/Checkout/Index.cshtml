@@ -1,17 +1,112 @@
-﻿@using Project_385.Models.ViewModels
+@using Project_385.Models.ViewModels
 @model CartItemViewModel
 
 @{
     ViewData["Title"] = "Xác nhận Thanh toán";
+    ViewData["OrderSummaryMode"] = "Checkout";
 }
 
-<div class="container" style="margin-top: 50px;">
-    <h2>Xác nhận Đơn hàng</h2>
-    <p>Tổng số tiền bạn cần thanh toán là: <strong>@Model.GrandTotal.ToString("#,##0") VND</strong></p>
+<link rel="stylesheet" href="~/css/order_summary.css" />
 
-    <form method="post" asp-controller="CheckOut" asp-action="CheckOut">
-        <button type="submit" class="btn btn-danger">Xác nhận & Thanh toán qua MoMo</button>
-        <a asp-controller="Cart" asp-action="Index" class="btn btn-default">Quay lại giỏ hàng</a>
-    </form>
-    
+<div class="col-sm-12">
+    @await Html.PartialAsync("_OrderSummary", Model, ViewData)
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const storeLat = parseFloat(document.getElementById('StoreLatitude')?.value || '0');
+            const storeLng = parseFloat(document.getElementById('StoreLongitude')?.value || '0');
+            const subtotalText = document.getElementById('subtotal-preview');
+            const deliveryText = document.getElementById('delivery-preview');
+            const grandTotalText = document.getElementById('grandtotal-preview');
+            const distanceText = document.getElementById('distance-preview');
+            const feeText = document.getElementById('delivery-fee-preview');
+            const statusText = document.getElementById('location-status');
+            const submitBtn = document.getElementById('checkout-submit-btn');
+            const latInput = document.getElementById('CurrentLatitude');
+            const lngInput = document.getElementById('CurrentLongitude');
+            const button = document.getElementById('btn-current-location');
+
+            if (!button) return;
+
+            const subtotal = parseMoney(subtotalText?.innerText || '0');
+
+            function parseMoney(value) {
+                const cleaned = (value || '').replace(/[^\d]/g, '');
+                return parseInt(cleaned || '0', 10);
+            }
+
+            function formatMoney(value) {
+                return new Intl.NumberFormat('vi-VN').format(Math.round(value)) + ' VND';
+            }
+
+            function toRad(value) {
+                return value * Math.PI / 180;
+            }
+
+            function haversine(lat1, lon1, lat2, lon2) {
+                const r = 6371;
+                const dLat = toRad(lat2 - lat1);
+                const dLon = toRad(lon2 - lon1);
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                return r * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            }
+
+            function getDiscountRate(distanceKm) {
+                if (distanceKm > 50) return 0.30;
+                if (distanceKm > 20) return 0.10;
+                return 0;
+            }
+
+            function updateState(message, distanceKm, deliveryFee, canSubmit) {
+                if (statusText) statusText.textContent = message;
+                if (distanceText) distanceText.textContent = typeof distanceKm === 'number' ? distanceKm.toFixed(2) + ' km' : '--';
+                if (feeText) feeText.textContent = typeof deliveryFee === 'number' ? formatMoney(deliveryFee) : '0 VND';
+                if (deliveryText) deliveryText.textContent = typeof deliveryFee === 'number' ? formatMoney(deliveryFee) : '0 VND';
+                if (grandTotalText) grandTotalText.textContent = formatMoney(subtotal + (deliveryFee || 0));
+                if (submitBtn) submitBtn.disabled = !canSubmit;
+            }
+
+            button.addEventListener('click', function () {
+                if (!navigator.geolocation) {
+                    updateState('Trình duyệt không hỗ trợ lấy vị trí hiện tại.', null, 0, false);
+                    return;
+                }
+
+                statusText.textContent = 'Đang lấy vị trí hiện tại...';
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const currentLat = position.coords.latitude;
+                    const currentLng = position.coords.longitude;
+                    const distanceKm = haversine(currentLat, currentLng, storeLat, storeLng);
+
+                    latInput.value = currentLat;
+                    lngInput.value = currentLng;
+
+                    if (distanceKm > 100) {
+                        updateState('Khoảng cách vượt quá 100km, không thể thanh toán.', distanceKm, 0, false);
+                        return;
+                    }
+
+                    const rawFee = Math.ceil(distanceKm) * 10000;
+                    const deliveryFee = rawFee * (1 - getDiscountRate(distanceKm));
+                    const roundedFee = Math.round(deliveryFee);
+                    const suffix = distanceKm > 50 ? 'giảm 30%' : (distanceKm > 20 ? 'giảm 10%' : 'không giảm');
+                    updateState(`Đã xác định vị trí hiện tại, ${suffix}.`, distanceKm, roundedFee, true);
+                }, function (error) {
+                    let message = 'Không thể lấy vị trí hiện tại.';
+                    if (error && error.code === error.PERMISSION_DENIED) {
+                        message = 'Bạn đã từ chối cấp quyền vị trí.';
+                    }
+                    updateState(message, null, 0, false);
+                }, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
+            });
+        })();
+    </script>
+}

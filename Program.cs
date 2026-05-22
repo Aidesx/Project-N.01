@@ -16,7 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // checkouut
 builder.Services.Configure<MoMoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
+builder.Services.Configure<DeliverySettingsModel>(builder.Configuration.GetSection("DeliverySettings"));
 builder.Services.AddScoped<IMomoService, MoMoService>();
+builder.Services.AddScoped<CartPricingService>();
 
 // Connection DB
 builder.Services.AddDbContext<DataContext>(options =>

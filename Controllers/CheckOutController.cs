@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Project_385.Models;
 using Project_385.Models.ViewModels;
 using Project_385.Repositery;
+using Project_385.Services;
 using Project_385.Services.MoMo;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace Project_385.Controllers
 {
@@ -13,26 +12,25 @@ namespace Project_385.Controllers
     {
         private readonly DataContext _dataContext;
         private readonly IMomoService _momoService;
+        private readonly CartPricingService _cartPricingService;
 
-        public CheckOutController(DataContext dataContext, IMomoService momoService)
+        public CheckOutController(DataContext dataContext, IMomoService momoService, CartPricingService cartPricingService)
         {
             _dataContext = dataContext;
             _momoService = momoService;
+            _cartPricingService = cartPricingService;
         }
 
         public IActionResult Index()
         {
             var cartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
-            var viewModel = new CartItemViewModel
-            {
-                CartItems = cartItems,
-                GrandTotal = cartItems.Sum(x => x.Price * x.Quantity)
-            };
+            var viewModel = _cartPricingService.BuildSummary(cartItems);
             return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CheckOut()
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CheckOut(double? currentLatitude, double? currentLongitude)
         {
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
             if (userEmail == null) return RedirectToAction("Login", "Account");
@@ -44,17 +42,24 @@ namespace Project_385.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
+            var pricing = _cartPricingService.BuildSummary(cartItems, currentLatitude, currentLongitude);
+            if (!pricing.CanDeliver)
+            {
+                TempData["Error"] = pricing.DeliveryMessage ?? "Vui lòng lấy vị trí hiện tại để tính phí di chuyển.";
+                return RedirectToAction("Index");
+            }
+
             var order = new OrderModels
             {
                 OrderNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
                 OrderDate = DateTime.Now,
                 UserName = userEmail,
-                Total = cartItems.Sum(x => x.Price * x.Quantity),
-                Status = 0 
+                Total = pricing.GrandTotal,
+                Status = 0
             };
 
             _dataContext.Orders.Add(order);
-            await _dataContext.SaveChangesAsync(); 
+            await _dataContext.SaveChangesAsync();
 
             var orderDetails = cartItems.Select(cart => new OrderDetailModels
             {

@@ -1,84 +1,13 @@
-﻿@using Project_385.Models.ViewModels
+@using Project_385.Models.ViewModels
 @model CartItemViewModel
 
-<link rel="stylesheet" href="~/css/cart_index.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    ViewData["OrderSummaryMode"] = "Cart";
+}
 
-<div class="cart-container">
-    <h2><i class="fa fa-shopping-cart"></i> Giỏ hàng của bạn</h2>
+<link rel="stylesheet" href="~/css/order_summary.css" />
 
-    @if (Model.CartItems != null && Model.CartItems.Count > 0)
-    {
-        <table class="cart-table">
-            <thead>
-                <tr>
-                    <th>Sản phẩm</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Thành tiền</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.CartItems)
-                {
-                    <tr>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <img src="~/images/@item.Image" alt="@item.ProductName" />
-                                <a href="#" class="cart-product-name">@item.ProductName</a>
-                            </div>
-                        </td>
-                        <td class="cart-price">@item.Price.ToString("#,##0 VND")</td>
-                        <td>
-                            <div class="qty-control">
-                                <a asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId" class="qty-btn">−</a>
-                                <input class="qty-input" type="text" value="@item.Quantity" readonly />
-                                <a asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId" class="qty-btn">+</a>
-                            </div>
-                        </td>
-                        <td class="cart-total">@item.Total.ToString("#,##0 VND")</td>
-                        <td>
-                            <a asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId" class="remove-btn">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <div class="cart-actions">
-            <div>
-                <span class="grand-total">Tổng cộng: @Model.GrandTotal.ToString("#,##0 VND")</span>
-            </div>
-            <div style="display: flex; gap: 1rem; align-items: center;">
-                <a asp-controller="Cart" asp-action="Clear" class="btn-clear">
-                    <i class="fa fa-trash-o"></i> Xóa hết
-                </a>
-                @if (User.Identity?.IsAuthenticated ?? false)
-                {
-                    <form asp-controller="CheckOut" asp-action="CheckOut" method="post" style="margin:0;">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn-checkout">
-                            <i class="fa fa-credit-card"></i> Thanh toán
-                        </button>
-                    </form>
-                }
-                else
-                {
-                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="/Cart" class="btn-login-checkout">
-                        <i class="fa fa-sign-in"></i> Đăng nhập để thanh toán
-                    </a>
-                }
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="empty-cart">
-            <i class="fa fa-shopping-cart" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
-            Giỏ hàng của bạn đang trống.
-        </div>
-    }
+<div class="col-sm-12">
+    @await Html.PartialAsync("_OrderSummary", Model, ViewData)
 </div>

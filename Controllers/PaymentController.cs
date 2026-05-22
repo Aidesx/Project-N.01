@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Project_385.Areas.Admin.Repositery;
 using Project_385.Models;
-using Project_385.Services.MoMo;
 using Project_385.Repositery;
-using Project_385.Areas.Admin.Repositery; 
+using Project_385.Services.MoMo;
 
 namespace Project_385.Controllers
 {
@@ -13,13 +13,20 @@ namespace Project_385.Controllers
         private readonly DataContext _context;
         private readonly IEmailSender _emailSender;
         private readonly IEmailTemplateRenderer _emailRenderer;
+        private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(IMomoService momoService, DataContext context, IEmailSender emailSender, IEmailTemplateRenderer emailRenderer)
+        public PaymentController(
+            IMomoService momoService,
+            DataContext context,
+            IEmailSender emailSender,
+            IEmailTemplateRenderer emailRenderer,
+            ILogger<PaymentController> logger)
         {
             _momoService = momoService;
             _context = context;
             _emailSender = emailSender;
             _emailRenderer = emailRenderer;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -39,28 +46,28 @@ namespace Project_385.Controllers
 
                 if (order != null)
                 {
-                    if (response.ResultCode == "0") 
+                    if (response.ResultCode == "0")
                     {
                         order.Status = 1;
                         await _context.SaveChangesAsync();
 
                         var orderDetails = await _context.OrderDetails
-                        .Where(od => od.OrderId == order.Id)
-                        .ToListAsync();
+                            .Where(od => od.OrderId == order.Id)
+                            .ToListAsync();
                         try
                         {
                             await SendOrderEmail(order.UserName, order, orderDetails);
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("Lỗi gửi mail: " + ex.Message);
+                            _logger.LogWarning(ex, "Không thể gửi email xác nhận đơn hàng {OrderNumber}", order.OrderNumber);
                         }
 
                         HttpContext.Session.Remove("Cart");
                         TempData["Success"] = "Thanh toán thành công! Cảm ơn bạn.";
                         return View(response);
                     }
-                    else 
+                    else
                     {
                         order.Status = 2;
                         await _context.SaveChangesAsync();
@@ -75,7 +82,9 @@ namespace Project_385.Controllers
             }
             catch (Exception ex)
             {
-                return Content($"🚨 HỆ THỐNG CRASH! Lỗi chi tiết: {ex.Message} \n\n StackTrace: {ex.StackTrace}");
+                _logger.LogError(ex, "Lỗi khi xử lý callback thanh toán MoMo");
+                TempData["Error"] = "Đã xảy ra lỗi khi xử lý thanh toán. Vui lòng thử lại sau.";
+                return RedirectToAction("Index", "Cart");
             }
         }
 
@@ -88,13 +97,13 @@ namespace Project_385.Controllers
             }
 
             var body = await _emailRenderer.RenderAsync("OrderSuccess", new Dictionary<string, string>
-    {
-        { "UserName", userEmail },
-        { "OrderNumber", order.OrderNumber },
-        { "OrderDate", order.OrderDate.ToString("dd/MM/yyyy HH:mm") },
-        { "Total", order.Total.ToString("#,##0") + " đ" },
-        { "ItemList", itemListHtml }
-    });
+            {
+                { "UserName", userEmail },
+                { "OrderNumber", order.OrderNumber },
+                { "OrderDate", order.OrderDate.ToString("dd/MM/yyyy HH:mm") },
+                { "Total", order.Total.ToString("#,##0") + " đ" },
+                { "ItemList", itemListHtml }
+            });
 
             await _emailSender.SendEmailAsync(userEmail, $"Xác nhận đơn hàng #{order.OrderNumber}", body);
         }

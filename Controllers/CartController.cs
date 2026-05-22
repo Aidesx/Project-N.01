@@ -1,27 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Project_385.Models.ViewModels;
 using Project_385.Models;
 using Project_385.Repositery;
+using Project_385.Services;
 
 namespace Project_385.Controllers
 {
     public class CartController : Controller
     {
         private readonly DataContext _dataContext;
+        private readonly CartPricingService _cartPricingService;
 
-        public CartController(DataContext _Context)
+        public CartController(DataContext _Context, CartPricingService cartPricingService)
         {
             _dataContext = _Context;
+            _cartPricingService = cartPricingService;
         }
 
         public IActionResult Index()
         {
             List<CartItemModel> CartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
-            CartItemViewModel caVN = new()
-            {
-                CartItems = CartItems,
-                GrandTotal = CartItems.Sum(x => x.Quantity * x.Price)
-            };
+            CartItemViewModel caVN = _cartPricingService.BuildSummary(CartItems);
             return View(caVN);
         }
 
@@ -53,14 +52,14 @@ namespace Project_385.Controllers
 
         public async Task<IActionResult> Increase(int id)
         {
-            List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart");
+            List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             CartItemModel cartItem = cart.Where(c => c.ProductId == id).FirstOrDefault();
 
-            if(cartItem.Quantity >= 1)
+            if (cartItem != null && cartItem.Quantity >= 1)
             {
                 ++cartItem.Quantity;
             }
-            else
+            else if (cartItem != null)
             {
                 cart.RemoveAll(p => p.ProductId == id);
             }
@@ -78,7 +77,7 @@ namespace Project_385.Controllers
 
         public async Task<IActionResult> Decrease(int id)
         {
-            List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart");
+            List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             CartItemModel cartItem = cart.Where(c => c.ProductId == id).FirstOrDefault();
 
             if (cartItem != null)
@@ -107,7 +106,7 @@ namespace Project_385.Controllers
 
         public async Task<IActionResult> Remove(int id)
         {
-            List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart");
+            List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             cart.RemoveAll(p => p.ProductId == id);
 
             if (cart.Count == 0)
