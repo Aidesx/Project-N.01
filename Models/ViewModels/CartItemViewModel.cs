@@ -24,6 +24,6 @@ namespace Project_385.Models.ViewModels
 
         public bool CanDeliver { get; set; } = true;
 
-        public string? DeliveryMessage { get; set; }
+        public string DeliveryMessage { get; set; } = string.Empty;
     }
 }

@@ -1,22 +1,21 @@
-﻿@* _Sidebar.cshtml *@
-<div style="font-size: 15px;" class="sidebar-dark">
-    <h2>
-        <svg width="14" height="14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">
-            <path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\" />
-        </svg>
-        Category
-    </h2>
-    <div class="panel-group category-products" style="border: 0px;" id="accordian">
-        <vc:categories></vc:categories>
-    </div>
+<div class="sidebar-panel">
+    <section class="sidebar-section">
+        <div class="sidebar-section-header">
+            <i class="fa fa-layer-group"></i>
+            <span>Category</span>
+        </div>
+        <div class="sidebar-list-wrap">
+            <vc:categories></vc:categories>
+        </div>
+    </section>
 
-    <h2>
-        <svg width="14" height="14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">
-            <path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\" />
-        </svg>
-        Brands
-    </h2>
-    <div class=\"panel-group brands_products\" style=\"border: 0px;\" id=\"accordian\">
-        <vc:brands></vc:brands>
-    </div>
+    <section class="sidebar-section">
+        <div class="sidebar-section-header">
+            <i class="fa fa-tags"></i>
+            <span>Brands</span>
+        </div>
+        <div class="sidebar-list-wrap">
+            <vc:brands></vc:brands>
+        </div>
+    </section>
 </div>

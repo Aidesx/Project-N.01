@@ -100,6 +100,7 @@ namespace Project_385.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to add wishlist item for product {ProductId}", Id);
                 return StatusCode(500, "Có lỗi với việc thêm wishlist");
             }
         }
@@ -129,6 +130,7 @@ namespace Project_385.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to add compare item for product {ProductId}", Id);
                 return StatusCode(500, "Có lỗi với việc thêm so sánh");
             }
         }

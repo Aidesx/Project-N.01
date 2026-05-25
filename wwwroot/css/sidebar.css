@@ -6,7 +6,7 @@
     }
 
     .sidebar-dark h2 {
-        font-size: 15px;
+        font-size: 1.05rem;
         font-weight: 600;
         letter-spacing: 0.1em;
         text-transform: uppercase;
@@ -46,7 +46,7 @@
         gap: 0.5rem;
         padding: 0.6rem 1rem;
         color: #cbd5e1;
-        font-size: 15px;
+        font-size: 1.05rem;
         text-decoration: none;
         transition: background 0.2s, color 0.2s;
         border-left: 3px solid transparent;
@@ -74,7 +74,7 @@
         display: block;
         padding: 0.4rem 1rem;
         color: #94a3b8;
-        font-size: 15px;
+        font-size: 1.05rem;
         text-decoration: none;
         transition: background 0.2s, color 0.2s;
         border-left: 3px solid transparent;

@@ -14,24 +14,24 @@
                 <p class="order-summary-kicker">Kết quả thanh toán</p>
                 <h2>Thanh toán thành công</h2>
             </div>
-            <div class="order-summary-badge" style="background: rgba(16, 185, 129, 0.12); color: #a7f3d0; border-color: rgba(16, 185, 129, 0.25);">
+            <div class="order-summary-badge order-summary-badge-success">
                 Hoàn tất
             </div>
         </div>
 
         <div class="order-summary-body">
-            <div class="delivery-location-panel" style="border-color: rgba(16, 185, 129, 0.25); background: linear-gradient(180deg, rgba(16, 185, 129, 0.10), rgba(15, 23, 42, 0.84));">
+            <div class="delivery-location-panel delivery-location-panel-success">
                 <p class="delivery-location-label">Thông tin đơn hàng</p>
-                <div class="delivery-location-meta" style="margin-top: 0.5rem;">
+                <div class="delivery-location-meta compact">
                     <span>Mã đơn: <strong>@Model.OrderId</strong></span>
                     <span>Tổng tiền: <strong>@Convert.ToDouble(Model.Amount).ToString("#,##0") VND</strong></span>
                 </div>
-                <p class="delivery-location-note" style="margin-bottom: 0;">
+                <p class="delivery-location-note tight">
                     @Model.OrderInfo
                 </p>
             </div>
 
-            <div class="order-actions" style="justify-content: flex-start;">
+            <div class="order-actions order-actions-start">
                 <a class="btn-primary-order" asp-controller="Account" asp-action="History">
                     Xem lịch sử đơn hàng
                 </a>

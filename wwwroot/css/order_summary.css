@@ -46,13 +46,13 @@
     color: var(--os-accent-2);
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    font-size: 0.75rem;
+    font-size: 1rem;
 }
 
 .order-summary-header h2 {
     margin: 0;
     color: #f8fafc;
-    font-size: 1.4rem;
+    font-size: 1.55rem;
     font-weight: 700;
 }
 
@@ -63,7 +63,13 @@
     color: #93c5fd;
     border: 1px solid rgba(59, 130, 246, 0.25);
     white-space: nowrap;
-    font-size: 0.92rem;
+    font-size: 1.05rem;
+}
+
+.order-summary-badge-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: #a7f3d0;
+    border-color: rgba(16, 185, 129, 0.25);
 }
 
 .order-summary-body {
@@ -79,6 +85,11 @@
     border-radius: 0.9rem;
 }
 
+.delivery-location-panel-success {
+    border-color: rgba(16, 185, 129, 0.25);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.10), rgba(15, 23, 42, 0.84));
+}
+
 .store-map-panel {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 280px;
@@ -89,14 +100,14 @@
 .store-map-copy h3 {
     margin: 0;
     color: #f8fafc;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
 }
 
 .store-map-note {
     margin: 0.75rem 0 0;
     color: var(--os-text-muted);
     line-height: 1.55;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
 }
 
 .store-map-frame {
@@ -124,7 +135,7 @@
 .delivery-location-label {
     margin: 0 0 0.25rem;
     color: #93c5fd;
-    font-size: 0.78rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
 }
@@ -132,7 +143,7 @@
 .delivery-location-head h3 {
     margin: 0;
     color: #f8fafc;
-    font-size: 1.05rem;
+    font-size: 1.25rem;
 }
 
 .btn-location-action {
@@ -145,7 +156,7 @@
     background: rgba(37, 99, 235, 0.18);
     color: #dbeafe;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
 }
 
 .btn-location-action:hover {
@@ -155,7 +166,11 @@
 .delivery-location-note {
     margin: 0.9rem 0 0.75rem;
     color: #cbd5e1;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
+}
+
+.delivery-location-note.tight {
+    margin-bottom: 0;
 }
 
 .delivery-location-meta {
@@ -164,7 +179,11 @@
     gap: 1rem;
     flex-wrap: wrap;
     color: var(--os-text-muted);
-    font-size: 0.95rem;
+    font-size: 1.05rem;
+}
+
+.delivery-location-meta.compact {
+    margin-top: 0.5rem;
 }
 
 .delivery-location-meta strong {
@@ -197,20 +216,20 @@
 .order-line-info h3 {
     margin: 0 0 0.25rem;
     color: #f8fafc;
-    font-size: 0.98rem;
+    font-size: 1.15rem;
 }
 
 .order-line-info p {
     margin: 0;
     color: var(--os-text-muted);
-    font-size: 0.92rem;
+    font-size: 1.05rem;
 }
 
 .order-line-total {
     color: var(--os-accent-2);
     font-weight: 700;
     white-space: nowrap;
-    font-size: 0.98rem;
+    font-size: 1.12rem;
 }
 
 .order-line-actions {
@@ -253,13 +272,13 @@
     text-align: center;
     color: #f8fafc;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
 }
 
 .remove-line-btn {
     color: #f87171;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 1.05rem;
 }
 
 .remove-line-btn:hover {
@@ -279,24 +298,24 @@
     align-items: center;
     color: #cbd5e1;
     padding: 0.45rem 0;
-    font-size: 0.97rem;
+    font-size: 1rem;
 }
 
 .order-total-row strong {
     color: var(--os-text);
-    font-size: 0.98rem;
+    font-size: 1rem;
 }
 
 .order-total-row.grand {
     margin-top: 0.35rem;
     padding-top: 0.8rem;
     border-top: 1px dashed #25314a;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
 }
 
 .order-total-row.grand strong {
     color: #60a5fa;
-    font-size: 1.15rem;
+    font-size: 1.35rem;
 }
 
 .order-actions {
@@ -305,6 +324,10 @@
     gap: 0.9rem;
     flex-wrap: wrap;
     margin-top: 1.5rem;
+}
+
+.order-actions-start {
+    justify-content: flex-start;
 }
 
 .order-action-form {

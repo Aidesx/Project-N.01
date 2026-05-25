@@ -6,14 +6,14 @@
         border-radius: 0.75rem;
         padding: 2rem;
     }
-    .compare-container h2 {
-        color: #f0f4ff;
-        margin-bottom: 1.5rem;
-        font-size: 1.3rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+.compare-container h2 {
+    color: #f0f4ff;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
     .compare-table {
         width: 100%;
         border-collapse: collapse;
@@ -49,44 +49,44 @@
         font-weight: 600;
         font-size: 1rem;
     }
-    .compare-desc {
-        color: #94a3b8;
-        font-size: 15px;
-        text-align: left;
-        line-height: 1.5;
-    }
-    .btn-add-cart {
+.compare-desc {
+    color: #94a3b8;
+    font-size: 1rem;
+    text-align: left;
+    line-height: 1.5;
+}
+.btn-add-cart {
         background: linear-gradient(135deg, #1d4ed8, #3b82f6);
         color: white;
         border: none;
         padding: 0.4rem 1rem;
         border-radius: 0.4rem;
         cursor: pointer;
-        font-size: 15px;
-        transition: filter 0.2s;
-    }
+    font-size: 1rem;
+    transition: filter 0.2s;
+}
     .btn-add-cart:hover {
         filter: brightness(1.1);
     }
-    .btn-remove {
+.btn-remove {
         background: #7f1d1d;
         color: #fecaca;
         border: 1px solid #b91c1c;
         padding: 0.3rem 0.8rem;
         border-radius: 0.4rem;
         text-decoration: none;
-        font-size: 15px;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
     .btn-remove:hover {
         background: #991b1b;
         color: #fff;
     }
-    .empty-compare {
-        text-align: center;
-        padding: 3rem;
-        color: #4b5e7a;
-        font-size: 1rem;
-    }
+.empty-compare {
+    text-align: center;
+    padding: 3rem;
+    color: #4b5e7a;
+    font-size: 1.05rem;
+}

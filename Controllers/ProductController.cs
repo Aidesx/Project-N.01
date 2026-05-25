@@ -19,7 +19,17 @@ namespace Project_385.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var featuredProductId = _dataContext.Products
+                .OrderByDescending(p => p.Id)
+                .Select(p => p.Id)
+                .FirstOrDefault();
+
+            if (featuredProductId == 0)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return RedirectToAction("Details", new { Id = featuredProductId });
         }
 
         public async Task<IActionResult> Details(int? Id)
@@ -66,28 +76,28 @@ namespace Project_385.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize] 
-        public async Task<IActionResult> CommentProduct(RatingModels Rating)
+        public async Task<IActionResult> CommentProduct(RatingModels ratingModel)
         {
-            if (Rating.ProductId == 0) return RedirectToAction("Index", "Home");
+            if (ratingModel.ProductId == 0) return RedirectToAction("Index", "Home");
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return RedirectToAction("Login", "Account");
 
             string userEmail = currentUser.Email;
 
-            var alreadyExists = await _dataContext.Ratings.AnyAsync(r => r.ProductId == Rating.ProductId && r.Email == userEmail);
+            var alreadyExists = await _dataContext.Ratings.AnyAsync(r => r.ProductId == ratingModel.ProductId && r.Email == userEmail);
 
             if (alreadyExists)
             {
                 TempData["Error"] = "Bạn đã đánh giá sản phẩm này rồi!";
-                return RedirectToAction("Details", new { Id = Rating.ProductId });
+                return RedirectToAction("Details", new { Id = ratingModel.ProductId });
             }
 
             if (ModelState.IsValid)
             {
-                Rating.Email = userEmail;
-                Rating.Name = currentUser.UserName; 
+                ratingModel.Email = userEmail;
+                ratingModel.Name = currentUser.UserName;
 
-                _dataContext.Ratings.Add(Rating);
+                _dataContext.Ratings.Add(ratingModel);
                 await _dataContext.SaveChangesAsync();
                 TempData["Success"] = "Cảm ơn bạn đã đánh giá!";
             }
@@ -96,7 +106,7 @@ namespace Project_385.Controllers
                 TempData["Error"] = "Vui lòng nhập nội dung đánh giá.";
             }
 
-            return RedirectToAction("Details", new { Id = Rating.ProductId });
+            return RedirectToAction("Details", new { Id = ratingModel.ProductId });
         }
         [HttpPost]
         public async Task<IActionResult> Search(string search)

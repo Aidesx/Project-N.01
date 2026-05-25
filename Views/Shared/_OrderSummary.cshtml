@@ -4,7 +4,6 @@
 
 @{
     var mode = (ViewData["OrderSummaryMode"] as string) ?? "Cart";
-    var mapSrc = string.Empty;
 }
 
 <div class="order-summary-shell">
@@ -24,31 +23,11 @@
             {
                 @if (mode == "Checkout")
                 {
-                    mapSrc = $"https://www.google.com/maps?q={Model.StoreLatitude.ToString(CultureInfo.InvariantCulture)},{Model.StoreLongitude.ToString(CultureInfo.InvariantCulture)}&z=16&output=embed";
-
-                    <div class="store-map-panel">
-                        <div class="store-map-copy">
-                            <p class="delivery-location-label">Shop cố định</p>
-                            <h3>@Model.StoreAddress</h3>
-                            <p class="store-map-note">
-                                Bản đồ Google hiển thị vị trí shop cố định để tính phí di chuyển.
-                            </p>
-                        </div>
-                        <div class="store-map-frame">
-                            <iframe
-                                src="@mapSrc"
-                                loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade"
-                                title="Bản đồ vị trí shop">
-                            </iframe>
-                        </div>
-                    </div>
-
                     <div class="delivery-location-panel">
                         <div class="delivery-location-head">
                             <div>
                                 <p class="delivery-location-label">Vị trí hiện tại</p>
-                                <h3>Đo khoảng cách giao hàng</h3>
+                                <h3>Đo khoảng cách tới shop</h3>
                             </div>
                             <button type="button" class="btn-location-action" id="btn-current-location">
                                 <i class="fa fa-location-arrow"></i> Lấy vị trí hiện tại
@@ -57,6 +36,10 @@
 
                         <p class="delivery-location-note" id="location-status">
                             @Model.DeliveryMessage
+                        </p>
+
+                        <p class="delivery-location-note">
+                            Shop cố định được hiển thị ở footer để giữ khối thanh toán gọn hơn.
                         </p>
 
                         <div class="delivery-location-meta">

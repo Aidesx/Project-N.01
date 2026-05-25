@@ -13,6 +13,7 @@
             background: var(--admin-bg);
             color: var(--admin-text);
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 18px;
             margin: 0;
         }
         
@@ -22,7 +23,7 @@
             border-bottom: 1px solid var(--admin-border);
             padding: 0.75rem 0;
             position: sticky;
-            font-size: 16px;
+            font-size: 18px;
             top: 0;
             z-index: 1000;
         }
@@ -45,7 +46,7 @@
         .admin-nav-menu li a {
             color: var(--admin-muted);
             text-decoration: none;
-            font-size: 16px;
+            font-size: 1.05rem;
             font-weight: 500;
             display: flex;
             align-items: center;
@@ -74,7 +75,7 @@
         .admin-card h4 {
             color: var(--admin-accent);
             margin-bottom: 1rem;
-            font-size: 1rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -109,6 +110,7 @@
         .dataTables_wrapper .dataTables_info,
         .dataTables_wrapper .dataTables_paginate {
             color: var(--admin-muted);
+            font-size: 1rem;
         }
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             color: var(--admin-accent) !important;
@@ -142,5 +144,5 @@
             padding: 1.5rem 0;
             text-align: center;
             color: var(--admin-muted);
-            font-size: 0.8rem;
+            font-size: 1rem;
         }

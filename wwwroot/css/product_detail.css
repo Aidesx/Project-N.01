@@ -38,7 +38,7 @@
 
     .product-info-box h2 {
         color: #f0f4ff;
-        font-size: 1.5rem;
+        font-size: 1.95rem;
         margin-bottom: 0.75rem;
         margin-top: 0;
     }
@@ -52,13 +52,13 @@
 }
 
 .price-current {
-    font-size: 1.75rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: #60a5fa;
 }
 
 .price-original {
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: #4b5e7a;
     text-decoration: line-through;
 }
@@ -100,13 +100,36 @@
         transform: translateY(-1px);
     }
 
+.product-action-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.product-action-group .btn-wishlist,
+.product-action-group .btn-compare {
+    background: transparent;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+.product-action-group .btn-wishlist:hover,
+.product-action-group .btn-compare:hover {
+    color: #f8fafc;
+    border-color: #3b82f6;
+}
+
 /* ===== Meta Info ===== */
 .meta-info {
     margin: 1.5rem 0 1rem;
-    font-size: 2.0rem;
+    font-size: 1.02rem;
 }
 
-    .meta-info p {
+.meta-info p {
         margin-bottom: 0.6rem;
         color: #94a3b8;
     }
@@ -129,7 +152,7 @@
         border-radius: 0.5rem 0.5rem 0 0;
         padding: 0.6rem 1.2rem;
         margin-right: 4px;
-        font-size: 0.85rem;
+        font-size: 1rem;
         transition: 0.2s;
     }
 
@@ -186,7 +209,7 @@
 
     .mini-product-card h5 {
         color: #f0f4ff; /* Đã sửa lỗi chữ đen ở đây */
-        font-size: 0.85rem;
+        font-size: 1rem;
         margin: 0.5rem 0;
         white-space: nowrap;
         overflow: hidden;
@@ -196,7 +219,7 @@
     .mini-product-card .price {
         color: #60a5fa;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 1.08rem;
         margin-bottom: 0.5rem;
     }
 
@@ -212,9 +235,69 @@
     }
 
     .review-item .review-header {
-        font-size: 0.85rem;
+        font-size: 1rem;
         margin-bottom: 0.5rem;
     }
+
+.review-item .review-email {
+    margin-left: 1rem;
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+.review-item p {
+    margin: 0.5rem 0 0;
+}
+
+.review-title {
+    margin-top: 1.5rem;
+    color: #f8fafc;
+    font-size: 1.12rem;
+}
+
+.review-form {
+    margin-top: 1rem;
+}
+
+.availability-in-stock {
+    color: #10b981;
+}
+
+.rating-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.rating-row label {
+    margin: 0;
+    color: #cbd5e1;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.star-picker {
+    cursor: pointer;
+    color: #fbbf24;
+    font-size: 1.4rem;
+}
+
+.ui-alert {
+    background: #1e293b;
+    border-color: #2563eb;
+    color: #93c5fd;
+}
+
+.ui-alert.warning {
+    border-color: #fbbf24;
+    color: #fcd34d;
+}
+
+.share-link {
+    display: inline-block;
+    margin-top: 1rem;
+}
 
 .star-rating {
     color: #fbbf24;
@@ -256,7 +339,7 @@
 /* ===== Recommended Carousel ===== */
 .recommended_items h2 {
     color: #60a5fa;
-    font-size: 1.2rem;
+    font-size: 1.35rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 1.5rem;
@@ -280,4 +363,8 @@
 .carousel-inner {
     background: transparent; /* Bỏ màu nền ở đây vì Box tổng đã bao trọn */
     border-radius: 0.75rem;
+}
+
+.mini-product-card.compact {
+    margin-bottom: 0;
 }

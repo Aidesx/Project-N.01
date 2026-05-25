@@ -1,4 +1,4 @@
-﻿@using Project_385.Models.ViewModels
+@using Project_385.Models.ViewModels
 @model List<CompareViewModel>
 @{
     ViewData["Title"] = "So sánh sản phẩm";
@@ -7,111 +7,77 @@
 <link rel="stylesheet" href="~/css/home_compare.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<div class="compare-container">
-    <h2><i class="fa fa-exchange"></i> @ViewData["Title"]</h2>
+<div class="page-shell">
+    <section class="compare-container page-card">
+        <div class="section-title">
+            <h2 class="section-title-label"><i class="fa fa-exchange"></i> @ViewData["Title"]</h2>
+        </div>
 
-    @if (Model != null && Model.Count > 0)
-    {
-        <div class="table-responsive">
-            <table class="compare-table">
-                <tbody>
-                    <tr>
-                        <th>Hình ảnh</th>
-                        @foreach (var item in Model)
-                        {
-                            <td>
-                                <img src="~/images/@item.Product.Image" alt="@item.Product.Name" />
-                            </td>
-                        }
-                    </tr>
-                    <tr>
-                        <th>Tên sản phẩm</th>
-                        @foreach (var item in Model)
-                        {
-                            <td><span class="compare-name">@item.Product.Name</span></td>
-                        }
-                    </tr>
-                    <tr>
-                        <th>Giá</th>
-                        @foreach (var item in Model)
-                        {
-                            <td><span class="compare-price">@item.Product.Price.ToString("#,##0 VND")</span></td>
-                        }
-                    </tr>
-                    <tr>
-                        <th>Mô tả</th>
-                        @foreach (var item in Model)
-                        {
-                            <td class="compare-desc">@Html.Raw(item.Product.Description)</td>
-                        }
-                    </tr>
-                    <tr>
-                        <th>Mua hàng</th>
-                        @foreach (var item in Model)
-                        {
-                            <td>
-                                <button class="btn-add-cart add-to-cart" data-product-id="@item.Product.Id">
-                                    <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
-                                </button>
-                            </td>
-                        }
-                    </tr>
-                    <tr>
-                        <th>Thao tác</th>
-                        @foreach (var item in Model)
-                        {
-                            <td>
-                                <a class="btn-remove" asp-action="RemoveCompare" asp-controller="Home" asp-route-Id="@item.Compares.Id">
-                                    <i class="fa fa-trash"></i> Xóa
-                                </a>
-                            </td>
-                        }
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    }
-    else
-    {
-        <div class="empty-compare">
-            <i class="fa fa-exchange" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
-            Bạn chưa có sản phẩm nào trong danh sách so sánh.
-        </div>
-    }
+        @if (Model != null && Model.Count > 0)
+        {
+            <div class="table-responsive">
+                <table class="compare-table data-table">
+                    <tbody>
+                        <tr>
+                            <th>Hình ảnh</th>
+                            @foreach (var item in Model)
+                            {
+                                <td><img src="~/images/@item.Product.Image" alt="@item.Product.Name" /></td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            @foreach (var item in Model)
+                            {
+                                <td><span class="compare-name">@item.Product.Name</span></td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Giá</th>
+                            @foreach (var item in Model)
+                            {
+                                <td><span class="compare-price">@item.Product.Price.ToString("#,##0 VND")</span></td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Mô tả</th>
+                            @foreach (var item in Model)
+                            {
+                                <td class="compare-desc">@Html.Raw(item.Product.Description)</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Mua hàng</th>
+                            @foreach (var item in Model)
+                            {
+                                <td>
+                                    <button class="btn-add-cart add-to-cart" data-product-id="@item.Product.Id">
+                                        <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                                    </button>
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <th>Thao tác</th>
+                            @foreach (var item in Model)
+                            {
+                                <td>
+                                    <a class="btn-remove" asp-action="RemoveCompare" asp-controller="Home" asp-route-Id="@item.Compares.Id">
+                                        <i class="fa fa-trash"></i> Xóa
+                                    </a>
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fa fa-exchange"></i>
+                <p>Bạn chưa có sản phẩm nào trong danh sách so sánh.</p>
+            </div>
+        }
+    </section>
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('.add-to-cart').click(function (e) {
-                e.preventDefault();
-                var id = $(this).data('product-id');
-                $.ajax({
-                    url: '@Url.Action("Add", "Cart")',
-                    type: 'POST',
-                    data: { id: id },
-                    success: function (result) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Thành công',
-                            text: 'Đã thêm sản phẩm vào giỏ hàng!',
-                            showConfirmButton: false,
-                            confirmButtonText: 'Xóa',
-                            background: '#0d1117',
-                            timer: 1500
-                        });
-                    },
-                    error: function () {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Thất bại',
-                            confirmButtonText: 'Xóa',
-                            background: '#0d1117',
-                            text: 'Có lỗi xảy ra khi thêm vào giỏ hàng.'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-}

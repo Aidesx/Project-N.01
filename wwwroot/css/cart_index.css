@@ -22,7 +22,7 @@
         border-bottom: 1px solid #1a1f35;
         color: #94a3b8;
         font-weight: 500;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
     }
     .cart-table td {
         padding: 0.75rem;
@@ -80,7 +80,7 @@
     .remove-btn {
         color: #f87171;
         text-decoration: none;
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
     .remove-btn:hover {
         color: #ef4444;

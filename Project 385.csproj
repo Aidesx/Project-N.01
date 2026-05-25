@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>$(NoWarn);NU1701;NU1900</NoWarn>
     <RootNamespace>Project_385</RootNamespace>
     <UserSecretsId>9c2540c7-167e-407f-ab5d-84513c3b5242</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>

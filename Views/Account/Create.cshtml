@@ -6,18 +6,19 @@
 <link rel="stylesheet" href="~/css/account_login.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<div class="login-card">
+<div class="page-shell narrow">
+<div class="login-card page-card">
     <h2><i class="fa fa-user-plus"></i> @ViewData["Title"] tài khoản</h2>
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success" style="background:#064e3b; border-color:#059669; color:#34d399; border-radius: 8px;">
+        <div class="alert alert-success auth-alert auth-alert-success">
             <i class="fa fa-check-circle"></i> @TempData["Success"]
         </div>
     }
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger" style="background:#451a03; border-color:#b45309; color:#f87171; border-radius: 8px;">
+        <div class="alert alert-danger auth-alert auth-alert-danger">
             <i class="fa fa-exclamation-circle"></i> @TempData["Error"]
         </div>
     }
@@ -51,12 +52,12 @@
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
 
-        <div class="checkbox-inline" style="margin-bottom: 1.5rem;">
+        <div class="checkbox-inline">
             <input type="checkbox" id="showPassword" onclick="togglePassword()" />
-            <label for="showPassword" style="color: #cbd5e1; font-weight: normal; margin-left: 5px; cursor: pointer;">Hiển thị mật khẩu</label>
+            <label for="showPassword" class="auth-checkbox-label">Hiển thị mật khẩu</label>
         </div>
 
-        <div style="display: flex; gap: 1rem; align-items: center;">
+        <div class="button-group">
             <button type="submit" class="btn-login"><i class="fa fa-check"></i> Đăng ký</button>
             <a asp-action="Login" asp-controller="Account" class="btn-register"><i class="fa fa-sign-in"></i> Đăng nhập ngay</a>
         </div>
@@ -65,13 +66,14 @@
     <div class="forgot-section">
         <form asp-action="ForgotPassword" method="post">
             @Html.AntiForgeryToken()
-            <label style="color:#cbd5e1; font-weight:500;">Quên mật khẩu?</label>
-            <div style="display: flex; gap: 10px; margin-top: 0.5rem;">
-                <input type="email" name="Email" class="form-control" placeholder="Nhập email để lấy lại mật khẩu" required style="max-width:260px;" />
+            <label>Quên mật khẩu?</label>
+            <div class="auth-forgot-section">
+                <input type="email" name="Email" class="form-control" placeholder="Nhập email để lấy lại mật khẩu" required />
                 <button type="submit" class="btn-forgot"><i class="fa fa-envelope"></i> Gửi</button>
             </div>
         </form>
     </div>
+</div>
 </div>
 
 <script>

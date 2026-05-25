@@ -36,7 +36,7 @@ namespace Project_385.Models
 
         [NotMapped]
         [FileExtension]
-        public IFormFile? ImageUpLoad { get; set; }
+        public IFormFile ImageUpLoad { get; set; }
 
         public ICollection<RatingModels> Ratings { get; set; }
     }
