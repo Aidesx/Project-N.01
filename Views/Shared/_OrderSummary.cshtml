@@ -29,18 +29,34 @@
                                 <p class="delivery-location-label">Vị trí hiện tại</p>
                                 <h3>Đo khoảng cách tới shop</h3>
                             </div>
-                            <button type="button" class="btn-location-action" id="btn-current-location">
-                                <i class="fa fa-location-arrow"></i> Lấy vị trí hiện tại
-                            </button>
+                            <div class="delivery-location-actions">
+                                <button type="button" class="btn-location-action" id="btn-current-location">
+                                    <i class="fa fa-location-arrow"></i> Lấy vị trí hiện tại
+                                </button>
+                                <div class="delivery-location-or">
+                                    <span>Hoặc</span>
+                                </div>
+                                <div class="delivery-location-manual">
+                                    <div id="delivery-map" style="height: 260px; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; background: #f8fafc;"></div>
+
+                                    <div style="margin-top: 10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                        <input type="hidden" id="ManualLatitude" />
+                                        <input type="hidden" id="ManualLongitude" />
+                                        <button type="button" class="btn-location-action" id="btn-use-manual-location">
+                                            <i class="fa fa-check"></i> Xác nhận vị trí
+                                        </button>
+                                        <span style="color:#6b7280; font-size: 13px;">Chạm vào bản đồ để chọn vị trí</span>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <p class="delivery-location-note" id="location-status">
                             @Model.DeliveryMessage
                         </p>
 
-                        <p class="delivery-location-note">
-                            Shop cố định được hiển thị ở footer để giữ khối thanh toán gọn hơn.
-                        </p>
+
 
                         <div class="delivery-location-meta">
                             <span>

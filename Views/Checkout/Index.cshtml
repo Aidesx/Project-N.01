@@ -7,14 +7,20 @@
 }
 
 <link rel="stylesheet" href="~/css/order_summary.css" />
+<style>
+    .checkout-card{ border-radius: 14px; overflow: hidden; }
+</style>
 
-<div class="col-sm-12">
+<div class="col-sm-12 checkout-card" aria-label="Xác nhận thanh toán">
     @await Html.PartialAsync("_OrderSummary", Model, ViewData)
 </div>
 
 @section Scripts {
     <script>
         (function () {
+            // Leaflet map library
+            // We include it from CDN in this page to support choosing location by clicking on map.
+
             const storeLat = parseFloat(document.getElementById('StoreLatitude')?.value || '0');
             const storeLng = parseFloat(document.getElementById('StoreLongitude')?.value || '0');
             const subtotalText = document.getElementById('subtotal-preview');
@@ -27,6 +33,12 @@
             const latInput = document.getElementById('CurrentLatitude');
             const lngInput = document.getElementById('CurrentLongitude');
             const button = document.getElementById('btn-current-location');
+            const manualLatInput = document.getElementById('ManualLatitude');
+            const manualLngInput = document.getElementById('ManualLongitude');
+            const manualButton = document.getElementById('btn-use-manual-location');
+
+            // Leaflet map (OpenStreetMap) for manual location picking
+            // Note: We load scripts in the browser via CDN below.
 
             if (!button) return;
 
@@ -70,8 +82,140 @@
                 if (submitBtn) submitBtn.disabled = !canSubmit;
             }
 
+            // ---- Leaflet map picker ----
+            const deliveryMapEl = document.getElementById('delivery-map');
+            let map = null;
+            let marker = null;
+
+            function setManualFromLatLng(lat, lng) {
+                if (Number.isNaN(lat) || Number.isNaN(lng)) return;
+                // Put values to hidden inputs used by checkout form
+                if (latInput) latInput.value = lat;
+                if (lngInput) lngInput.value = lng;
+                if (manualLatInput) manualLatInput.value = lat;
+                if (manualLngInput) manualLngInput.value = lng;
+
+                // Update fee/distance via existing logic
+                applyManualLocation(lat, lng);
+
+                // Ensure marker exists and moves
+                if (marker) marker.setLatLng([lat, lng]);
+            }
+
+            function initLeafletMap() {
+                if (!deliveryMapEl) return;
+                if (typeof window.L === 'undefined') {
+                    updateState('Chưa tải được bản đồ. Vui lòng thử lại.', null, 0, false);
+                    return;
+                }
+
+                map = L.map('delivery-map', { zoomControl: true }).setView([storeLat || 0, storeLng || 0], 12);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap'
+                }).addTo(map);
+
+                marker = L.marker([storeLat || 0, storeLng || 0], { draggable: false }).addTo(map);
+
+                map.on('click', function (e) {
+                    const lat = e.latlng.lat;
+                    const lng = e.latlng.lng;
+                    setManualFromLatLng(lat, lng);
+                });
+            }
+
+
+            function applyManualLocation(currentLat, currentLng) {
+                const distanceKm = haversine(currentLat, currentLng, storeLat, storeLng);
+
+                latInput.value = currentLat;
+                lngInput.value = currentLng;
+
+                if (distanceKm > 100) {
+                    updateState('Khoảng cách vượt quá 100km, không thể thanh toán.', distanceKm, 0, false);
+                    return;
+                }
+
+                const rawFee = Math.ceil(distanceKm) * 10000;
+                const deliveryFee = rawFee * (1 - getDiscountRate(distanceKm));
+                const roundedFee = Math.round(deliveryFee);
+                const suffix = distanceKm > 50 ? 'giảm 30%' : (distanceKm > 20 ? 'giảm 10%' : 'không giảm');
+                updateState(`Đã xác định vị trí, ${suffix}.`, distanceKm, roundedFee, true);
+            }
+
+            if (manualButton) {
+                manualButton.addEventListener('click', function () {
+                    const lat = parseFloat(manualLatInput?.value || '');
+                    const lng = parseFloat(manualLngInput?.value || '');
+
+                    if (Number.isNaN(lat) || Number.isNaN(lng)) {
+                        updateState('Vui lòng chọn vị trí trên bản đồ trước.', null, 0, false);
+                        return;
+                    }
+
+                    applyManualLocation(lat, lng);
+                });
+            }
+
+
+            // Ensure Leaflet is loaded, then init.
+            function loadLeafletAndInit() {
+                if (!deliveryMapEl) return;
+
+                // If already loaded, init immediately
+                if (typeof window.L !== 'undefined') {
+                    initLeafletMap();
+                    return;
+                }
+
+                const leafletCssId = 'leaflet-css';
+                const leafletJsId = 'leaflet-js';
+
+                // Load CSS
+                if (!document.getElementById(leafletCssId)) {
+                    const link = document.createElement('link');
+                    link.id = leafletCssId;
+                    link.rel = 'stylesheet';
+                    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+                    document.head.appendChild(link);
+                }
+
+                // Load JS
+                if (!document.getElementById(leafletJsId)) {
+                    const script = document.createElement('script');
+                    script.id = leafletJsId;
+                    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+                    script.onload = function () {
+                        initLeafletMap();
+                    };
+                    script.onerror = function () {
+                        updateState('Chưa tải được bản đồ. Vui lòng thử lại.', null, 0, false);
+                    };
+                    document.body.appendChild(script);
+                } else {
+                    // Script tag exists; wait a bit for L
+                    const t = setInterval(function () {
+                        if (typeof window.L !== 'undefined') {
+                            clearInterval(t);
+                            initLeafletMap();
+                        }
+                    }, 150);
+                    setTimeout(function () {
+                        clearInterval(t);
+                    }, 5000);
+                }
+            }
+
+            loadLeafletAndInit();
+
+
             button.addEventListener('click', function () {
                 if (!navigator.geolocation) {
+
+
+
+
                     updateState('Trình duyệt không hỗ trợ lấy vị trí hiện tại.', null, 0, false);
                     return;
                 }
@@ -94,8 +238,9 @@
                     const deliveryFee = rawFee * (1 - getDiscountRate(distanceKm));
                     const roundedFee = Math.round(deliveryFee);
                     const suffix = distanceKm > 50 ? 'giảm 30%' : (distanceKm > 20 ? 'giảm 10%' : 'không giảm');
-                    updateState(`Đã xác định vị trí hiện tại, ${suffix}.`, distanceKm, roundedFee, true);
+                    applyManualLocation(currentLat, currentLng);
                 }, function (error) {
+
                     let message = 'Không thể lấy vị trí hiện tại.';
                     if (error && error.code === error.PERMISSION_DENIED) {
                         message = 'Bạn đã từ chối cấp quyền vị trí.';

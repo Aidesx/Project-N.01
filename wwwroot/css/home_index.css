@@ -188,12 +188,15 @@
             color: #60a5fa;
         }
 
-        /* Pagination */
+        /* Pagination (enhanced for D2 demo) */
+        .pagination-wrapper.tailwind-pagination{
+            margin-top: 2.25rem;
+        }
         .pagination-container {
             display: flex;
             justify-content: center;
-            margin-top: 2rem;
-            gap: 5px;
+            margin-top: 0;
+            gap: 6px;
             list-style: none;
             padding: 0;
         }
