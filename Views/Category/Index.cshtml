@@ -3,91 +3,92 @@
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
 
-<link rel="stylesheet" href="~/css/category_index.css" />
+<link rel="stylesheet" href="~/css/product_list_base.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <div class="page-shell">
-<div class="row">
-    <div class="col-sm-3">
-        <partial name="_Sidebar" />
-    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <partial name="_Sidebar" />
+        </div>
 
-    <div class="col-sm-9">
-        <div class="features_items">
-            <div class="section-title">
-                <h2 class="section-title-label">
-                    Danh mục: @ViewBag.CategoryName
-                </h2>
-            </div>
+        <div class="col-sm-9">
+            <div class="features_items">
+                <div class="section-title">
+                    <h2 class="section-title-label">
+                        Danh mục: @ViewBag.CategoryName
+                    </h2>
+                </div>
 
-            <div class="product-grid">
-                @foreach (var item in Model)
-                {
-                    <div class="product-card">
-                        <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="product-link">
-                            <div class="product-img">
-                                <img src="~/images/@item.Image" alt="@item.Name" />
-                            </div>
-                        </a>
-
-                        <div class="card-body">
-                            <p class="card-details">Danh mục: @item.Category?.Name</p>
-                            <p class="card-details">Thương hiệu: @item.Brand?.Name</p>
-
-                            <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="card-title">
-                                @item.Name
+                <div class="product-grid">
+                    @foreach (var item in Model)
+                    {
+                        <div class="product-card">
+                            <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="product-link">
+                                <div class="product-img">
+                                    <img src="~/images/@item.Image" alt="@item.Name" />
+                                </div>
                             </a>
 
-                            <div class="card-price-row">
-                                <div>
-                                    <p class="price-current">@item.Price.ToString("#,##0 VND")</p>
-                                </div>
-                                <button class="btn-add-cart add-to-cart" data-product-id="@item.Id">
-                                    <i class="fa fa-shopping-cart"></i> Thêm
-                                </button>
-                            </div>
+                            <div class="card-body">
+                                <p class="card-details">Danh mục: @item.Category?.Name</p>
+                                <p class="card-details">Thương hiệu: @item.Brand?.Name</p>
 
-                            @if (User.Identity?.IsAuthenticated ?? false)
-                            {
-                                <div class="card-actions">
-                                    <button class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id">
-                                        <i class="fa fa-plus-square"></i> Yêu thích
-                                    </button>
-                                    <button class="btn-compare add-btn-compare" data-product-id="@item.Id">
-                                        <i class="fa fa-plus-square"></i> So sánh
+                                <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="card-title">
+                                    @item.Name
+                                </a>
+
+                                <div class="card-price-row">
+                                    <div>
+                                        <p class="price-current">@item.Price.ToString("#,##0 VND")</p>
+                                    </div>
+                                    <button class="btn-add-cart add-to-cart" data-product-id="@item.Id">
+                                        <i class="fa fa-shopping-cart"></i> Thêm
                                     </button>
                                 </div>
-                            }
+
+                                @if (User.Identity?.IsAuthenticated ?? false)
+                                {
+                                    <div class="card-actions">
+                                        <button class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id">
+                                            <i class="fa fa-plus-square"></i> Yêu thích
+                                        </button>
+                                        <button class="btn-compare add-btn-compare" data-product-id="@item.Id">
+                                            <i class="fa fa-plus-square"></i> So sánh
+                                        </button>
+                                    </div>
+                                }
+                            </div>
                         </div>
-                    </div>
+                    }
+                </div>
+
+                @if (pager != null && pager.TotalPage > 1)
+                {
+                    <ul class="pagination-container" role="navigation" aria-label="Phân trang">
+                        @if (pager.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="1">Đầu</a></li>
+                            <li class="page-item"><a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="@(pager.CurrentPage - 1)">Trước</a></li>
+                        }
+
+                        @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
+                        {
+                            <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
+                                <a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="@pge">@pge</a>
+                            </li>
+                        }
+
+                        @if (pager.CurrentPage < pager.TotalPage)
+                        {
+                            <li class="page-item"><a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="@(pager.CurrentPage + 1)">Tiếp</a></li>
+                            <li class="page-item"><a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="@(pager.TotalPage)">Cuối</a></li>
+                        }
+                    </ul>
                 }
             </div>
-
-            <!-- Phân trang (nếu có) -->
-            @if (pager != null && pager.TotalPage > 1)
-            {
-                <ul class="pagination-container">
-                    @if (pager.CurrentPage > 1)
-                    {
-                        <li class="page-item"><a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="1">Đầu</a></li>
-                        <li class="page-item"><a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="@(pager.CurrentPage - 1)">Trước</a></li>
-                    }
-                    @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
-                    {
-                        <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
-                            <a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="@pge">@pge</a>
-                        </li>
-                    }
-                    @if (pager.CurrentPage < pager.TotalPage)
-                    {
-                        <li class="page-item"><a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="@(pager.CurrentPage + 1)">Tiếp</a></li>
-                        <li class="page-item"><a asp-action="Index" asp-route-category="@ViewBag.CategorySlug" asp-route-pg="@(pager.TotalPage)">Cuối</a></li>
-                    }
-                </ul>
-            }
         </div>
     </div>
-</div>
 </div>
 
 @section Scripts {
@@ -194,3 +195,4 @@
         });
     </script>
 }
+

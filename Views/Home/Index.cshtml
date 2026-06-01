@@ -4,6 +4,7 @@
 }
 
 <link rel="stylesheet" href="~/css/home_index.css" />
+<link rel="stylesheet" href="~/css/product_list_base.css" />
 
 <section class="hero-slider">
     <div class="hero-bg-glow"></div>
@@ -64,19 +65,24 @@
 
 <section class="main-content">
     <div class="main-flex">
+        
         <aside class="sidebar-col">
             <partial name="_Sidebar" />
         </aside>
 
         <div class="products-col">
             <div class="product-grid">
+                <style>
+                    /* UI thử nghiệm (không phụ thuộc Tailwind) */
+                    .product-card{ border-radius: 0.75rem; }
+                </style>
                 @foreach (var item in Model)
                 {
-                    <div class="product-card">
+                    <div class="product-card" style="transition: transform .2s ease, box-shadow .2s ease;">
                         <a asp-action="Details" asp-controller="Product" asp-route-id="@item.Id" class="product-link">
                             <div class="product-img">
                                 <img src="~/images/@item.Image" alt="@item.Name" />
-                            </div>
+                            </div>      
                         </a>
                         <a asp-action="Details" asp-controller="Product" asp-route-id="@item.Id" class="card-title">
                             @item.Name
@@ -90,7 +96,7 @@
                                 <div>
                                     <p class="price-current">@item.Price.ToString("#,##0 VND")</p>
                                 </div>
-                                <button type="button" class="btn-add-cart add-to-cart" data-product-id="@item.Id">
+                                <button type="button" class="btn-add-cart add-to-cart" data-product-id="@item.Id" style="transition: filter .2s ease, transform .2s ease;">
                                     <i class="fa fa-shopping-cart"></i> Thêm
                                 </button>
                             </div>
@@ -98,10 +104,10 @@
                             @if (User.Identity?.IsAuthenticated ?? false)
                             {
                                 <div class="card-actions">
-                                    <button type="button" class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id">
+                                    <button type="button" class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id" style="transition: color .2s ease, transform .2s ease;">
                                         <i class="fa fa-plus-square"></i> Yêu thích
                                     </button>
-                                    <button type="button" class="btn-compare add-btn-compare" data-product-id="@item.Id">
+                                    <button type="button" class="btn-compare add-btn-compare" data-product-id="@item.Id" style="transition: color .2s ease, transform .2s ease;">
                                         <i class="fa fa-plus-square"></i> So sánh
                                     </button>
                                 </div>
@@ -113,8 +119,8 @@
 
             @if (pager != null && pager.TotalPage > 1)
             {
-                <div class="pagination-wrapper">
-                    <ul class="pagination-container">
+                <div class="pagination-wrapper tailwind-pagination">
+                    <ul class="pagination-container" role="navigation" aria-label="Phân trang">
                         @if (pager.CurrentPage > 1)
                         {
                             <li class="page-item"><a asp-action="Index" asp-route-pg="1" class="page-link">Đầu</a></li>
@@ -124,7 +130,7 @@
                         @for (var pge = pager.PageStart; pge <= pager.PageEnd; pge++)
                         {
                             <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
-                                <a asp-action="Index" asp-route-pg="@pge" class="page-link">@pge</a>
+                                <a asp-action="Index" asp-route-pg="@pge" class="page-link" aria-current="@(pge == pager.CurrentPage ? "page" : null)">@pge</a>
                             </li>
                         }
 

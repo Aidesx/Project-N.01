@@ -2,7 +2,7 @@
 @{
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
-<link rel="stylesheet" href="~/css/category_index.css" />
+<link rel="stylesheet" href="~/css/product_list_base.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <div class="page-shell">
@@ -61,7 +61,7 @@
 
             @if (pager != null && pager.TotalPage > 1)
             {
-                <ul class="pagination-container">
+<ul class="pagination-container tailwind-pagination" role="navigation" aria-label="Phân trang">
                     @if (pager.CurrentPage > 1)
                     {
                         <li class="page-item"><a asp-action="Index" asp-route-brand="@ViewBag.BrandSlug" asp-route-pg="1">Đầu</a></li>

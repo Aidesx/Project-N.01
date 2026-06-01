@@ -8,6 +8,16 @@
 
 <link rel="stylesheet" href="~/css/order_summary.css" />
 
-<div class="col-sm-12">
+<style>
+    /* Cart/OrderSummary Tailwind-like upgrades: minimal, non-breaking */
+    .tailwind-cart-scope .order-summary-card{border-radius:16px; background:#0d1117;}
+    .tailwind-cart-scope .order-lines{gap:12px;}
+    .tailwind-cart-scope .order-line{border-top:1px solid rgba(26,31,53,.9); padding-top:12px;}
+    .tailwind-cart-scope .order-total-row{display:flex; justify-content:space-between;}
+    .tailwind-cart-scope .btn-primary-order{border-radius:12px;}
+    .tailwind-cart-scope .btn-secondary-order{border-radius:12px;}
+</style>
+
+<div class="col-sm-12 tailwind-cart-scope">
     @await Html.PartialAsync("_OrderSummary", Model, ViewData)
 </div>
