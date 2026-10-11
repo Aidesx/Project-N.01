@@ -137,8 +137,37 @@
                             <input type="hidden" id="StoreLongitude" value="@Model.StoreLongitude" />
                             <input type="hidden" id="DistanceKm" value="@((Model.DistanceKm.HasValue) ? Model.DistanceKm.Value.ToString("0.00") : "")" />
                             <input type="hidden" id="DeliveryFee" value="@Model.DeliveryFee" />
+
+                            <div class="checkout-delivery-fields" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; text-align: left;">
+                                <div>
+                                    <label style="font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px; display: block;">Họ và tên người nhận</label>
+                                    <input type="text" name="receiverName" value="@Model.ReceiverName" required placeholder="Nhập tên người nhận hàng" class="form-control" style="border-radius: 8px; padding: 8px 12px; font-size: 14px;" />
+                                </div>
+                                <div>
+                                    <label style="font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px; display: block;">Số điện thoại</label>
+                                    <input type="tel" name="phoneNumber" value="@Model.PhoneNumber" required placeholder="Số điện thoại giao hàng" class="form-control" style="border-radius: 8px; padding: 8px 12px; font-size: 14px;" />
+                                </div>
+                                <div>
+                                    <label style="font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 4px; display: block;">Địa chỉ nhận hàng chi tiết</label>
+                                    <input type="text" name="shippingAddress" value="@Model.ShippingAddress" required placeholder="Số nhà, tên đường, quận/huyện..." class="form-control" style="border-radius: 8px; padding: 8px 12px; font-size: 14px;" />
+                                </div>
+                                <div>
+                                    <label style="font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; display: block;">Phương thức thanh toán</label>
+                                    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; color: #f8fafc;">
+                                            <input type="radio" name="paymentMethod" value="COD" checked id="pm-cod" />
+                                            <span>💵 Nhận hàng trả tiền (COD)</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; color: #f8fafc;">
+                                            <input type="radio" name="paymentMethod" value="MoMo" id="pm-momo" />
+                                            <span>💳 Ví điện tử MoMo</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <button type="submit" class="btn-primary-order" id="checkout-submit-btn" disabled="disabled">
-                                <i class="fa fa-credit-card"></i> Xác nhận & Thanh toán qua MoMo
+                                <i class="fa fa-shopping-bag"></i> <span id="checkout-btn-text">Xác nhận đặt hàng (COD)</span>
                             </button>
                         </form>
                         <a asp-controller="Cart" asp-action="Index" class="btn-secondary-order">

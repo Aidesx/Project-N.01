@@ -25,5 +25,13 @@ namespace Project_385.Models.ViewModels
         public bool CanDeliver { get; set; } = true;
 
         public string DeliveryMessage { get; set; } = string.Empty;
+
+        public string ReceiverName { get; set; } = string.Empty;
+
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        public string ShippingAddress { get; set; } = string.Empty;
+
+        public string PaymentMethod { get; set; } = "COD";
     }
 }

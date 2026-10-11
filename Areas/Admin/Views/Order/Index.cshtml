@@ -1,4 +1,4 @@
-﻿@model IEnumerable<OrderModels>
+@model IEnumerable<OrderModels>
 @{
     ViewData["Title"] = "Danh sách đơn hàng";
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
@@ -14,9 +14,11 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Email khách hàng</th>
                     <th>Mã đơn hàng</th>
                     <th>Ngày đặt</th>
+                    <th>Khách hàng</th>
+                    <th>Người nhận & SĐT</th>
+                    <th>Thanh toán</th>
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
                     <th>Thao tác</th>
@@ -27,18 +29,37 @@
                 {
                     <tr>
                         <td>@item.Id</td>
+                        <td><strong>#@item.OrderNumber</strong></td>
+                        <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
                         <td>@item.UserName</td>
-                        <td>@item.OrderNumber</td>
-                        <td>@item.OrderDate</td>
-                        <td>@item.Total.ToString("#,##0 VND")</td>
+                        <td>@(string.IsNullOrEmpty(item.ReceiverName) ? item.UserName : item.ReceiverName) <br /><small style="color:#94a3b8;">@item.PhoneNumber</small></td>
                         <td>
-                            @if (item.Status == 1)
+                            <span class="badge" style="background: @(item.PaymentMethod == "MoMo" ? "#be185d" : "#334155"); color: #fff;">
+                                @(item.PaymentMethod == "MoMo" ? "Ví MoMo" : "COD")
+                            </span>
+                        </td>
+                        <td><strong>@item.Total.ToString("#,##0 VND")</strong></td>
+                        <td>
+                            @switch (item.Status)
                             {
-                                <span class="badge" style="background: #065f46; color: #a7f3d0;">Đang xử lý</span>
-                            }
-                            else
-                            {
-                                <span class="badge" style="background: #7f1d1d; color: #fecaca;">Đã xử lý</span>
+                                case 1:
+                                    <span class="badge" style="background: #065f46; color: #a7f3d0;">Đã thanh toán (MoMo)</span>
+                                    break;
+                                case 2:
+                                    <span class="badge" style="background: #1e3a8a; color: #bfdbfe;">Đang đóng gói</span>
+                                    break;
+                                case 3:
+                                    <span class="badge" style="background: #0e7490; color: #cffafe;">Đang giao hàng</span>
+                                    break;
+                                case 4:
+                                    <span class="badge" style="background: #047857; color: #d1fae5;">Hoàn thành</span>
+                                    break;
+                                case 5:
+                                    <span class="badge" style="background: #991b1b; color: #fee2e2;">Đã hủy</span>
+                                    break;
+                                default:
+                                    <span class="badge" style="background: #854d0e; color: #fef08a;">Chờ xử lý (COD)</span>
+                                    break;
                             }
                         </td>
                         <td>

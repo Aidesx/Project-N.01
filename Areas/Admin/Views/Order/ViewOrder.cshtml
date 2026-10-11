@@ -1,16 +1,82 @@
-﻿@model IEnumerable<OrderDetailModels>
+@model IEnumerable<OrderDetailModels>
 @{
     ViewData["Title"] = "Chi tiết đơn hàng";
+    var order = ViewBag.Order as Project_385.Models.OrderModels;
 }
 
 <div class="admin-card">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
-        <h4 style="margin: 0;"><i class="fa fa-list-alt"></i> @ViewData["Title"]</h4>
+        <h4 style="margin: 0;"><i class="fa fa-list-alt"></i> @ViewData["Title"] @(order != null ? $"#{order.OrderNumber}" : "")</h4>
         <a asp-action="Index" class="btn-admin-primary" style="padding:0.4rem 1rem;">
-            <i class="fa fa-arrow-left"></i> Quay lại
+            <i class="fa fa-arrow-left"></i> Quay lại danh sách
         </a>
     </div>
 
+    @if (order != null)
+    {
+        <div style="background: #1e293b; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid #334155; color: #f8fafc;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <span style="color: #94a3b8; font-size: 13px; display: block;">Mã đơn hàng:</span>
+                    <strong>#@order.OrderNumber</strong>
+                </div>
+                <div>
+                    <span style="color: #94a3b8; font-size: 13px; display: block;">Ngày đặt:</span>
+                    <strong>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</strong>
+                </div>
+                <div>
+                    <span style="color: #94a3b8; font-size: 13px; display: block;">Tài khoản đặt:</span>
+                    <strong>@order.UserName</strong>
+                </div>
+                <div>
+                    <span style="color: #94a3b8; font-size: 13px; display: block;">Người nhận:</span>
+                    <strong>@(string.IsNullOrEmpty(order.ReceiverName) ? order.UserName : order.ReceiverName)</strong>
+                </div>
+                <div>
+                    <span style="color: #94a3b8; font-size: 13px; display: block;">Số điện thoại:</span>
+                    <strong>@(string.IsNullOrEmpty(order.PhoneNumber) ? "Chưa cập nhật" : order.PhoneNumber)</strong>
+                </div>
+                <div>
+                    <span style="color: #94a3b8; font-size: 13px; display: block;">Phương thức thanh toán:</span>
+                    <span class="badge" style="background: @(order.PaymentMethod == "MoMo" ? "#be185d" : "#0284c7"); font-size: 13px;">
+                        @(order.PaymentMethod == "MoMo" ? "Ví điện tử MoMo" : "Thanh toán khi nhận hàng (COD)")
+                    </span>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <span style="color: #94a3b8; font-size: 13px; display: block;">Địa chỉ nhận hàng:</span>
+                    <strong>@(string.IsNullOrEmpty(order.ShippingAddress) ? "Chưa cập nhật" : order.ShippingAddress)</strong>
+                </div>
+            </div>
+
+            <hr style="border-color: #334155; margin: 1rem 0;" />
+
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span style="color: #94a3b8; font-size: 14px;">Tổng giá trị đơn hàng: </span>
+                    <strong style="color: #38bdf8; font-size: 18px;">@order.Total.ToString("#,##0 VND")</strong>
+                </div>
+
+                <form asp-action="UpdateStatus" method="post" style="display: flex; align-items: center; gap: 8px;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="orderNumber" value="@order.OrderNumber" />
+                    <label style="color: #cbd5e1; font-size: 14px; margin: 0;">Trạng thái:</label>
+                    <select name="status" class="form-select form-select-sm" style="background: #0f172a; color: #fff; border-color: #475569; width: auto; border-radius: 6px;">
+                        <option value="0" selected="@(order.Status == 0 ? "selected" : null)">Chờ xử lý (COD)</option>
+                        <option value="1" selected="@(order.Status == 1 ? "selected" : null)">Đã thanh toán (MoMo)</option>
+                        <option value="2" selected="@(order.Status == 2 ? "selected" : null)">Đang đóng gói</option>
+                        <option value="3" selected="@(order.Status == 3 ? "selected" : null)">Đang giao hàng</option>
+                        <option value="4" selected="@(order.Status == 4 ? "selected" : null)">Hoàn thành</option>
+                        <option value="5" selected="@(order.Status == 5 ? "selected" : null)">Đã hủy</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary" style="border-radius: 6px; padding: 4px 12px;">
+                        <i class="fa fa-save"></i> Cập nhật
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <h5 style="margin-bottom: 1rem; color: #e2e8f0;"><i class="fa fa-cubes"></i> Danh sách mặt hàng</h5>
     <div class="table-responsive">
         <table class="table" id="my_table">
             <thead>
@@ -27,10 +93,10 @@
                 {
                     <tr>
                         <td>@item.Id</td>
-                        <td>@item.ProductName</td>
+                        <td><strong>@item.ProductName</strong></td>
                         <td>@item.Quantity</td>
                         <td>@item.Price.ToString("#,##0 VND")</td>
-                        <td>@((item.Price * item.Quantity).ToString("#,##0 VND"))</td>
+                        <td><strong>@((item.Price * item.Quantity).ToString("#,##0 VND"))</strong></td>
                     </tr>
                 }
             </tbody>

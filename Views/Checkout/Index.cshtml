@@ -82,6 +82,20 @@
                 if (submitBtn) submitBtn.disabled = !canSubmit;
             }
 
+            const pmCod = document.getElementById('pm-cod');
+            const pmMomo = document.getElementById('pm-momo');
+            const btnText = document.getElementById('checkout-btn-text');
+
+            function updateBtnText() {
+                if (btnText) {
+                    btnText.textContent = pmMomo && pmMomo.checked
+                        ? 'Xác nhận & Chuyển sang MoMo'
+                        : 'Xác nhận đặt hàng (COD)';
+                }
+            }
+            if (pmCod) pmCod.addEventListener('change', updateBtnText);
+            if (pmMomo) pmMomo.addEventListener('change', updateBtnText);
+
             // ---- Leaflet map picker ----
             const deliveryMapEl = document.getElementById('delivery-map');
             let map = null;

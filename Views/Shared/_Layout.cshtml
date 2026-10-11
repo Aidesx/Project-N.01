@@ -76,21 +76,18 @@
 											{
 												<li>
 													<a asp-area="Admin" asp-controller="Product" asp-action="Index">
-														<i class="fa fa-lock"></i> Admin Panel
-													</a>
-												</li>
-											}
-											else
-											{
-												<li>
-													<a asp-controller="Account" asp-action="Index">
-														<i class="fa fa-user"></i> My Account
+														<i class="fa fa-lock"></i> Trang quản trị (Admin)
 													</a>
 												</li>
 											}
 											<li>
+												<a asp-controller="Account" asp-action="History">
+													<i class="fa fa-shopping-bag"></i> Đơn hàng của tôi
+												</a>
+											</li>
+											<li>
 												<a asp-controller="Account" asp-action="Logout">
-													<i class="fa fa-sign-out"></i> Logout
+													<i class="fa fa-sign-out"></i> Đăng xuất
 												</a>
 											</li>
 										</ul>
