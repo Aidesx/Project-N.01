@@ -166,13 +166,15 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn-primary-order" id="checkout-submit-btn" disabled="disabled">
-                                <i class="fa fa-shopping-bag"></i> <span id="checkout-btn-text">Xác nhận đặt hàng (COD)</span>
-                            </button>
+                            <div class="checkout-actions-row">
+                                <button type="submit" class="btn-primary-order" id="checkout-submit-btn" disabled="disabled">
+                                    <i class="fa fa-shopping-bag"></i> <span id="checkout-btn-text">Xác nhận đặt hàng (COD)</span>
+                                </button>
+                                <a asp-controller="Cart" asp-action="Index" class="btn-secondary-order">
+                                    <i class="fa fa-arrow-left"></i> Quay lại giỏ hàng
+                                </a>
+                            </div>
                         </form>
-                        <a asp-controller="Cart" asp-action="Index" class="btn-secondary-order">
-                            Quay lại giỏ hàng
-                        </a>
                     }
                     else
                     {

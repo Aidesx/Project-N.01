@@ -1,7 +1,9 @@
 @model IEnumerable<ProductModels>
 @{
-    ViewBag.Title = ViewBag.Keyword;
+    ViewBag.Title = $"Tìm kiếm: {ViewBag.Keyword}";
 }
+
+<link rel="stylesheet" href="~/css/product_list_base.css" />
 
 <div class="page-shell">
     <div class="row">
@@ -10,42 +12,122 @@
         </div>
         <div class="col-sm-9">
             <div class="features_items">
-                <div class="section-title">
-                    <h2 class="section-title-label">
-                        @ViewBag.Keyword
+                <div class="section-title" style="margin-bottom: 1.5rem;">
+                    <h2 class="section-title-label" style="font-size: 1.35rem; font-weight: 700; color: #60a5fa;">
+                        <i class="fa fa-search"></i> Kết quả tìm kiếm: "@ViewBag.Keyword"
                     </h2>
                 </div>
 
-                <div class="product-grid">
-                    @foreach (var item in Model)
-                    {
-                        <div class="product-card">
-                            <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="product-link">
-                                <div class="product-img">
-                                    <img src="~/images/@item.Image" alt="@item.Name" onerror="this.onerror=null;this.src='/images/default.png';" />
-                                </div>
-                            </a>
-
-                            <div class="card-body">
-                                <p class="card-details">Danh mục: @item.Category?.Name</p>
-                                <p class="card-details">Thương hiệu: @item.Brand?.Name</p>
-                                <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="card-title">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="product-grid">
+                        @foreach (var item in Model)
+                        {
+                            <div class="product-card animate-fade-in-up">
+                                <a asp-action="Details" asp-controller="Product" asp-route-id="@item.Id" class="product-link">
+                                    <div class="product-img img-zoom-container">
+                                        <img src="~/images/@item.Image" alt="@item.Name" onerror="this.onerror=null;this.src='/images/default.png';" />
+                                    </div>      
+                                </a>
+                                <a asp-action="Details" asp-controller="Product" asp-route-id="@item.Id" class="card-title">
                                     @item.Name
                                 </a>
 
-                                <div class="card-price-row">
-                                    <div>
-                                        <p class="price-current">@item.Price.ToString("#,##0 VND")</p>
+                                <div class="card-body">
+                                    <p class="card-details">Danh mục: @item.Category?.Name</p>
+                                    <p class="card-details">Thương hiệu: @item.Brand?.Name</p>
+
+                                    <div class="card-price-row">
+                                        <div>
+                                            <p class="price-current">@item.Price.ToString("#,##0 VND")</p>
+                                        </div>
+                                        <button type="button" class="btn-add-cart add-to-cart" data-product-id="@item.Id">
+                                            <i class="fa fa-shopping-cart"></i> Thêm
+                                        </button>
                                     </div>
-                                    <button class="btn-add-cart add-to-cart" data-product-id="@item.Id">
-                                        <i class="fa fa-shopping-cart"></i> Thêm
-                                    </button>
+
+                                    @if (User.Identity?.IsAuthenticated ?? false)
+                                    {
+                                        <div class="card-actions">
+                                            <button type="button" class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id">
+                                                <i class="fa fa-plus-square"></i> Yêu thích
+                                            </button>
+                                            <button type="button" class="btn-compare add-btn-compare" data-product-id="@item.Id">
+                                                <i class="fa fa-plus-square"></i> So sánh
+                                            </button>
+                                        </div>
+                                    }
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="app-card" style="text-align: center; padding: 3rem 1rem;">
+                        <i class="fa fa-search" style="font-size: 2.5rem; color: #64748b; margin-bottom: 1rem;"></i>
+                        <h4 style="color: #f8fafc; font-weight: 600;">Không tìm thấy sản phẩm phù hợp</h4>
+                        <p style="color: #94a3b8; margin-top: 0.5rem;">Hãy thử tìm kiếm với từ khóa khác hoặc duyệt danh mục sản phẩm.</p>
+                        <a asp-controller="Home" asp-action="Index" class="btn-app btn-app-primary" style="margin-top: 1rem;">
+                            Quay lại trang chủ
+                        </a>
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.add-to-cart, .add-btn-wishlist, .add-btn-compare', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var $btn = $(this);
+                var id = $btn.data('product-id');
+                var url = '';
+                var msg = '';
+
+                if ($btn.hasClass('add-to-cart')) {
+                    url = '@Url.Action("Add", "Cart")';
+                    msg = 'Đã thêm sản phẩm vào giỏ hàng!';
+                } else if ($btn.hasClass('add-btn-wishlist')) {
+                    url = '@Url.Action("AddWishList", "Home")';
+                    msg = 'Đã thêm vào yêu thích!';
+                } else {
+                    url = '@Url.Action("AddCompare", "Home")';
+                    msg = 'Đã thêm vào so sánh!';
+                }
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: { Id: id },
+                    success: function (r) {
+                        if (r.success !== false) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: msg,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                background: '#0d1117',
+                                color: '#e2e8f0'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại!',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại.',
+                            background: '#0d1117',
+                            color: '#e2e8f0'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

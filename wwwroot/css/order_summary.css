@@ -321,9 +321,11 @@
 .order-actions {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 0.9rem;
     flex-wrap: wrap;
     margin-top: 1.5rem;
+    width: 100%;
 }
 
 .order-actions-start {
@@ -332,6 +334,15 @@
 
 .order-action-form {
     margin: 0;
+    width: 100%;
+}
+
+.checkout-actions-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
 }
 
 .btn-primary-order,
