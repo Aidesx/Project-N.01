@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Project_385.Areas.Admin.Repositery;
 using Project_385.Models;
 using Project_385.Models.MoMo;
-using Project_385.Repositery;
+using Project_385.Repository;
 using Project_385.Services;
 using Project_385.Services.MoMo;
 
