@@ -72,15 +72,11 @@
 
         <div class="products-col">
             <div class="product-grid">
-                <style>
-                    /* UI thử nghiệm (không phụ thuộc Tailwind) */
-                    .product-card{ border-radius: 0.75rem; }
-                </style>
                 @foreach (var item in Model)
                 {
-                    <div class="product-card" style="transition: transform .2s ease, box-shadow .2s ease;">
+                    <div class="product-card animate-fade-in-up">
                         <a asp-action="Details" asp-controller="Product" asp-route-id="@item.Id" class="product-link">
-                            <div class="product-img">
+                            <div class="product-img img-zoom-container">
                                 <img src="~/images/@item.Image" alt="@item.Name" onerror="this.onerror=null;this.src='/images/default.png';" />
                             </div>      
                         </a>
@@ -96,7 +92,7 @@
                                 <div>
                                     <p class="price-current">@item.Price.ToString("#,##0 VND")</p>
                                 </div>
-                                <button type="button" class="btn-add-cart add-to-cart" data-product-id="@item.Id" style="transition: filter .2s ease, transform .2s ease;">
+                                <button type="button" class="btn-add-cart add-to-cart" data-product-id="@item.Id">
                                     <i class="fa fa-shopping-cart"></i> Thêm
                                 </button>
                             </div>
@@ -104,10 +100,10 @@
                             @if (User.Identity?.IsAuthenticated ?? false)
                             {
                                 <div class="card-actions">
-                                    <button type="button" class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id" style="transition: color .2s ease, transform .2s ease;">
+                                    <button type="button" class="btn-wishlist add-btn-wishlist" data-product-id="@item.Id">
                                         <i class="fa fa-plus-square"></i> Yêu thích
                                     </button>
-                                    <button type="button" class="btn-compare add-btn-compare" data-product-id="@item.Id" style="transition: color .2s ease, transform .2s ease;">
+                                    <button type="button" class="btn-compare add-btn-compare" data-product-id="@item.Id">
                                         <i class="fa fa-plus-square"></i> So sánh
                                     </button>
                                 </div>

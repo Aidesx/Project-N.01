@@ -1,0 +1,355 @@
+/* ===================================================================
+   DESIGN TOKENS & UNIFIED COMPONENT SYSTEM (The Awesome Store)
+   Centralized CSS Variables, Utility Classes, and Micro-Animations
+   =================================================================== */
+
+:root {
+    /* --- Brand & Palette Colors --- */
+    --color-primary: #3b82f6;
+    --color-primary-hover: #2563eb;
+    --color-primary-light: rgba(59, 130, 246, 0.15);
+    
+    --color-accent: #f97316;
+    --color-accent-hover: #ea580c;
+    
+    --color-success: #10b981;
+    --color-success-bg: rgba(16, 185, 129, 0.15);
+    
+    --color-warning: #f59e0b;
+    --color-warning-bg: rgba(245, 158, 11, 0.15);
+    
+    --color-danger: #ef4444;
+    --color-danger-bg: rgba(239, 68, 68, 0.15);
+    
+    --color-info: #06b6d4;
+    --color-info-bg: rgba(6, 182, 212, 0.15);
+
+    --color-momo: #be185d;
+    --color-momo-hover: #9d174d;
+
+    /* --- Dark Theme Surfaces & Backgrounds --- */
+    --bg-page: #0b0f17;
+    --bg-surface: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-hover: #273549;
+    --bg-elevated: #334155;
+
+    /* --- Borders & Outlines --- */
+    --border-subtle: #1e293b;
+    --border-card: #334155;
+    --border-active: #3b82f6;
+    --border-focus: rgba(59, 130, 246, 0.5);
+
+    /* --- Typography & Text Colors --- */
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --text-inverse: #0f172a;
+
+    /* --- Border Radiuses --- */
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* --- Shadows & Glow Effects --- */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.4);
+    --shadow-glow-primary: 0 0 20px rgba(59, 130, 246, 0.25);
+    --shadow-glow-accent: 0 0 20px rgba(249, 115, 22, 0.25);
+
+    /* --- Transitions & Timings --- */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===================================================================
+   UNIFIED COMPONENT CLASSES
+   =================================================================== */
+
+/* --- 1. App Cards --- */
+.app-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    color: var(--text-main);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.app-card--interactive {
+    cursor: pointer;
+}
+
+.app-card--interactive:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-active);
+    box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+}
+
+.app-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-card);
+}
+
+.app-card-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* --- 2. App Buttons --- */
+.btn-app {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.925rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-base);
+    user-select: none;
+    line-height: 1.5;
+}
+
+.btn-app:active {
+    transform: scale(0.97);
+}
+
+.btn-app-sm {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    border-radius: var(--radius-xs);
+}
+
+.btn-app-lg {
+    padding: 0.75rem 1.75rem;
+    font-size: 1.05rem;
+    border-radius: var(--radius-md);
+}
+
+.btn-app-primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+    color: #ffffff;
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-app-primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-hover), #1d4ed8);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-app-accent {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+}
+
+.btn-app-accent:hover {
+    background: linear-gradient(135deg, var(--color-accent-hover), #c2410c);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-app-secondary {
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    border-color: var(--border-card);
+}
+
+.btn-app-secondary:hover {
+    background: #475569;
+    color: #ffffff;
+    border-color: var(--text-muted);
+}
+
+.btn-app-danger {
+    background: linear-gradient(135deg, #b91c1c, #991b1b);
+    color: #fee2e2;
+    border-color: #7f1d1d;
+}
+
+.btn-app-danger:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+.btn-app-outline {
+    background: transparent;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn-app-outline:hover {
+    background: var(--color-primary-light);
+    color: #ffffff;
+    border-color: var(--color-primary-hover);
+}
+
+/* --- 3. Badges --- */
+.app-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.app-badge--pending {
+    background: var(--color-warning-bg);
+    color: #fef08a;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.app-badge--paid {
+    background: var(--color-success-bg);
+    color: #a7f3d0;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.app-badge--processing {
+    background: rgba(30, 58, 138, 0.3);
+    color: #bfdbfe;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.app-badge--shipping {
+    background: var(--color-info-bg);
+    color: #cffafe;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.app-badge--completed {
+    background: rgba(4, 120, 87, 0.25);
+    color: #d1fae5;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.app-badge--cancelled {
+    background: var(--color-danger-bg);
+    color: #fee2e2;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.app-badge--momo {
+    background: rgba(190, 24, 93, 0.25);
+    color: #fbcfe8;
+    border: 1px solid rgba(190, 24, 93, 0.4);
+}
+
+.app-badge--cod {
+    background: rgba(51, 65, 85, 0.4);
+    color: #e2e8f0;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* --- 4. Inputs & Forms --- */
+.app-input {
+    width: 100%;
+    background: var(--bg-surface);
+    color: var(--text-main);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.95rem;
+    font-size: 0.95rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.app-input:focus {
+    outline: none;
+    border-color: var(--border-active);
+    box-shadow: 0 0 0 3px var(--border-focus);
+}
+
+.app-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* ===================================================================
+   MICRO-ANIMATIONS & TRANSITIONS
+   =================================================================== */
+
+/* Keyframe Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+    }
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.92);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.4s var(--transition-smooth) forwards;
+}
+
+.animate-pop-in {
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Image Hover Zoom Utility */
+.img-zoom-container {
+    overflow: hidden;
+    position: relative;
+    border-radius: var(--radius-sm);
+}
+
+.img-zoom-container img {
+    transition: transform var(--transition-smooth);
+}
+
+.img-zoom-container:hover img {
+    transform: scale(1.06);
+}

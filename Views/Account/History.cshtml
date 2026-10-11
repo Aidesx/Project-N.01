@@ -4,62 +4,60 @@
 }
 
 <div class="container my-5" style="max-width: 960px;">
-    <div class="card shadow-sm border-0" style="border-radius: 16px; overflow: hidden; background: #ffffff;">
-        <div class="card-header p-4" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff;">
-            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                <div>
-                    <h3 class="fw-bold mb-1"><i class="fa fa-history me-2"></i> Lịch sử đơn hàng</h3>
-                    <p class="mb-0 text-muted small" style="color: #94a3b8 !important;">Theo dõi các đơn hàng bạn đã đặt tại cửa hàng</p>
-                </div>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light btn-sm" style="border-radius: 8px;">
-                    <i class="fa fa-arrow-left me-1"></i> Mua sắm thêm
-                </a>
+    <div class="app-card animate-fade-in-up">
+        <div class="app-card-header">
+            <div>
+                <h3 class="app-card-title"><i class="fa fa-history"></i> Lịch sử đơn hàng</h3>
+                <p class="text-muted" style="margin: 0.35rem 0 0; font-size: 0.9rem;">Theo dõi các đơn hàng bạn đã đặt tại cửa hàng</p>
             </div>
+            <a asp-controller="Home" asp-action="Index" class="btn-app btn-app-sm btn-app-outline">
+                <i class="fa fa-arrow-left"></i> Mua sắm thêm
+            </a>
         </div>
 
-        <div class="card-body p-4">
+        <div style="padding-top: 0.5rem;">
             @if (Model != null && Model.Any())
             {
-                <div class="d-flex flex-column gap-4">
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
                     @foreach (var order in Model)
                     {
-                        <div class="border rounded-3 p-3 p-md-4" style="border-color: #e2e8f0; background: #f8fafc;">
-                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-3 border-bottom">
+                        <div class="app-card" style="background: var(--bg-surface); border-color: var(--border-card);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-subtle);">
                                 <div>
-                                    <span class="text-muted small d-block">Mã đơn hàng</span>
-                                    <strong class="fs-5 text-dark">#@order.OrderNumber</strong>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Mã đơn hàng</span>
+                                    <strong style="color: var(--color-primary); font-size: 1.1rem;">#@order.OrderNumber</strong>
                                 </div>
                                 <div>
-                                    <span class="text-muted small d-block">Ngày đặt</span>
-                                    <span class="text-secondary">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Ngày đặt</span>
+                                    <span style="color: var(--text-main); font-size: 0.9rem;">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
                                 </div>
                                 <div>
-                                    <span class="text-muted small d-block">Thanh toán</span>
-                                    <span class="badge bg-secondary">
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Thanh toán</span>
+                                    <span class="app-badge @(order.PaymentMethod == "MoMo" ? "app-badge--momo" : "app-badge--cod")">
                                         @(order.PaymentMethod == "MoMo" ? "Ví MoMo" : "COD (Tiền mặt)")
                                     </span>
                                 </div>
                                 <div>
-                                    <span class="text-muted small d-block">Trạng thái</span>
+                                    <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Trạng thái</span>
                                     @switch (order.Status)
                                     {
                                         case 1:
-                                            <span class="badge bg-success">Đã thanh toán (MoMo)</span>
+                                            <span class="app-badge app-badge--paid">Đã thanh toán (MoMo)</span>
                                             break;
                                         case 2:
-                                            <span class="badge bg-info text-dark">Đang đóng gói</span>
+                                            <span class="app-badge app-badge--processing">Đang đóng gói</span>
                                             break;
                                         case 3:
-                                            <span class="badge bg-primary">Đang giao hàng</span>
+                                            <span class="app-badge app-badge--shipping">Đang giao hàng</span>
                                             break;
                                         case 4:
-                                            <span class="badge bg-success">Hoàn thành</span>
+                                            <span class="app-badge app-badge--completed">Hoàn thành</span>
                                             break;
                                         case 5:
-                                            <span class="badge bg-danger">Đã hủy</span>
+                                            <span class="app-badge app-badge--cancelled">Đã hủy</span>
                                             break;
                                         default:
-                                            <span class="badge bg-warning text-dark">Chờ xử lý (COD)</span>
+                                            <span class="app-badge app-badge--pending">Chờ xử lý (COD)</span>
                                             break;
                                     }
                                 </div>
@@ -67,32 +65,32 @@
 
                             @if (!string.IsNullOrWhiteSpace(order.ShippingAddress))
                             {
-                                <div class="mb-3 p-2 rounded small text-muted" style="background: #ffffff; border: 1px solid #e2e8f0;">
-                                    <i class="fa fa-map-marker text-danger me-1"></i>
-                                    <strong>Địa chỉ nhận:</strong> @order.ReceiverName (@order.PhoneNumber) - @order.ShippingAddress
+                                <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.65rem 0.95rem; margin-bottom: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+                                    <i class="fa fa-map-marker" style="color: var(--color-accent); margin-right: 0.35rem;"></i>
+                                    <strong style="color: var(--text-main);">Địa chỉ nhận:</strong> @order.ReceiverName (@order.PhoneNumber) - @order.ShippingAddress
                                 </div>
                             }
 
                             @if (order.OrderDetails != null && order.OrderDetails.Any())
                             {
                                 <div class="table-responsive">
-                                    <table class="table table-sm align-middle mb-0">
+                                    <table class="table" style="margin-bottom: 0;">
                                         <thead>
-                                            <tr class="text-muted small">
+                                            <tr style="color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid var(--border-card);">
                                                 <th>Sản phẩm</th>
-                                                <th class="text-center">Số lượng</th>
-                                                <th class="text-end">Đơn giá</th>
-                                                <th class="text-end">Thành tiền</th>
+                                                <th style="text-align: center;">Số lượng</th>
+                                                <th style="text-align: right;">Đơn giá</th>
+                                                <th style="text-align: right;">Thành tiền</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach (var item in order.OrderDetails)
                                             {
-                                                <tr>
+                                                <tr style="border-bottom: 1px solid rgba(51, 65, 85, 0.3); color: var(--text-main);">
                                                     <td><strong>@item.ProductName</strong></td>
-                                                    <td class="text-center">@item.Quantity</td>
-                                                    <td class="text-end text-muted">@item.Price.ToString("#,##0 VND")</td>
-                                                    <td class="text-end fw-semibold">@((item.Price * item.Quantity).ToString("#,##0 VND"))</td>
+                                                    <td style="text-align: center;">@item.Quantity</td>
+                                                    <td style="text-align: right; color: var(--text-muted);">@item.Price.ToString("#,##0 VND")</td>
+                                                    <td style="text-align: right; font-weight: 600; color: var(--color-accent);">@((item.Price * item.Quantity).ToString("#,##0 VND"))</td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -100,9 +98,9 @@
                                 </div>
                             }
 
-                            <div class="d-flex justify-content-end align-items-center mt-3 pt-2 border-top">
-                                <span class="me-2 text-muted">Tổng cộng:</span>
-                                <strong class="fs-5 text-danger">@order.Total.ToString("#,##0 VND")</strong>
+                            <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); gap: 0.5rem;">
+                                <span style="color: var(--text-muted); font-size: 0.925rem;">Tổng cộng:</span>
+                                <strong style="color: var(--color-accent); font-size: 1.25rem;">@order.Total.ToString("#,##0 VND")</strong>
                             </div>
                         </div>
                     }
@@ -110,14 +108,14 @@
             }
             else
             {
-                <div class="text-center py-5">
-                    <div style="width: 80px; height: 80px; background: #f1f5f9; color: #94a3b8; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 36px;">
+                <div style="text-align: center; padding: 4rem 1rem;">
+                    <div style="width: 80px; height: 80px; background: rgba(59, 130, 246, 0.1); color: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 32px;">
                         <i class="fa fa-shopping-basket"></i>
                     </div>
-                    <h5 class="fw-bold text-dark mb-2">Bạn chưa có đơn hàng nào</h5>
-                    <p class="text-muted mb-4">Hãy khám phá các sản phẩm tuyệt vời của chúng tôi và đặt đơn hàng đầu tiên!</p>
-                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4 py-2" style="border-radius: 8px;">
-                        <i class="fa fa-shopping-bag me-1"></i> Bắt đầu mua sắm
+                    <h4 style="font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;">Bạn chưa có đơn hàng nào</h4>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Hãy khám phá các sản phẩm tuyệt vời của chúng tôi và đặt đơn hàng đầu tiên!</p>
+                    <a asp-controller="Home" asp-action="Index" class="btn-app btn-app-primary">
+                        <i class="fa fa-shopping-bag"></i> Bắt đầu mua sắm
                     </a>
                 </div>
             }

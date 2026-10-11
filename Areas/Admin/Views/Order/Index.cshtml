@@ -34,7 +34,7 @@
                         <td>@item.UserName</td>
                         <td>@(string.IsNullOrEmpty(item.ReceiverName) ? item.UserName : item.ReceiverName) <br /><small style="color:#94a3b8;">@item.PhoneNumber</small></td>
                         <td>
-                            <span class="badge" style="background: @(item.PaymentMethod == "MoMo" ? "#be185d" : "#334155"); color: #fff;">
+                            <span class="app-badge @(item.PaymentMethod == "MoMo" ? "app-badge--momo" : "app-badge--cod")">
                                 @(item.PaymentMethod == "MoMo" ? "Ví MoMo" : "COD")
                             </span>
                         </td>
@@ -43,34 +43,33 @@
                             @switch (item.Status)
                             {
                                 case 1:
-                                    <span class="badge" style="background: #065f46; color: #a7f3d0;">Đã thanh toán (MoMo)</span>
+                                    <span class="app-badge app-badge--paid">Đã thanh toán (MoMo)</span>
                                     break;
                                 case 2:
-                                    <span class="badge" style="background: #1e3a8a; color: #bfdbfe;">Đang đóng gói</span>
+                                    <span class="app-badge app-badge--processing">Đang đóng gói</span>
                                     break;
                                 case 3:
-                                    <span class="badge" style="background: #0e7490; color: #cffafe;">Đang giao hàng</span>
+                                    <span class="app-badge app-badge--shipping">Đang giao hàng</span>
                                     break;
                                 case 4:
-                                    <span class="badge" style="background: #047857; color: #d1fae5;">Hoàn thành</span>
+                                    <span class="app-badge app-badge--completed">Hoàn thành</span>
                                     break;
                                 case 5:
-                                    <span class="badge" style="background: #991b1b; color: #fee2e2;">Đã hủy</span>
+                                    <span class="app-badge app-badge--cancelled">Đã hủy</span>
                                     break;
                                 default:
-                                    <span class="badge" style="background: #854d0e; color: #fef08a;">Chờ xử lý (COD)</span>
+                                    <span class="app-badge app-badge--pending">Chờ xử lý (COD)</span>
                                     break;
                             }
                         </td>
                         <td>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <a asp-action="ViewOrder" asp-route-orderNumber="@item.OrderNumber" class="btn-admin-primary btn-sm" style="padding:0.25rem 0.75rem; font-size:15px;">
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <a asp-action="ViewOrder" asp-route-orderNumber="@item.OrderNumber" class="btn-app btn-app-sm btn-app-primary">
                                     <i class="fa fa-eye"></i> Chi tiết
                                 </a>
-                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline">
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline; margin:0;">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm confirmDeletion" 
-                                            style="background:#7f1d1d; color:#fecaca; border:1px solid #b91c1c; padding:0.25rem 0.75rem; font-size:15px;">
+                                    <button type="submit" class="btn-app btn-app-sm btn-app-danger confirmDeletion">
                                         <i class="fa fa-trash"></i> Xóa
                                     </button>
                                 </form>
