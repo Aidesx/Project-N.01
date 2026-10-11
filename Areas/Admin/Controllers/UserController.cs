@@ -66,6 +66,13 @@ namespace Project_385.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserModels user, string roleName)
         {
+            if (string.Equals(roleName, "Admin", StringComparison.OrdinalIgnoreCase) && !User.IsInRole("Admin"))
+            {
+                TempData["Error"] = "Chỉ quản trị viên cấp cao (Admin) mới có quyền cấp quyền Admin.";
+                ViewBag.Roles = new SelectList(_roleManager.Roles, "Name", "Name");
+                return View(user);
+            }
+
             if (ModelState.IsValid)
             {
                 AppUserModels appUser = new AppUserModels
@@ -115,6 +122,13 @@ namespace Project_385.Areas.Admin.Controllers
             }
 
             var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("Admin") && !User.IsInRole("Admin"))
+            {
+                TempData["Error"] = "Bạn không có quyền chỉnh sửa tài khoản quản trị viên Admin.";
+                return RedirectToAction("Index");
+            }
+
             ViewBag.Roles = await _roleManager.Roles.ToListAsync();
             ViewBag.CurrentRole = roles.FirstOrDefault() ?? "User";
 
@@ -133,12 +147,25 @@ namespace Project_385.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserWithRoleViewModel model, string roleName)
         {
+            if (string.Equals(roleName, "Admin", StringComparison.OrdinalIgnoreCase) && !User.IsInRole("Admin"))
+            {
+                TempData["Error"] = "Chỉ quản trị viên cấp cao (Admin) mới có quyền cấp vai trò Admin.";
+                return RedirectToAction("Index");
+            }
+
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByIdAsync(model.Id);
                 if (user == null)
                 {
                     TempData["Error"] = "Không tìm thấy người dùng.";
+                    return RedirectToAction("Index");
+                }
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if (currentRoles.Contains("Admin") && !User.IsInRole("Admin"))
+                {
+                    TempData["Error"] = "Bạn không có quyền thay đổi tài khoản quản trị viên Admin.";
                     return RedirectToAction("Index");
                 }
 
@@ -156,7 +183,6 @@ namespace Project_385.Areas.Admin.Controllers
 
                 if (result.Succeeded)
                 {
-                    var currentRoles = await _userManager.GetRolesAsync(user);
                     await _userManager.RemoveFromRolesAsync(user, currentRoles);
 
                     if (!string.IsNullOrEmpty(roleName))
@@ -192,6 +218,13 @@ namespace Project_385.Areas.Admin.Controllers
                 if (user.UserName.Equals("admin", StringComparison.OrdinalIgnoreCase))
                 {
                     TempData["Error"] = "Không được phép xóa tài khoản quản trị viên chính (admin).";
+                    return RedirectToAction("Index");
+                }
+
+                var userRoles = await _userManager.GetRolesAsync(user);
+                if (userRoles.Contains("Admin") && !User.IsInRole("Admin"))
+                {
+                    TempData["Error"] = "Bạn không có quyền xóa tài khoản quản trị viên Admin.";
                     return RedirectToAction("Index");
                 }
 
