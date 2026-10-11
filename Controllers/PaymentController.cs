@@ -48,7 +48,7 @@ namespace Project_385.Controllers
                 {
                     if (response.ResultCode == "0")
                     {
-                        order.Status = 1;
+                        order.Status = (int)OrderStatus.Paid;
                         await _context.SaveChangesAsync();
 
                         var orderDetails = await _context.OrderDetails
@@ -65,11 +65,11 @@ namespace Project_385.Controllers
 
                         HttpContext.Session.Remove("Cart");
                         TempData["Success"] = "Thanh toán thành công! Cảm ơn bạn.";
-                        return View(response);
+                        return View("~/Views/Checkout/PaymentCallBack.cshtml", response);
                     }
                     else
                     {
-                        order.Status = 2;
+                        order.Status = (int)OrderStatus.Cancelled;
                         await _context.SaveChangesAsync();
 
                         TempData["Error"] = $"Giao dịch không thành công: {response.Message}";

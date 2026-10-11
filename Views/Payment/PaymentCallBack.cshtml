@@ -1,0 +1,44 @@
+@using Project_385.Models.MoMo
+@model MomoExecuteResponseModel
+
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+}
+
+<link rel="stylesheet" href="~/css/order_summary.css" />
+
+<section class="order-summary-shell">
+    <div class="order-summary-card">
+        <div class="order-summary-header">
+            <div>
+                <p class="order-summary-kicker">Kết quả thanh toán</p>
+                <h2>Thanh toán thành công</h2>
+            </div>
+            <div class="order-summary-badge order-summary-badge-success">
+                Hoàn tất
+            </div>
+        </div>
+
+        <div class="order-summary-body">
+            <div class="delivery-location-panel delivery-location-panel-success">
+                <p class="delivery-location-label">Thông tin đơn hàng</p>
+                <div class="delivery-location-meta compact">
+                    <span>Mã đơn: <strong>@Model.OrderId</strong></span>
+                    <span>Tổng tiền: <strong>@Convert.ToDouble(Model.Amount).ToString("#,##0") VND</strong></span>
+                </div>
+                <p class="delivery-location-note tight">
+                    @Model.OrderInfo
+                </p>
+            </div>
+
+            <div class="order-actions order-actions-start">
+                <a class="btn-primary-order" asp-controller="Account" asp-action="History">
+                    Xem lịch sử đơn hàng
+                </a>
+                <a class="btn-secondary-order" asp-controller="Home" asp-action="Index">
+                    Về trang chủ
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
