@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductModels>
+@model IEnumerable<ProductModels>
 @{
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
 }
@@ -26,7 +26,7 @@
                         <div class="product-card">
                             <a asp-action="Details" asp-controller="Product" asp-route-Id="@item.Id" class="product-link">
                                 <div class="product-img">
-                                    <img src="~/images/@item.Image" alt="@item.Name" />
+                                    <img src="~/images/@item.Image" alt="@item.Name" onerror="this.onerror=null;this.src='/images/default.png';" />
                                 </div>
                             </a>
 

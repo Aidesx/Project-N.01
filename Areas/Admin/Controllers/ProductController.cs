@@ -16,12 +16,18 @@ namespace Project_385.Areas.Admin.Controllers
         private readonly DataContext _dataContext;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly PermissionService _permissionService;
+        private readonly IImageService _imageService;
 
-        public ProductController(DataContext context, IWebHostEnvironment webHostEnvironment, PermissionService permissionService)
+        public ProductController(
+            DataContext context,
+            IWebHostEnvironment webHostEnvironment,
+            PermissionService permissionService,
+            IImageService imageService)
         {
             _dataContext = context;
             _webHostEnvironment = webHostEnvironment;
             _permissionService = permissionService;
+            _imageService = imageService;
         }
 
         public async Task<IActionResult> Index(int pg = 1)
@@ -86,18 +92,8 @@ namespace Project_385.Areas.Admin.Controllers
                     }
 
                     string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-                    if (!Directory.Exists(uploadDir))
-                    {
-                        Directory.CreateDirectory(uploadDir);
-                    }
-
-                    string imageName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(product.ImageUpLoad.FileName);
-                    string filePath = Path.Combine(uploadDir, imageName);
-                    using (FileStream fs = new FileStream(filePath, FileMode.Create))
-                    {
-                        await product.ImageUpLoad.CopyToAsync(fs);
-                    }
-                    product.Image = imageName;
+                    string imageName = await _imageService.SaveAndResizeImageAsync(product.ImageUpLoad, uploadDir, 800, 800);
+                    product.Image = imageName ?? "default.png";
                 }
 
                 _dataContext.Add(product);
@@ -166,28 +162,13 @@ namespace Project_385.Areas.Admin.Controllers
                     }
 
                     string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-                    if (!Directory.Exists(uploadDir))
-                    {
-                        Directory.CreateDirectory(uploadDir);
-                    }
+                    string imageName = await _imageService.SaveAndResizeImageAsync(product.ImageUpLoad, uploadDir, 800, 800);
 
-                    string imageName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(product.ImageUpLoad.FileName);
-                    string filePath = Path.Combine(uploadDir, imageName);
-                    using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                    if (!string.IsNullOrEmpty(imageName))
                     {
-                        await product.ImageUpLoad.CopyToAsync(fs);
+                        _imageService.DeleteImage(uploadDir, existingProduct.Image);
+                        existingProduct.Image = imageName;
                     }
-
-                    if (!string.Equals(existingProduct.Image, "default.png"))
-                    {
-                        string oldFilePath = Path.Combine(uploadDir, existingProduct.Image);
-                        if (System.IO.File.Exists(oldFilePath))
-                        {
-                            System.IO.File.Delete(oldFilePath);
-                        }
-                    }
-
-                    existingProduct.Image = imageName;
                 }
 
                 existingProduct.Name = product.Name;
@@ -221,15 +202,8 @@ namespace Project_385.Areas.Admin.Controllers
             ProductModels product = await _dataContext.Products.FindAsync(Id);
             if (product != null)
             {
-                if (!string.Equals(product.Image, "default.png"))
-                {
-                    string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-                    string oldFilePath = Path.Combine(uploadDir, product.Image);
-                    if (System.IO.File.Exists(oldFilePath))
-                    {
-                        System.IO.File.Delete(oldFilePath);
-                    }
-                }
+                string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                _imageService.DeleteImage(uploadDir, product.Image);
 
                 _dataContext.Products.Remove(product);
                 await _dataContext.SaveChangesAsync();

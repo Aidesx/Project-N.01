@@ -18,6 +18,7 @@ builder.Services.Configure<MoMoOptionModel>(builder.Configuration.GetSection("Mo
 builder.Services.Configure<DeliverySettingsModel>(builder.Configuration.GetSection("DeliverySettings"));
 builder.Services.AddScoped<IMomoService, MoMoService>();
 builder.Services.AddScoped<CartPricingService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 // Connection DB
 builder.Services.AddDbContext<DataContext>(options =>

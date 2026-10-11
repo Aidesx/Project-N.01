@@ -45,7 +45,7 @@
 
                 <div class="hero-img-wrap hero-content-layer">
                     <div class="hero-img-glow"></div>
-                    <img src="~/images/@item.Image" alt="@item.Name" />
+                    <img src="~/images/@item.Image" alt="@item.Name" onerror="this.onerror=null;this.src='/images/default.png';" />
                 </div>
             </div>
         }
@@ -81,7 +81,7 @@
                     <div class="product-card" style="transition: transform .2s ease, box-shadow .2s ease;">
                         <a asp-action="Details" asp-controller="Product" asp-route-id="@item.Id" class="product-link">
                             <div class="product-img">
-                                <img src="~/images/@item.Image" alt="@item.Name" />
+                                <img src="~/images/@item.Image" alt="@item.Name" onerror="this.onerror=null;this.src='/images/default.png';" />
                             </div>      
                         </a>
                         <a asp-action="Details" asp-controller="Product" asp-route-id="@item.Id" class="card-title">

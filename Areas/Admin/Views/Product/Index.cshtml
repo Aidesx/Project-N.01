@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductModels>
+@model IEnumerable<ProductModels>
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
     var pager = ViewBag.Pager as Project_385.Models.Paginate;
@@ -35,7 +35,7 @@
                         <td>@item.Name</td>
                         <td>@Html.Raw(item.Description)</td>
                         <td>@item.Price.ToString("#,##0 VND")</td>
-                        <td><img src="~/images/@item.Image" style="max-width: 80px; border-radius: 0.25rem;" /></td>
+                        <td><img src="~/images/@item.Image" style="max-width: 80px; border-radius: 0.25rem;" onerror="this.onerror=null;this.src='/images/default.png';" /></td>
                         <td>@item.Slug</td>
                         <td>@item.Category?.Name</td>
                         <td>@item.Brand?.Name</td>

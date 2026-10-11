@@ -40,7 +40,7 @@
                                 <td>@Html.Raw(item.Product.Description)</td>
                                 <td>@item.Product.Price.ToString("#,##0 VND")</td>
                                 <td>
-                        <img src="~/images/@item.Product.Image" alt="@item.Product.Name" class="wishlist-thumb" />
+                        <img src="~/images/@item.Product.Image" alt="@item.Product.Name" class="wishlist-thumb" onerror="this.onerror=null;this.src='/images/default.png';" />
                                 </td>
                                 <td>
                                     <a class="btn-page-danger confirmDeletion"
