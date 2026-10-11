@@ -111,13 +111,20 @@ namespace Project_385.Controllers
         [HttpPost]
         public async Task<IActionResult> Search(string search)
         {
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                ViewBag.Keyword = string.Empty;
+                return View(new List<ProductModels>());
+            }
+
+            var trimmedSearch = search.Trim();
             var products = await _dataContext.Products
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Where(p => p.Name.Contains(search) || p.Description.Contains(search))
+                .Where(p => p.Name.Contains(trimmedSearch) || (p.Description != null && p.Description.Contains(trimmedSearch)))
                 .ToListAsync();
 
-            ViewBag.Keyword = search;
+            ViewBag.Keyword = trimmedSearch;
             return View(products);
         }
     }

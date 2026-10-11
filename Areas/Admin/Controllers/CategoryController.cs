@@ -133,6 +133,13 @@ namespace Project_385.Areas.Admin.Controllers
         {
             if (Id == null) return NotFound();
 
+            var hasProducts = await _dataContext.Products.AnyAsync(p => p.CategoryID == Id);
+            if (hasProducts)
+            {
+                TempData["Error"] = "Không thể xóa danh mục này vì vẫn còn sản phẩm liên kết. Vui lòng chuyển hoặc xóa sản phẩm trước.";
+                return RedirectToAction("Index");
+            }
+
             CategoryModel category = await _dataContext.Categories.FindAsync(Id);
             if (category != null)
             {

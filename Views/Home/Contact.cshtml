@@ -1,0 +1,55 @@
+@using Microsoft.Extensions.Options
+@using Project_385.Models
+@inject IOptions<DeliverySettingsModel> _deliverySettings
+@{
+    ViewData["Title"] = "Liên hệ với chúng tôi";
+    var settings = _deliverySettings.Value;
+}
+
+<div class="page-shell">
+    <div class="page-card" style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+        <h2 style="font-weight: 700; margin-bottom: 1.5rem; color: #1e293b;">
+            <i class="fa fa-envelope" style="color: #f97316;"></i> @ViewData["Title"]
+        </h2>
+
+        <div class="row">
+            <div class="col-md-6" style="margin-bottom: 1.5rem;">
+                <h4 style="font-weight: 600; color: #334155;">Thông tin cửa hàng</h4>
+                <p style="color: #64748b; line-height: 1.6;">
+                    Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn mọi lúc. Hãy liên hệ với chúng tôi qua các kênh dưới đây hoặc ghé thăm cửa hàng trực tiếp.
+                </p>
+
+                <div style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div>
+                        <strong style="color: #0f172a;"><i class="fa fa-map-marker" style="width: 20px; color: #ef4444;"></i> Địa chỉ:</strong>
+                        <span style="color: #475569; display: block; margin-left: 24px;">@settings.StoreAddress</span>
+                    </div>
+                    <div>
+                        <strong style="color: #0f172a;"><i class="fa fa-clock-o" style="width: 20px; color: #3b82f6;"></i> Giờ mở cửa:</strong>
+                        <span style="color: #475569; display: block; margin-left: 24px;">08:00 - 21:30 (Thứ 2 - Chủ Nhật)</span>
+                    </div>
+                    <div>
+                        <strong style="color: #0f172a;"><i class="fa fa-phone" style="width: 20px; color: #10b981;"></i> Hotline hỗ trợ:</strong>
+                        <span style="color: #475569; display: block; margin-left: 24px;">1900 6868 (Miễn phí)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h4 style="font-weight: 600; color: #334155; margin-bottom: 1rem;">Vị trí trên bản đồ</h4>
+                <div style="border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; height: 260px;">
+                    <iframe
+                        src="https://www.google.com/maps?q=@settings.StoreLatitude,@settings.StoreLongitude&z=16&output=embed"
+                        width="100%"
+                        height="100%"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Bản đồ cửa hàng">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,19 +17,22 @@ namespace Project_385.Controllers
         private readonly IEmailSender _emailSender;
         private readonly IEmailTemplateRenderer _emailRenderer;
         private readonly DataContext _dataContext;
+        private readonly ILogger<AccountController> _logger;
 
         public AccountController(
             UserManager<AppUserModels> userManager,
             SignInManager<AppUserModels> signInManager,
             IEmailSender emailSender,
             IEmailTemplateRenderer emailRenderer,
-            DataContext dataContext)
+            DataContext dataContext,
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _emailRenderer = emailRenderer;
             _dataContext = dataContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -125,9 +128,17 @@ namespace Project_385.Controllers
                     { "ExpireTime", "24 giờ" }
                 });
 
-                await _emailSender.SendEmailAsync(appUser.Email, "Xác nhận tài khoản của bạn", body);
+                try
+                {
+                    await _emailSender.SendEmailAsync(appUser.Email, "Xác nhận tài khoản của bạn", body);
+                    TempData["Success"] = "Đăng ký thành công! Vui lòng kiểm tra Email để kích hoạt tài khoản.";
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Không thể gửi email kích hoạt tài khoản cho {Email}", appUser.Email);
+                    TempData["Success"] = "Đăng ký thành công! Hệ thống tạm thời chưa thể gửi email kích hoạt, vui lòng liên hệ hỗ trợ.";
+                }
 
-                TempData["Success"] = "Đăng ký thành công! Vui lòng kiểm tra Email để kích hoạt tài khoản.";
                 return RedirectToAction("Login");
             }
 
@@ -168,6 +179,7 @@ namespace Project_385.Controllers
         public IActionResult ForgotPassword() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(string email)
         {
             if (string.IsNullOrEmpty(email))
@@ -189,7 +201,14 @@ namespace Project_385.Controllers
                     { "ExpireTime", "2 giờ" }
                 });
 
-                await _emailSender.SendEmailAsync(email, "Đặt lại mật khẩu của bạn", body);
+                try
+                {
+                    await _emailSender.SendEmailAsync(email, "Đặt lại mật khẩu của bạn", body);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Không thể gửi email đặt lại mật khẩu cho {Email}", email);
+                }
             }
 
             TempData["Success"] = "Nếu Email tồn tại, một liên kết đặt lại mật khẩu đã được gửi đi.";
@@ -269,15 +288,22 @@ namespace Project_385.Controllers
                 return RedirectToLocal(returnUrl);
 
             var email = info.Principal.FindFirstValue(ClaimTypes.Email)!;
-            var userName = email.Split('@')[0];
+            var baseUserName = email.Split('@')[0];
+            var candidateUserName = baseUserName;
 
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user == null)
             {
+                int suffix = 1;
+                while (await _userManager.FindByNameAsync(candidateUserName) != null)
+                {
+                    candidateUserName = $"{baseUserName}_{suffix++}";
+                }
+
                 user = new AppUserModels
                 {
-                    UserName = userName,
+                    UserName = candidateUserName,
                     Email = email,
                     EmailConfirmed = true
                 };
@@ -285,7 +311,7 @@ namespace Project_385.Controllers
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
                 {
-                    TempData["Error"] = "Không thể tạo tài khoản từ Google.";
+                    TempData["Error"] = "Không thể tạo tài khoản từ Google: " + string.Join("; ", createResult.Errors.Select(e => e.Description));
                     return RedirectToAction("Login");
                 }
 
