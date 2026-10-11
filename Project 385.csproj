@@ -9,8 +9,6 @@
     <UserSecretsId>9c2540c7-167e-407f-ab5d-84513c3b5242</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <CscToolPath Condition="Exists('$(UserProfile)\.nuget\packages\microsoft.net.compilers.toolset\4.11.0\tasks\net472')">$(UserProfile)\.nuget\packages\microsoft.net.compilers.toolset\4.11.0\tasks\net472</CscToolPath>
-    <UseSharedCompilation Condition="'$(CscToolPath)' != ''">false</UseSharedCompilation>
   </PropertyGroup>
 
   <ItemGroup>
