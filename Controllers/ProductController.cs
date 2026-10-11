@@ -108,6 +108,7 @@ namespace Project_385.Controllers
 
             return RedirectToAction("Details", new { Id = ratingModel.ProductId });
         }
+        [HttpGet]
         [HttpPost]
         public async Task<IActionResult> Search(string search)
         {
