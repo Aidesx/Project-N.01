@@ -1,4 +1,6 @@
-﻿namespace Project_385.Repositery
+using Microsoft.AspNetCore.Hosting;
+
+namespace Project_385.Services
 {
     public class EmailTemplateRenderer : IEmailTemplateRenderer
     {
@@ -22,7 +24,6 @@
                 content = content.Replace($"{{{{{variable.Key}}}}}", variable.Value);
 
             return content;
-
         }
     }
 }

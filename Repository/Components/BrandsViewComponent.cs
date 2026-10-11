@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Project_385.Repositery.Components
+namespace Project_385.Repository.Components
 {
     public class BrandsViewComponent : ViewComponent
     {

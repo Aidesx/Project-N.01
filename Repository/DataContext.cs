@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
 
-namespace Project_385.Repositery
+namespace Project_385.Repository
 {
     public class DataContext : IdentityDbContext<AppUserModels>
     {

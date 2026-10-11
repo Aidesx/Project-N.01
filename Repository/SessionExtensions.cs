@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
-namespace Project_385.Repositery
+namespace Project_385.Repository
 {
     public static class SessionExtensions
     {

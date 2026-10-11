@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
 using Project_385.Models.ViewModels;
-using Project_385.Repositery;
+using Project_385.Repository;
 using System.Diagnostics;
 
 namespace Project_385.Controllers
@@ -22,9 +22,13 @@ namespace Project_385.Controllers
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var product = _dataContext.Products.Include("Category").Include("Brand").ToList();
+            var product = await _dataContext.Products
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .ToListAsync();
             return View(product);
         }
 

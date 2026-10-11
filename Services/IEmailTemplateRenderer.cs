@@ -1,4 +1,4 @@
-﻿namespace Project_385.Repositery
+namespace Project_385.Services
 {
     public interface IEmailTemplateRenderer
     {

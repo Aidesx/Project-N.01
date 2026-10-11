@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
-using Project_385.Repositery;
+using Project_385.Repository;
 using System.Security.Claims;
 
 namespace Project_385.Services

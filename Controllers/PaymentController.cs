@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Project_385.Areas.Admin.Repositery;
+using Project_385.Services;
 using Project_385.Models;
-using Project_385.Repositery;
+using Project_385.Repository;
 using Project_385.Services.MoMo;
 
 namespace Project_385.Controllers

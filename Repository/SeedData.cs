@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Project_385.Models;
 using System.Linq;
 
-namespace Project_385.Repositery
+namespace Project_385.Repository
 {
     public class SeedData
     {

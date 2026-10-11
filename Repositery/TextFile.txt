@@ -1,8 +1,0 @@
-﻿Username admin 
-Email admin@admin.com
-Password Admin@123
-
-Email hphanngoc120@gmail.com
-Password Admin@123
-
-test

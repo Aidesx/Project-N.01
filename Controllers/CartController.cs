@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Project_385.Models.ViewModels;
 using Project_385.Models;
-using Project_385.Repositery;
+using Project_385.Repository;
 using Project_385.Services;
 
 namespace Project_385.Controllers
@@ -50,7 +50,7 @@ namespace Project_385.Controllers
         }
 
 
-        public async Task<IActionResult> Increase(int id)
+        public IActionResult Increase(int id)
         {
             List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             CartItemModel cartItem = cart.Where(c => c.ProductId == id).FirstOrDefault();
@@ -75,7 +75,7 @@ namespace Project_385.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Decrease(int id)
+        public IActionResult Decrease(int id)
         {
             List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             CartItemModel cartItem = cart.Where(c => c.ProductId == id).FirstOrDefault();
@@ -104,7 +104,7 @@ namespace Project_385.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Remove(int id)
+        public IActionResult Remove(int id)
         {
             List<CartItemModel> cart = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
             cart.RemoveAll(p => p.ProductId == id);
@@ -121,7 +121,7 @@ namespace Project_385.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Clear()
+        public IActionResult Clear()
         {
             HttpContext.Session.Remove("Cart");
             TempData["Success"] = "Đã xóa toàn bộ giỏ hàng";

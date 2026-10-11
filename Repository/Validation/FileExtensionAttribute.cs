@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Project_385.Repositery.Validation
+namespace Project_385.Repository.Validation
 {
     public class FileExtensionAttribute : ValidationAttribute
 
