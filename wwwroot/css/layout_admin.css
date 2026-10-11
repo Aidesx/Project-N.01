@@ -112,15 +112,43 @@
             color: var(--admin-muted);
             font-size: 1rem;
         }
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            color: var(--admin-accent) !important;
-            background: #1e293b;
-            border: 1px solid var(--admin-border);
+        .dataTables_wrapper .dataTables_length label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
         }
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background: var(--admin-primary);
+        .dataTables_wrapper .dataTables_paginate {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #93c5fd !important;
+            background: #1e293b !important;
+            border: 1px solid var(--admin-border) !important;
+            border-radius: 6px !important;
+            padding: 4px 10px !important;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #2563eb !important;
+            color: #ffffff !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: var(--admin-primary) !important;
             color: white !important;
-            border-color: var(--admin-primary);
+            border-color: var(--admin-primary) !important;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+            color: #64748b !important;
+            background: #0f172a !important;
+            border-color: #1e293b !important;
+            cursor: not-allowed;
+            opacity: 0.7;
         }
         
         /* Buttons */
