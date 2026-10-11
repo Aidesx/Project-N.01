@@ -4,6 +4,7 @@
 @{
     var relatedByCategory = ViewBag.RelatedByCategory as List<ProductModels> ?? new List<ProductModels>();
     var relatedByBrand = ViewBag.RelatedByBrand as List<ProductModels> ?? new List<ProductModels>();
+    var recommendedProducts = relatedByBrand.Any() ? relatedByBrand : relatedByCategory;
 }
 
 <link rel="stylesheet" href="~/css/product_detail.css" />
@@ -198,8 +199,14 @@
                         }
                         else
                         {
-                            <div class="alert alert-warning ui-alert warning">
-                                Vui lòng <a asp-area="" asp-controller="Account" asp-action="Login">đăng nhập</a> để đánh giá.
+                            <div class="review-login-prompt" style="padding: 1.5rem; background: rgba(30, 41, 59, 0.4); border: 1px dashed #334155; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; color: #cbd5e1;">
+                                    <i class="fa fa-lock" style="font-size: 1.25rem; color: #f59e0b;"></i>
+                                    <span>Bạn cần đăng nhập để viết cảm nhận và chấm sao cho sản phẩm này.</span>
+                                </div>
+                                <a asp-area="" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-primary" style="background: linear-gradient(135deg, #2563eb, #3b82f6); border: none; border-radius: 8px; padding: 0.55rem 1.25rem; font-weight: 600; color: #fff; text-decoration: none;">
+                                    <i class="fa fa-sign-in"></i> Đăng nhập ngay
+                                </a>
                             </div>
                         }
                     </div>
@@ -207,51 +214,57 @@
             </div>
         </div>
 
-        <div class="recommended_items">
-            <h2><i class="fa fa-star"></i> Sản phẩm đề xuất</h2>
-            <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                    @{
-                        int recCount = 0;
-                        foreach (var related in relatedByBrand)
-                        {
-                            if (recCount % 3 == 0)
+        @if (recommendedProducts != null && recommendedProducts.Any())
+        {
+            <div class="recommended_items">
+                <h2><i class="fa fa-star"></i> Sản phẩm đề xuất</h2>
+                <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        @{
+                            int recCount = 0;
+                            foreach (var related in recommendedProducts)
                             {
-                                string activeClass = recCount == 0 ? "active" : "";
-                                @Html.Raw($"<div class=\"item {activeClass}\"><div class=\"row\">")
-                            }
+                                if (recCount % 3 == 0)
+                                {
+                                    string activeClass = recCount == 0 ? "active" : "";
+                                    @Html.Raw($"<div class=\"item {activeClass}\"><div class=\"row\">")
+                                }
 
-                            <div class="col-sm-4">
-                                <div class="mini-product-card compact">
-                                    <a asp-action="Details" asp-controller="Product" asp-route-id="@related.Id">
-                                        <img src="~/images/@related.Image" alt="@related.Name" onerror="this.onerror=null;this.src='/images/default.png';" />
-                                    </a>
-                                    <div class="caption">
-                                        <h5>@related.Name</h5>
-                                        <div class="price">@related.Price.ToString("N0") đ</div>
-                                        <button type="button" class="btn-add-cart add-to-cart" data-product-id="@related.Id">
-                                            <i class="fa fa-shopping-cart"></i> Thêm
-                                        </button>
+                                <div class="col-sm-4">
+                                    <div class="mini-product-card compact">
+                                        <a asp-action="Details" asp-controller="Product" asp-route-id="@related.Id">
+                                            <img src="~/images/@related.Image" alt="@related.Name" onerror="this.onerror=null;this.src='/images/default.png';" />
+                                        </a>
+                                        <div class="caption">
+                                            <h5>@related.Name</h5>
+                                            <div class="price">@related.Price.ToString("N0") đ</div>
+                                            <button type="button" class="btn-add-cart add-to-cart" data-product-id="@related.Id">
+                                                <i class="fa fa-shopping-cart"></i> Thêm
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            if (recCount % 3 == 2 || recCount == relatedByBrand.Count - 1)
-                            {
-                                @Html.Raw("</div></div>")
+                                if (recCount % 3 == 2 || recCount == recommendedProducts.Count - 1)
+                                {
+                                    @Html.Raw("</div></div>")
+                                }
+                                recCount++;
                             }
-                            recCount++;
                         }
+                    </div>
+                    @if (recommendedProducts.Count > 3)
+                    {
+                        <a class="left carousel-control" href="#recommended-item-carousel" data-slide="prev">
+                            <i class="fa fa-angle-left"></i>
+                        </a>
+                        <a class="right carousel-control" href="#recommended-item-carousel" data-slide="next">
+                            <i class="fa fa-angle-right"></i>
+                        </a>
                     }
                 </div>
-                <a class="left carousel-control" href="#recommended-item-carousel" data-slide="prev">
-                    <i class="fa fa-angle-left"></i>
-                </a>
-                <a class="right carousel-control" href="#recommended-item-carousel" data-slide="next">
-                    <i class="fa fa-angle-right"></i>
-                </a>
             </div>
-        </div>
+        }
     </div>
 </div>
 

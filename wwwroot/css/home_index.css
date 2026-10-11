@@ -18,7 +18,7 @@
         .hero-slider { position: relative; min-height: 420px; background-color: #09090f; overflow: hidden; }
         .hero-bg-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 60% 70% at 70% 50%, rgba(37,99,235,0.1) 0%, transparent 70%); }
         .hero-grid-bg { position: absolute; inset: 0; pointer-events: none; opacity: 0.04; background-image: linear-gradient(rgba(59,130,246,1) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,1) 1px, transparent 1px); background-size: 50px 50px; }
-        .hero-slide { display: none; align-items: center; gap: 2rem; padding: 3rem 2rem; max-width: 80rem; margin: 0 auto; position: relative; z-index: 10; flex-wrap: wrap; }
+        .hero-slide { display: none; align-items: center; gap: 2rem; padding: 3rem 3.75rem; max-width: 80rem; margin: 0 auto; position: relative; z-index: 10; flex-wrap: wrap; }
         .hero-slide.active { display: flex; animation: fadeIn 0.5s ease; }
         
         .hero-content { flex: 1; min-width: 260px; }
@@ -43,7 +43,7 @@
         .hero-icon-btn:hover { border-color: #3b82f6; color: #f8fafc; background: rgba(37, 99, 235, 0.12); }
         .hero-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; background-color: #111827; border: 1px solid #1e2a3a; color: #60a5fa; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; font-size: 1rem; transition: all 0.2s; }
         .hero-nav:hover { background: #3b82f6; color: white; }
-        .hero-prev { left: 1rem; } .hero-next { right: 1rem; }
+        .hero-prev { left: 0.75rem; } .hero-next { right: 0.75rem; }
         .hero-dots { position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 20; }
         .hero-dot { width: 8px; height: 8px; border-radius: 10px; background-color: #1e2a3a; border: none; cursor: pointer; transition: all 0.2s; }
         .hero-dot.active { background-color: #3b82f6; width: 24px; }
