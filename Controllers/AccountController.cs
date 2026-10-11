@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Project_385.Areas.Admin.Repositery;
+using Microsoft.EntityFrameworkCore;
+using Project_385.Services;
 using Project_385.Models;
 using Project_385.Models.ViewModels;
-using Project_385.Repositery;
+using Project_385.Repository;
 using System.Linq;
 using System.Security.Claims;
 
@@ -15,13 +16,41 @@ namespace Project_385.Controllers
         private readonly SignInManager<AppUserModels> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly IEmailTemplateRenderer _emailRenderer;
+        private readonly DataContext _dataContext;
 
-        public AccountController(UserManager<AppUserModels> userManager, SignInManager<AppUserModels> signInManager, IEmailSender emailSender, IEmailTemplateRenderer emailRenderer)
+        public AccountController(
+            UserManager<AppUserModels> userManager,
+            SignInManager<AppUserModels> signInManager,
+            IEmailSender emailSender,
+            IEmailTemplateRenderer emailRenderer,
+            DataContext dataContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _emailRenderer = emailRenderer;
+            _dataContext = dataContext;
+        }
+
+        [HttpGet]
+        public IActionResult Index() => RedirectToAction("History");
+
+        [HttpGet]
+        public async Task<IActionResult> History()
+        {
+            if (!(User.Identity?.IsAuthenticated ?? false)) return RedirectToAction("Login");
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login");
+
+            var orders = await _dataContext.Orders
+                .Include(o => o.OrderDetails)
+                .AsNoTracking()
+                .Where(o => o.UserName == user.Email || o.UserName == user.UserName)
+                .OrderByDescending(o => o.Id)
+                .ToListAsync();
+
+            return View(orders);
         }
 
         [HttpGet]
@@ -58,7 +87,7 @@ namespace Project_385.Controllers
                 if (result.Succeeded)
                 {
                     TempData["Success"] = "Đăng nhập thành công!";
-                    return Redirect(login.ReturnUrl ?? "/");
+                    return RedirectToLocal(login.ReturnUrl);
                 }
             }
 
@@ -84,6 +113,8 @@ namespace Project_385.Controllers
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(appUser, "User");
+
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
                 var confirmLink = Url.Action("ConfirmEmail", "Account", new { userId = appUser.Id, token = token }, Request.Scheme);
 
@@ -102,6 +133,13 @@ namespace Project_385.Controllers
 
             TempData["Error"] = string.Join("\n", result.Errors.Select(e => e.Description));
             return View(user);
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            TempData["Error"] = "Bạn không có quyền truy cập vào chức năng hoặc trang này.";
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -197,7 +235,7 @@ namespace Project_385.Controllers
         {
             await _signInManager.SignOutAsync();
             TempData["Success"] = "Bạn đã đăng xuất thành công.";
-            return Redirect(string.IsNullOrEmpty(returnUrl) ? "/" : returnUrl);
+            return RedirectToLocal(returnUrl);
         }
 
         [HttpGet]
@@ -228,7 +266,7 @@ namespace Project_385.Controllers
                 isPersistent: false);
 
             if (result.Succeeded)
-                return Redirect(returnUrl);
+                return RedirectToLocal(returnUrl);
 
             var email = info.Principal.FindFirstValue(ClaimTypes.Email)!;
             var userName = email.Split('@')[0];
@@ -257,7 +295,16 @@ namespace Project_385.Controllers
             await _userManager.AddLoginAsync(user, info);
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            return Redirect(returnUrl);
+            return RedirectToLocal(returnUrl);
+        }
+
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

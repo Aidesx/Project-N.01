@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Project_385.Areas.Admin.Filters;
 using Project_385.Models;
 using Project_385.Models.ViewModels;
-using Project_385.Repositery;
+using Project_385.Repository;
 using Project_385.Services;
 
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [AdminAuthorize("ManageUser")]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -26,8 +27,6 @@ namespace Project_385.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(int pg =1)
         {
-            if (!await _permissionService.HasPermissionAsync(User, "ManageUser"))
-                return Forbid();
 
             var roles = await _roleManager.Roles.ToListAsync();
             var permissions = await _dataContext.RolePermissions.ToListAsync();
@@ -124,7 +123,17 @@ namespace Project_385.Areas.Admin.Controllers
                     TempData["Error"] = "Role không tồn tại.";
                     return RedirectToAction("Index");
                 }
-                
+
+                // Bảo vệ không cho đổi tên vai trò hệ thống
+                if (string.Equals(role.Name, "Admin", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(role.Name, "User", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!string.Equals(model.RoleName, role.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        TempData["Error"] = "Không được phép thay đổi tên của vai trò mặc định (Admin, User).";
+                        return View(model);
+                    }
+                }
 
                 if (role.Name != model.RoleName)
                 {
@@ -172,6 +181,14 @@ namespace Project_385.Areas.Admin.Controllers
             var role = await _roleManager.FindByIdAsync(id);
             if (role != null)
             {
+                // Bảo vệ không cho xóa vai trò hệ thống
+                if (string.Equals(role.Name, "Admin", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(role.Name, "User", StringComparison.OrdinalIgnoreCase))
+                {
+                    TempData["Error"] = "Không thể xóa vai trò mặc định của hệ thống (Admin, User).";
+                    return RedirectToAction("Index");
+                }
+
                 var permission = await _dataContext.RolePermissions
                     .FirstOrDefaultAsync(p => p.Id == id);
                 if (permission != null)

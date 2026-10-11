@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Project_385.Areas.Admin.Filters;
 using Project_385.Models;
 using Project_385.Models.ViewModels;
 using Project_385.Services;
@@ -10,7 +11,7 @@ using Project_385.Services;
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [AdminAuthorize("ManageUser")]
     public class UserController : Controller
     {
         private readonly UserManager<AppUserModels> _userManager;
@@ -26,8 +27,6 @@ namespace Project_385.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(int pg = 1)
         {
-            if (!await _permissionService.HasPermissionAsync(User, "ManageUser"))
-                return Forbid();
 
             var users = _userManager.Users.ToList();
             var userWithRoles = new List<UserWithRoleViewModel>();
@@ -143,9 +142,15 @@ namespace Project_385.Areas.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
+                // Bảo vệ tài khoản admin chính không bị hạ quyền
+                if (user.UserName.Equals("admin", StringComparison.OrdinalIgnoreCase) && roleName != "Admin")
+                {
+                    TempData["Error"] = "Không được phép gỡ quyền Admin của tài khoản quản trị viên chính (admin).";
+                    return RedirectToAction("Index");
+                }
+
                 user.UserName = model.UserName;
                 user.Email = model.Email;
-
 
                 var result = await _userManager.UpdateAsync(user);
 
@@ -184,6 +189,19 @@ namespace Project_385.Areas.Admin.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
+                if (user.UserName.Equals("admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    TempData["Error"] = "Không được phép xóa tài khoản quản trị viên chính (admin).";
+                    return RedirectToAction("Index");
+                }
+
+                var currentUserId = _userManager.GetUserId(User);
+                if (user.Id == currentUserId)
+                {
+                    TempData["Error"] = "Bạn không thể tự xóa tài khoản của chính mình.";
+                    return RedirectToAction("Index");
+                }
+
                 var result = await _userManager.DeleteAsync(user);
                 if (result.Succeeded)
                     TempData["Success"] = "Xóa user thành công";

@@ -1,15 +1,16 @@
-﻿
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Project_385.Areas.Admin.Filters;
 using Project_385.Models;
-using Project_385.Repositery;
+using Project_385.Repository;
 using Project_385.Services;
 
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [AdminAuthorize("ManageBrand")]
     public class BrandController : Controller
     {
         private readonly DataContext _dataContext;
@@ -24,18 +25,20 @@ namespace Project_385.Areas.Admin.Controllers
         [Route("Index")]
         public async Task<IActionResult> Index(int pg = 1)
         {
-            if (!await _permissionService.HasPermissionAsync(User, "ManageBrand"))
-                return Forbid();
-
-            List<BrandModels> brands = await _dataContext.Brands.OrderByDescending(p => p.Id).ToListAsync();
 
             const int pageSize = 10;
             if (pg < 1) pg = 1;
 
-            int recsCount = brands.Count();
+            int recsCount = await _dataContext.Brands.CountAsync();
             var pager = new Paginate(recsCount, pg, pageSize);
             int recSkip = (pg - 1) * pageSize;
-            var data = brands.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            var data = await _dataContext.Brands
+                .AsNoTracking()
+                .OrderByDescending(p => p.Id)
+                .Skip(recSkip)
+                .Take(pager.PageSize)
+                .ToListAsync();
 
             ViewBag.Pager = pager;
             return View(data);

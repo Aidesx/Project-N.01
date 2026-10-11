@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Project_385.Areas.Admin.Filters;
 using Project_385.Models;
-using Project_385.Repositery;
+using Project_385.Repository;
 using Project_385.Services;
 
 namespace Project_385.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [AdminAuthorize("ManageProduct")]
     public class ProductController : Controller
     {
         private readonly DataContext _dataContext;
@@ -25,17 +26,22 @@ namespace Project_385.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(int pg = 1)
         {
-            if (!await _permissionService.HasPermissionAsync(User, "ManageProduct"))
-                return Forbid();
-            var products = await _dataContext.Products.Include(p => p.Category).Include(p => p.Brand).OrderByDescending(p => p.Id).ToListAsync();
 
             const int pageSize = 10;
             if (pg < 1) pg = 1;
 
-            int recsCount = products.Count;
+            int recsCount = await _dataContext.Products.CountAsync();
             var pager = new Paginate(recsCount, pg, pageSize);
             int recSkip = (pg - 1) * pageSize;
-            var data = products.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            var data = await _dataContext.Products
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .OrderByDescending(p => p.Id)
+                .Skip(recSkip)
+                .Take(pager.PageSize)
+                .ToListAsync();
 
             ViewBag.Pager = pager;
             return View(data);
