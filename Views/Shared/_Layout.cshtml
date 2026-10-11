@@ -7,11 +7,12 @@
 @{
 	var deliverySettings = _deliverySettings.Value;
 	var shopName = string.IsNullOrWhiteSpace(deliverySettings.ShopName) ? "The Awesome Store" : deliverySettings.ShopName;
+	var lat = deliverySettings.StoreLatitude;
+	var lng = deliverySettings.StoreLongitude;
 	var footerMapSrc = string.Format(
 		CultureInfo.InvariantCulture,
-		"https://www.google.com/maps?q={0},{1}&z=16&output=embed",
-		deliverySettings.StoreLatitude,
-		deliverySettings.StoreLongitude);
+		"https://www.openstreetmap.org/export/embed.html?bbox={0}%2C{1}%2C{2}%2C{3}&layer=mapnik&marker={4}%2C{5}",
+		lng - 0.006, lat - 0.004, lng + 0.006, lat + 0.004, lat, lng);
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -43,28 +44,47 @@
 
 <body>
 	<header id="header">
+		<div class="header_top">
+			<div class="container header_top_container">
+				<div class="contactinfo">
+					<ul class="nav nav-pills">
+						<li><a href="tel:0905123456"><i class="fa fa-phone"></i> Hotline: 0905 123 456</a></li>
+						<li><a href="mailto:contact@theawesomestore.com"><i class="fa fa-envelope"></i> contact@theawesomestore.com</a></li>
+					</ul>
+				</div>
+				<div class="social-icons">
+					<ul class="nav navbar-nav">
+						<li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
+						<li><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" title="YouTube"><i class="fab fa-youtube"></i></a></li>
+						<li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" title="TikTok"><i class="fab fa-tiktok"></i></a></li>
+						<li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" title="Instagram"><i class="fab fa-instagram"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
 		<div class="header-middle">
 			<div class="container">
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-3">
 						<div class="logo pull-left site-brand">
 							<a asp-controller="Home" asp-action="Index" class="site-brand-link">
-								<span class="site-brand-copy">
-									<i class="fa fa-shopping-bag site-brand-icon" style="font-size: 1.5rem; color: #3b82f6; margin-right: 0.5rem;"></i>
-									<span class="site-brand-name">@shopName</span>
+								<span class="site-brand-icon-box">
+									<i class="fa fa-shopping-bag"></i>
 								</span>
+								<span class="site-brand-name">@shopName</span>
 							</a>
 						</div>
 					</div>
-					<div class="col-sm-8">
+					<div class="col-sm-9">
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
+								<li><a asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
 								@if (User.Identity?.IsAuthenticated ?? false)
 								{
 									<li><a asp-action="WishList" asp-controller="Home"><i class="fa fa-star"></i> Wishlist</a></li>
-									<li><a asp-action="Compare" asp-controller="Home"><i class="fa fa-star"></i> Compare</a></li>
-									<li><a asp-controller="Checkout"><i class="fa fa-lock"></i> Checkout</a></li>
-									<li><a asp-controller="Cart" asp-action="Index"><i class="fa fa-shopping-cart"></i>Cart</a></li>
+									<li><a asp-action="Compare" asp-controller="Home"><i class="fa fa-exchange"></i> So sánh</a></li>
+									<li><a asp-controller="Checkout"><i class="fa fa-check-circle"></i> Thanh toán</a></li>
 									<li class="dropdown">
 										<a href="#" data-toggle="dropdown">
 											<i class="fa fa-user"></i> @User.Identity.Name
@@ -96,7 +116,7 @@
 								{
 									<li>
 										<a asp-controller="Account" asp-action="Login">
-											<i class="fa fa-lock"></i> Login
+											<i class="fa fa-user"></i> Đăng nhập
 										</a>
 									</li>
 								}
@@ -138,8 +158,8 @@
 					<div class="col-sm-3">
 						<form asp-controller="Product" asp-action="Search" method="post">
 							<div class="search_box pull-right">
-								<input type="text" name="search" placeholder="Search" />
-								<button type="submit" class="btn btn-danger">Search</button>
+								<input type="text" name="search" placeholder="Tìm kiếm sản phẩm..." />
+								<button type="submit" class="btn btn-search"><i class="fa fa-search"></i> Tìm</button>
 							</div>
 						</form>
 					</div>
@@ -198,9 +218,10 @@
 						<li><a asp-controller="Home" asp-action="WishList">Yêu thích</a></li>
 					</ul>
 					<div class="footer-social-placeholders">
-						<a href="#" aria-label="Social 1">Facebook</a>
-						<a href="#" aria-label="Social 2">Zalo</a>
-						<a href="#" aria-label="Social 3">TikTok</a>
+						<a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
+						<a href="https://zalo.me" target="_blank" rel="noopener noreferrer" aria-label="Zalo"><i class="fa fa-comment-dots"></i> Zalo</a>
+						<a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i> TikTok</a>
+						<a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i> YouTube</a>
 					</div>
 				</div>
 			</div>

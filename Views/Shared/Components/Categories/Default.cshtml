@@ -1,13 +1,18 @@
 @using Project_385.Models
 @model IEnumerable<CategoryModel>
 
+@{
+    var currentSlug = ViewContext.RouteData.Values["Slug"]?.ToString() ?? "";
+}
+
 @if (Model != null && Model.Any())
 {
     <ul class="sidebar-list">
         @foreach (var item in Model.Take(5))
         {
+            var isActive = string.Equals(currentSlug, item.Slug, StringComparison.OrdinalIgnoreCase);
             <li>
-                <a asp-action="Index" asp-controller="Category" asp-route-Slug="@item.Slug">
+                <a asp-action="Index" asp-controller="Category" asp-route-Slug="@item.Slug" class="@(isActive ? "active" : "")">
                     @item.Name
                 </a>
             </li>
